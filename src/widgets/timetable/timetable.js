@@ -203,7 +203,7 @@
 		@description A scrollable list of ordered items displayed against a proportional axis.
 			Note: you must call draw() on a timetable before it is displayed.
 
-			<div class="info">Widgets must be called in a <code>glow.onReady()</code> call.</div>
+			<div class="info">Widgets must be called in a <code>glow.ready()</code> call.</div>
 
 		@param {String|HTMLElement|glow.dom.NodeList} container The Element into which the Timetable will be placed.
 			If a String is given, it is used as a selector. If a Nodelist is given, the first item is used.

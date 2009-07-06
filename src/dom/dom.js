@@ -1277,7 +1277,7 @@
 			addClass: function (name) {
 				for (var i = 0, length = this.length; i < length; i++) {
 					if ((" " + this[i].className + " ").indexOf(" " + name + " ") == -1) {
-						this[i].className += " " + name;
+						this[i].className += ((this[i].className)? " " : "") + name;
 					}
 				}
 				return this;
@@ -2245,15 +2245,7 @@
 				glow.dom.get("#myDiv li").hide();
 			*/
 			hide: function() {
-				var i = 0,
-					len = this.length,
-					currItem;
-				for (; i < len; i++) {
-					currItem = r.get(this[i]);
-					currItem[i].style.display = "none";
-					currItem[i].style.visibility = "hidden";
-				}
-				return this;
+				return this.css("display", "none").css("visibility", "hidden");
 			},
 
 			/**

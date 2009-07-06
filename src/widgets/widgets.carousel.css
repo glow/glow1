@@ -121,7 +121,11 @@
 .glowCSSVERSION-carousel .carousel-prev-disabled,
 .glowCSSVERSION-carousel .carousel-next-disabled,
 .glowCSSVERSION-vCarousel .carousel-prev-disabled,
-.glowCSSVERSION-vCarousel .carousel-next-disabled {
+.glowCSSVERSION-vCarousel .carousel-next-disabled,
+.glowCSSVERSION-carousel .carousel-prev-disabled a,
+.glowCSSVERSION-carousel .carousel-next-disabled a,
+.glowCSSVERSION-vCarousel .carousel-prev-disabled a,
+.glowCSSVERSION-vCarousel .carousel-next-disabled a {
 	cursor: default;
 }
 

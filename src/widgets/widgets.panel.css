@@ -63,7 +63,7 @@
   .glowCSSVERSION-panel .c {
 	  position: relative;
 	  min-height: 50px;
-	  overflow: auto;
+	  overflow: hidden;
   }
 
   .glowCSSVERSION-panel .panel-hd {

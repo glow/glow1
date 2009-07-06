@@ -535,7 +535,7 @@
 		  items below the input element which dynamically updates based on what
 		  has been typed so far.
 
-		  <div class="info">Widgets must be called in a <code>glow.onReady()</code> call.</div>
+		  <div class="info">Widgets must be called in a <code>glow.ready()</code> call.</div>
 		  
 		  @param {glow.dom.NodeList | String} inputElement A NodeList or css selector that points to a text input element.
 		  @param {Object[] | String[] | String | Function} dataSource Either an array of objects, an array of strings (referred to as a 'dataSource'), a function that returns a dataSource or a URL that when requested will return a dataSource.

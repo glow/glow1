@@ -94,6 +94,7 @@
 					target[param] = _set_defaults(target[param],defaults[param]);
 				}
 			}
+
 			return target;
 		}
 
@@ -256,7 +257,19 @@
 			return '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" ' + to_attributes(attributes) + '><param name="movie" value="' + src + '" />' + toParams(params) + '</object>';
 		}
 
-		var r = {};
+		var r = {},
+			idIndex = 0; // Used with private function _getId()
+
+		/**
+		@name _getId()
+		@private
+		@function
+		@returns {string} unique string to use for id of a flash object
+		@description Returns a unique to the page string to use for the id of the flash object.  This function ensures that all flash objects embedded into the page get an id.
+		*/
+		function _getId() {
+			return glow.UID + "FlashEmbed" + (idIndex++);
+		}
 
 		/**
 		@name glow.embed.Flash
@@ -339,7 +352,8 @@
 					},
 					attributes : {},
 					//expressInstall : false, // TODO add this in a later release
-					message : "This content requires Flash Player version " + minVersion + " (installed version: " + installed_flash_player + ")"
+					message : "This content requires Flash Player version " + minVersion + " (installed version: " + installed_flash_player + ")",
+					id : _getId() // Fix for trac 165
 				}
 			);
 

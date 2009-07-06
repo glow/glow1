@@ -17,7 +17,7 @@
 			@class
 			@description A Rich Text Editor to allow text formatting with form inputs.
 
-			<div class="info">Widgets must be called in a <code>glow.onReady()</code> call.</div>
+			<div class="info">Widgets must be called in a <code>glow.ready()</code> call.</div>
 			@constructor
 			@param {String|glow.dom.NodeList} textarea Textarea HTML element that the Editor replaces on your page
 			@param {Object} opts

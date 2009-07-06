@@ -25,7 +25,7 @@
 Use this if you're wanting to block out the main content of the page.
 Anything you want to be on top of the mask needs to have a higher z-index (default: 9990).
 
-<div class="info">Widgets must be called in a <code>glow.onReady()</code> call.</div>
+<div class="info">Widgets must be called in a <code>glow.ready()</code> call.</div>
 
 @see <a href="../furtherinfo/widgets/mask/">Mask user guide</a>
 

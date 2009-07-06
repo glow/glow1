@@ -409,7 +409,7 @@
 
 				@param {Object} destination Destination object
 
-				@param {Object} source Properties of this object will be copied onto a clone of destination
+				@param {Object} source Properties of this object will be copied onto the destination
 
 				@returns {Object}
 
@@ -580,6 +580,7 @@
 				@name glow.lang.hasOwnProperty
 				@function
 				@description Cross-browser implementation
+				@deprecated
 
 				  Safari 1.3 doesn't support
 				  <a href="http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:Object:hasOwnProperty">

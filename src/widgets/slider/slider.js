@@ -681,7 +681,7 @@
 		@class
 		@description Form control for setting a numerical value within a range.	
 
-		<div class="info">Widgets must be called in a <code>glow.onReady()</code> call.</div>
+		<div class="info">Widgets must be called in a <code>glow.ready()</code> call.</div>
 		
 		@param {glow.dom.NodeList | Selector | HTMLElement} container Container of Slider.
 			The Slider will be appended to this element, retaining existing contents.

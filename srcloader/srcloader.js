@@ -125,6 +125,7 @@ var srcLoader;
 	srcLoader = (function() {
 		var ua = navigator.userAgent.toLowerCase();
 		var isIE = /msie/i.test(ua) && !(/opera/.test(ua));
+		var emptyFunc = function() {};
 	
 		function runAfterLastScript(callback) {
 			//ie runs document written inline scripts before external script, pah!
@@ -153,7 +154,7 @@ var srcLoader;
 			//set up defaults
 			opts = {
 				loadMethod: opts.loadMethod || "gloaderSyncNoCallback",
-				onLoad: opts.onLoad || function() {},
+				onLoad: opts.onLoad || emptyFunc,
 				modules: opts.modules || moduleList,
 				path: opts.path || autoRoot
 			};
@@ -205,7 +206,9 @@ var srcLoader;
 				}
 	
 				//run callback after scripts have processed
-				runAfterLastScript(opts.onLoad);
+				if (opts.onLoad != emptyFunc) {
+					runAfterLastScript(opts.onLoad);
+				}
 			} else {
 	
 				//add map
@@ -230,7 +233,7 @@ var srcLoader;
 			}
 		};
 	})();
-	
+	srcLoader.createGlowMap = createGlowMap;
 	srcLoader.loaded = {};
 
 })();

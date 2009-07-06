@@ -241,7 +241,7 @@
 		@class
 		@description A container element displayed on top of the other page content
 
-		<div class="info">Widgets must be called in a <code>glow.onReady()</code> call.</div>
+		<div class="info">Widgets must be called in a <code>glow.ready()</code> call.</div>
 		@see <a href="../furtherinfo/widgets/overlay/">Overlay user guide</a>
 
 		@param {selector|Element|glow.dom.NodeList} content

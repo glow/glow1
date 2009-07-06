@@ -18,7 +18,7 @@
 			@class
 			@description Scroll through a list of items
 
-			<div class="info">Widgets must be called in a <code>glow.onReady()</code> call.</div>
+			<div class="info">Widgets must be called in a <code>glow.ready()</code> call.</div>
 	
 			@param {glow.dom.NodeList} container The container of items to display as a carousel.
 			@param {Object} opts Options object
@@ -316,11 +316,8 @@
 				//
 				this._opts.loop = this._originalOptsLoop;
 				this.element.get(".carousel-window").removeClass("carousel-notEnoughItems");
-				if (this._navPrev)
-				{
-					this._navPrev.removeClass("carousel-prev-disabled");
-					this._navNext.removeClass("carousel-next-disabled");
-				}
+				this._navPrev.removeClass("carousel-prev-disabled");
+				this._navNext.removeClass("carousel-next-disabled");
 			}
 
 
@@ -480,10 +477,8 @@
 			if (this._notEnoughContent) { 
 				// Added for bug fix trac 152 ***
 				// If there isn't enough content to require scrolling then disable both buttons
-				if (this._navPrev) {
-					this._navPrev.addClass("carousel-prev-disabled");
-					this._navNext.addClass("carousel-next-disabled");
-				}
+				this._navPrev.addClass("carousel-prev-disabled");
+				this._navNext.addClass("carousel-next-disabled");
 			} else if (!this._opts.loop) {
 				if (!canGo.apply(this, ["prev"])) this._navPrev.addClass("carousel-prev-disabled");
 				else if (!canGo.apply(this, [])) this._navNext.addClass("carousel-next-disabled");
