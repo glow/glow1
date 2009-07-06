@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" >
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Glow Drag Drop Test</title>
+<style type="text/css">
+	@import '../../test/testdata/screen.css';
+    #draggable{
+        cursor: move;
+    }
+    #draggable2, #draggable3{
+        
+    }
+	.drag{
+        width: 200px;
+        height: 200px;
+        background-color: red;
+
+    }
+    .drag h2{
+        background-color: green;
+        cursor: move;
+        width: 100%;
+    }
+    #container{
+        height:800px;
+        width:800px;
+        border: 2px dotted blue;
+    }
+    #dropZone{
+        float:right;
+        width:250px;
+        height:250px;
+        background-color:yellow;
+        border:2px solid white;
+    }
+    .over{
+        border: 1px solid blue;
+    }
+    
+</style>
+<!--[if lte IE 6]>
+  <style type="text/css">
+    #motionTest {
+      background: none;
+      filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='ball.png', sizingMethod='crop');
+    }
+  </style>
+<![endif]-->
+<script type="text/javascript">
+	try {
+	  document.execCommand("BackgroundImageCache", false, true);
+	} catch(err) {}
+</script>
+</head>
+<body id="body">
+<div id="heading"><h1>Glow Unit Test</h1></div>
+<div id="container">
+    <div id="dropZone"><h5>Drop Zone</h3><p>Taking crime to new heights</p></div>
+    <div id="draggable" class="drag">drag me (I can't leave my blue dotted prison)
+    <form><input type="text" size="20"></form>
+    </div>
+    <div id="draggable2" class="drag"><h2>drag me by my handle</h2></div>
+    <div id="draggable3" class="drag"><h2>basic</h2></div>
+</div>
+<div id="debug">0</div>
+
+
+<script type="text/javascript" src="../../src/glow/glow.js"></script>
+<script type="text/javascript" src="../../src/debug/debug.js"></script>
+<script type="text/javascript" src="../../src/dom/dom.js"></script>
+<script type="text/javascript" src="../../src/events/events.js"></script>
+<script type="text/javascript" src="../../src/dragdrop/dragdrop.js"></script>
+
+<script type="text/javascript">
+glow.ready(function() {
+    /*var aDropZone = new glow.dragdrop.DropTarget('#dropZone', {
+            onActive : function(dropTarget){
+                    dropTarget.self.css('border', '2px solid blue');
+            },
+            onInActive : function(dropTarget){
+                    dropTarget.self.css('border', '');
+                    dropTarget.self.css('opacity', '1');
+            },
+            onEnter : function(dropTarget){
+                    dropTarget.self.css('opacity', '0.2');
+            },
+            onLeave : function(dropTarget){
+                    dropTarget.self.css('opacity', '1');
+            },
+            onDrop : function(dropTarget){
+                    dropTarget.self.css('backgroundColor', 'green');
+					dropTarget.self.append("<p>I've been dropped on</p>");
+            }
+        });*/
+	var aDropZone = new glow.dragdrop.DropTarget('#dropZone');
+    var myDraggable = new glow.dragdrop.Draggable('#draggable', {dropTargets : [aDropZone], container : '#container', helper : 'ghost', placeHolder : 'ghost', onDrop : function(draggable){
+		if(draggable._isOverTarget){
+            //alert('test');
+			draggable.self.appendTo(glow.dom.get('#dropZone'));
+            //draggable.self.css('backgroundColor', 'green');
+            //alert('test');
+		}
+		else{
+			draggable.self.css('top', draggable.yStart);
+            draggable.self.css('left', draggable.xStart);
+			draggable.self.css('position', '');
+		}
+		return;
+	}});
+    var myDraggable2 = new glow.dragdrop.Draggable('#draggable2', {handle : '#draggable2 h2', placeHolder : 'ghost', helper : 'outline', axis : 'x'});
+    var myDraggable3 = new glow.dragdrop.Draggable('#draggable3');
+});
+</script>
+
+</body>
+</html>

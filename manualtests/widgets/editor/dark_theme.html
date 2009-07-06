@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>glow.widgets.Editor Test</title>
+	
+	<style type="text/css" media="screen">
+		#commentEntry
+		{
+			width: 520px;
+			height: 150px;
+			margin: 8px;
+			padding: 0;
+		}
+	</style>
+	
+	<script type="text/javascript" src="../../../loader/svnloader.js"></script>
+	<script type="text/javascript" language="javascript">
+		loadUnbuiltGlow(
+			createGlowMap('../../../'),
+			{
+				loadMethod: 'scriptTags',
+				modules: ['glow', '1', 'glow.dom'],
+				onLoad: function(glow) {
+					window.glow = glow;
+				}
+			}
+		);
+	</script>
+	
+	<script type="text/javascript">
+		$ = glow.dom.get;
+		
+		glow.ready(		
+			function() {
+				window.ed = new glow.widgets.Editor($("#commentEntry"), {theme: "dark"});
+				
+				ed.toolbar.addToolset("italics", "bold", "strike", "blockquote")
+					.draw();
+			
+				var demoTest = new glow.forms.Form("#demo-form");
+				
+				demoTest.addTests(
+					"userName",
+					["required", {message: "What? WHAT?!"}]
+				);
+			
+			}		
+		);
+	</script>
+	
+</head>
+<body>
+
+<h1>Example Blog</h1>
+
+<h2>Entry Title Here</h2>
+
+<h3>Add A Comment</h3>
+<form action="foo" method="get" id="demo-form">
+	<div>
+		<label for="userName">Your Name</label>:
+		<input name="userName" id="userName" type="text" size="28">
+	</div>
+	<div>
+		<textarea id="commentEntry" rows="10" cols="100" style="width: 500px"></textarea>
+	</div>
+
+	<div>
+		<input type="submit" value="Fake Submit" id="getHTML">
+	</div>
+	<div id="domPath"></div>
+</form>
+
+
+</body>
+</html>

@@ -1,0 +1,363 @@
+/* Carousel */
+
+.glowCSSVERSION-carousel, .glowCSSVERSION-vCarousel {
+	position:relative;
+	overflow:hidden;
+	zoom:1;
+}
+
+.glowCSSVERSION-carousel .carousel-window, .glowCSSVERSION-vCarousel .carousel-window {
+	position:relative;
+	overflow:hidden;
+}
+
+.glowCSSVERSION-carousel .carousel-content, .glowCSSVERSION-vCarousel .carousel-content {
+	position:relative;
+	list-style-type:none;
+	padding-left:0;
+	margin:0;
+	top:0;
+	left:0;
+	overflow: hidden !important;
+}
+
+.glowCSSVERSION-carousel .carousel-item, .glowCSSVERSION-vCarousel .carousel-item {
+	float:left;
+	/*_overflow:hidden;*/
+	display: inline;
+}
+
+.glowCSSVERSION-carousel .carousel-nav, .glowCSSVERSION-vCarousel .carousel-nav {
+	position:relative;
+	display:block;
+	width:30px;
+	height:100%;
+	cursor:pointer;
+	z-index:1;
+}
+
+.glowCSSVERSION-carousel .carousel-nav span, .glowCSSVERSION-vCarousel .carousel-nav span {
+	position:absolute;
+	top:0;
+	left:0;
+	display:block;
+	width:100%;
+	height:100%;
+}
+
+/* Light Theme */
+.glowCSSVERSION-carousel .carousel-light .carousel-window {
+	background:#f0f0f0;
+}
+
+.glowCSSVERSION-carousel .carousel-light .carousel-nav span {
+	background-image:url(images/carousel/lighth.png);
+}
+
+.glowCSSVERSION-carousel .carousel-light .carousel-nav {
+	background:#f0f0f0;
+	color:#000;
+}
+
+/* Dark Theme */
+
+.glowCSSVERSION-carousel .carousel-dark .carousel-window {
+	background:#282828;
+}
+
+.glowCSSVERSION-carousel .carousel-dark .carousel-nav {
+	background:#282828;
+	color:#fff;
+}
+
+.glowCSSVERSION-carousel .carousel-dark .carousel-nav span {
+	background-image:url(images/carousel/darkh.png);
+}
+
+.glowCSSVERSION-carousel .carousel-window {
+	float:left;
+}
+
+.glowCSSVERSION-carousel .carousel-nav {
+	float:left;
+	overflow:hidden;
+}
+
+.glowCSSVERSION-carousel .carousel-nav span {
+	background-repeat:no-repeat;
+}
+
+.glowCSSVERSION-carousel .carousel-nav .carousel-background {
+	top:0;
+	background-position:-60px 0;
+	background-repeat:repeat-y;
+}
+
+.glowCSSVERSION-carousel .carousel-nav .carousel-top {
+	top:0;
+	background-position:0 0;
+}
+
+.glowCSSVERSION-carousel .carousel-nav .carousel-bottom {
+	bottom:0;
+	background-position:-30px bottom;
+}
+
+.glowCSSVERSION-carousel .carousel-nav .carousel-arrow {
+	width:10px;
+	top:0;
+	left:10px;
+	background-repeat:no-repeat;
+}
+
+.glowCSSVERSION-carousel .carousel-prev .carousel-arrow {
+	background-position:-90px center;
+}
+
+.glowCSSVERSION-carousel .carousel-next .carousel-arrow {
+	background-position:-101px center;
+}
+
+.glowCSSVERSION-carousel .carousel-prev-disabled,
+.glowCSSVERSION-carousel .carousel-next-disabled,
+.glowCSSVERSION-vCarousel .carousel-prev-disabled,
+.glowCSSVERSION-vCarousel .carousel-next-disabled {
+	cursor: default;
+}
+
+.glowCSSVERSION-carousel .carousel-prev-disabled .carousel-arrow {
+	background-position:-112px center;
+}
+
+.glowCSSVERSION-carousel .carousel-next-disabled .carousel-arrow {
+	background-position:-123px center;
+}
+
+/* Vertical Themes */
+
+/* Light Theme - Vertical */
+
+.glowCSSVERSION-vCarousel .carousel-light .carousel-window {
+	background:#f0f0f0;
+}
+
+.glowCSSVERSION-vCarousel .carousel-light .carousel-nav {
+	background:#f0f0f0;
+	color:#000;
+	height:30px;
+}
+
+.glowCSSVERSION-vCarousel .carousel-light .carousel-nav span {
+	background-image:url(images/carousel/lightv.png);
+}
+
+/* Dark Theme - Vertical */
+.glowCSSVERSION-vCarousel .carousel-dark .carousel-window {
+	background:#282828;
+}
+
+.glowCSSVERSION-vCarousel .carousel-dark .carousel-nav {
+	background:#282828;
+	color:#fff;
+	height:30px;
+}
+
+.glowCSSVERSION-vCarousel .carousel-dark .carousel-nav span {
+	background-image:url(images/carousel/darkv.png);
+}
+
+.glowCSSVERSION-vCarousel .carousel-nav span {
+	background-repeat:no-repeat;
+	overflow:hidden;
+}
+
+.glowCSSVERSION-vCarousel .carousel-nav .carousel-background {
+	background-position:0 -60px;
+	background-repeat:repeat-x;
+}
+
+.glowCSSVERSION-vCarousel .carousel-nav .carousel-top {
+	background-position:right 0;
+}
+
+.glowCSSVERSION-vCarousel .carousel-nav .carousel-bottom {
+	background-position:left -30px;
+}
+
+.glowCSSVERSION-vCarousel .carousel-nav .carousel-arrow {
+	top:10px;
+	height:10px;
+}
+
+.glowCSSVERSION-vCarousel .carousel-prev .carousel-arrow {
+	background-position:center -90px;
+}
+
+.glowCSSVERSION-vCarousel .carousel-next .carousel-arrow {
+	background-position:center -101px;
+}
+
+.glowCSSVERSION-vCarousel .carousel-prev-disabled .carousel-arrow {
+	background-position:center -112px;
+}
+
+.glowCSSVERSION-vCarousel .carousel-next-disabled .carousel-arrow {
+	background-position:center -123px;
+}
+
+/* Paged Carousel */
+.glowCSSVERSION-vCarousel .carousel-window.paged { float: left; }
+
+.glowCSSVERSION-carousel .pageNav,
+.glowCSSVERSION-vCarousel .pageNav {
+	display: block;
+	padding: 0px;
+	height: 20px;
+	width: auto;
+	clear: both;
+	margin: 0 auto;
+}
+
+.glowCSSVERSION-vCarousel .pageNav {
+	height: auto;
+	float: left;
+	width: 20px;
+	clear: none;
+	margin: auto 0;
+}
+
+.glowCSSVERSION-carousel .dotLabel,
+.glowCSSVERSION-vCarousel .dotLabel {
+	width: 20px;
+	height: 20px;
+	overflow: hidden;
+	text-indent: -5000px; /* move text away when images are enabled */
+	padding: 0;
+	margin: 0;
+	display: block;
+}
+
+.glowCSSVERSION-basic .glowCSSVERSION-carousel .dot .dotLabel,
+.glowCSSVERSION-basic .glowCSSVERSION-vCarousel .dot .dotLabel, {
+	overflow: visible;
+	text-indent: 0; /* images are disabled, so move text back, but not for arrows */
+}
+
+.glowCSSVERSION-carousel .pageNav li,
+.glowCSSVERSION-vCarousel .pageNav li {
+	width: 20px;
+	height: 20px;
+	padding: 0px;
+	margin: 0px;
+	float: left;
+	list-style-type: none;
+	color: #000;
+	background-image: url(images/carousel/lightdots.png);
+	background-repeat: no-repeat;
+	background-position: -20px 0;
+}
+
+.glowCSSVERSION-carousel .pageNav .dot {
+	cursor: pointer;
+}
+
+.glowCSSVERSION-carousel .carousel-dark .pageNav li,
+.glowCSSVERSION-vCarousel .carousel-dark .pageNav li {
+	color: #fff;
+	background-image: url(images/carousel/darkdots.png);
+}
+
+.glowCSSVERSION-vCarousel .pageNav li {
+	background-image: url(images/carousel/lightdotsv.png);
+	float: none;
+}
+
+.glowCSSVERSION-vCarousel .carousel-dark .pageNav li { background-image: url(images/carousel/darkdotsv.png); }
+.glowCSSVERSION-carousel .pageNav li.dotActive,
+.glowCSSVERSION-vCarousel .pageNav li.dotActive { background-position: -20px -20px; }
+.glowCSSVERSION-basic .glowCSSVERSION-carousel .pageNav li.dotActive,
+.glowCSSVERSION-basic .glowCSSVERSION-vCarousel .pageNav li.dotActive { text-decoration: underline; }
+.glowCSSVERSION-carousel .pageNav li#rightarrow,
+.glowCSSVERSION-vCarousel .pageNav li#rightarrow { background-position: -40px -20px; }
+
+.glowCSSVERSION-basic .glowCSSVERSION-carousel .pageNav li#rightarrow .dotLabel {
+	width: 0;
+	height: 0;
+	border-top: 8px solid #fff;
+	border-right: 8px solid #fff;
+	border-bottom: 8px solid #fff;
+	border-left: 8px solid #000;
+}
+
+.glowCSSVERSION-basic .glowCSSVERSION-vCarousel .pageNav li#rightarrow .dotLabel {
+	width: 0;
+	height: 0;
+	border-top: 8px solid #000;
+	border-right: 8px solid #fff;
+	border-bottom: 8px solid #fff;
+	border-left: 8px solid #fff;
+}
+
+.glowCSSVERSION-carousel .pageNav li.carousel-next-disabled#rightarrow,
+.glowCSSVERSION-vCarousel .pageNav li.carousel-next-disabled#rightarrow { background-position: -40px 0; }
+
+.glowCSSVERSION-basic .glowCSSVERSION-carousel .pageNav li.carousel-next-disabled#rightarrow .dotLabel,
+.glowCSSVERSION-basic .glowCSSVERSION-vCarousel .pageNav li.carousel-next-disabled#rightarrow .dotLabel {
+	width: 0;
+	height: 0;
+	border-top: 8px solid #fff;
+	border-right: 8px solid #fff;
+	border-bottom: 8px solid #fff;
+	border-left: 8px solid #ccc;
+}
+
+.glowCSSVERSION-basic .glowCSSVERSION-vCarousel .pageNav li.carousel-next-disabled#rightarrow .dotLabel {
+	width: 0;
+	height: 0;
+	border-top: 8px solid #ccc;
+	border-right: 8px solid #fff;
+	border-bottom: 8px solid #fff;
+	border-left: 8px solid #fff;
+}
+
+.glowCSSVERSION-carousel .pageNav li#leftarrow,
+.glowCSSVERSION-vCarousel .pageNav li#leftarrow { background-position: 0 -20px; }
+
+.glowCSSVERSION-basic .glowCSSVERSION-carousel .pageNav li#leftarrow .dotLabel {
+	width: 0;
+	height: 0;
+	border-top: 8px solid #fff;
+	border-right: 8px solid #000;
+	border-bottom: 8px solid #fff;
+	border-left: 8px solid #fff;
+}
+
+.glowCSSVERSION-basic .glowCSSVERSION-vCarousel .pageNav li#leftarrow .dotLabel {
+	width: 0;
+	height: 0;
+	border-top: 8px solid #fff;
+	border-right: 8px solid #fff;
+	border-bottom: 8px solid #000;
+	border-left: 8px solid #fff;
+}
+
+.glowCSSVERSION-carousel .pageNav li.carousel-prev-disabled#leftarrow,
+.glowCSSVERSION-vCarousel .pageNav li.carousel-prev-disabled#leftarrow { background-position: 0 0; }
+
+.glowCSSVERSION-basic .glowCSSVERSION-carousel .pageNav li.carousel-prev-disabled#leftarrow .dotLabel {
+	width: 0;
+	height: 0;
+	border-top: 8px solid #fff;
+	border-right: 8px solid #ccc;
+	border-bottom: 8px solid #fff;
+	border-left: 8px solid #fff;
+}
+
+.glowCSSVERSION-basic .glowCSSVERSION-vCarousel .pageNav li.carousel-prev-disabled#leftarrow .dotLabel {
+	width: 0;
+	height: 0;
+	border-top: 8px solid #fff;
+	border-right: 8px solid #fff;
+	border-bottom: 8px solid #ccc;
+	border-left: 8px solid #fff;
+}

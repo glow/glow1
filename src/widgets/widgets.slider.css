@@ -1,0 +1,446 @@
+/* SLIDER */
+
+.glowCSSVERSION-slider,
+.glowCSSVERSION-vSlider {
+	position: relative;
+	zoom: 1;
+}
+
+.glowCSSVERSION-slider .slider-container,
+.glowCSSVERSION-vSlider .slider-container {
+	position: relative;
+	zoom: 1;
+	padding: 4px 17px 6px 17px;
+}
+
+.glowCSSVERSION-slider:focus,
+.glowCSSVERSION-vSlider:focus {
+	outline: none;
+	border: none;
+}
+
+/* track */
+	.glowCSSVERSION-slider .slider-track,
+	.glowCSSVERSION-vSlider .slider-track {
+		position: relative;
+		/* for IE */
+		font-size: 0;
+		zoom: 1;
+	}
+	.glowCSSVERSION-slider .slider-trackOff,
+	.glowCSSVERSION-vSlider .slider-trackOff {
+		height: 8px;
+		background: url(images/slider/lighth.png) 100% 0;
+		margin-left: 2px;
+		/* for IE */
+		font-size: 0;
+	}
+	.glowCSSVERSION-slider .slider-trackOn,
+	.glowCSSVERSION-vSlider .slider-trackOn {
+		/* width of this is set via js */
+		position: absolute;
+		height: 8px;
+		top: 0; left: 0;
+		background: url(images/slider/lighth.png) -2px -8px;
+		z-index: 2;
+		overflow: hidden;
+	}
+
+	.glowCSSVERSION-slider .slider-handle,
+	.glowCSSVERSION-vSlider .slider-handle {
+		/* left position of this is set via js */
+		position: absolute;
+		top: -4px;
+		width: 17px; height: 18px;
+		background: url(images/slider/lighth.png) 0px -16px;
+		z-index: 3;
+		cursor: pointer;
+	}
+
+/* buttons */
+
+	.glowCSSVERSION-slider .slider-btn-bk,
+	.glowCSSVERSION-slider .slider-btn-fwd,
+	.glowCSSVERSION-vSlider .slider-btn-bk,
+	.glowCSSVERSION-vSlider .slider-btn-fwd {
+		position: absolute;
+		width: 12px; height: 12px;
+		top: 2px; left: 0;
+		background: url(images/slider/lighth.png) 0px -34px;
+		font-size: 0;
+		cursor: pointer;
+	}
+	.glowCSSVERSION-slider .slider-btn-fwd {
+		background-position: -12px -34px;
+		left: 100%;
+		margin-left: -12px;
+	}
+
+/* active state */
+
+	.glowCSSVERSION-slider .slider-active .slider-handle {
+		background-position: -17px -16px;
+	}
+
+/* disabled state */
+
+	.glowCSSVERSION-slider .slider-disabled .slider-handle {
+		background-position: -34px -16px;
+	}
+	.glowCSSVERSION-slider .slider-disabled .slider-btn-bk {
+		background-position: -24px -34px;
+	}
+	.glowCSSVERSION-slider .slider-disabled .slider-btn-fwd {
+		background-position: -36px -34px;
+	}
+	.glowCSSVERSION-slider .slider-disabled .slider-trackOn {
+		background-position: -2px 0;
+	}
+
+	.glowCSSVERSION-slider  .slider-disabled .slider-btn-bk,
+	.glowCSSVERSION-slider  .slider-disabled .slider-btn-fwd,
+	.glowCSSVERSION-slider  .slider-disabled .slider-handle,
+	.glowCSSVERSION-vSlider .slider-disabled .slider-btn-bk,
+	.glowCSSVERSION-vSlider .slider-disabled .slider-btn-fwd,
+	.glowCSSVERSION-vSlider .slider-disabled .slider-handle {
+		cursor: auto;
+	}
+
+/* no buttons */
+	.glowCSSVERSION-slider .slider-noButtons .slider-container {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.glowCSSVERSION-slider .slider-noButtons .slider-btn-bk,
+	.glowCSSVERSION-slider .slider-noButtons .slider-btn-fwd,
+	.glowCSSVERSION-vSlider .slider-noButtons .slider-btn-bk,
+	.glowCSSVERSION-vSlider .slider-noButtons .slider-btn-fwd {
+		display: none;
+	}
+
+/* labels */
+	.glowCSSVERSION-slider .slider-labels {
+		margin: 10px 8px 0;
+	}
+	.glowCSSVERSION-vSlider .slider-labels {
+		position: absolute;
+		left: 22px; top: 25px;
+	}
+
+	.glowCSSVERSION-vSlider .slider-noButtons .slider-labels {
+		top: 8px;
+	}
+
+	.glowCSSVERSION-slider .slider-labels .ruler-tickMajor,
+	.glowCSSVERSION-slider .slider-labels .ruler-tickMinor,
+	.glowCSSVERSION-vSlider .slider-labels .ruler-tickMajor,
+	.glowCSSVERSION-vSlider .slider-labels .ruler-tickMinor {
+		background: #6e6e6e;
+	}
+	.glowCSSVERSION-slider .slider-labels .ruler-label,
+	.glowCSSVERSION-vSlider .slider-labels .ruler-label {
+		color: #6e6e6e;
+		cursor: pointer;
+	}
+
+
+/* vertical */
+	.glowCSSVERSION-vSlider .slider-trackOff,
+	.glowCSSVERSION-vSlider .slider-trackOn,
+	.glowCSSVERSION-vSlider .slider-handle,
+	.glowCSSVERSION-vSlider .slider-btn-bk,
+	.glowCSSVERSION-vSlider .slider-btn-fwd	{
+		background-image: url(images/slider/lightv.png);
+	}
+
+	.glowCSSVERSION-vSlider .slider-container {
+		padding: 17px 0;
+	}
+
+	.glowCSSVERSION-vSlider .slider-track {
+		margin: 0;
+		overflow: hidden;
+		zoom: 1;
+		width: 20px;
+	}
+
+	.glowCSSVERSION-vSlider .slider-trackOff {
+		width: 8px;
+		height: auto;
+		background-position: 0 0;
+		position: absolute;
+		margin: 0;
+		left: 4px; top: 0;
+		z-index: 2;
+	}
+
+	.glowCSSVERSION-vSlider .slider-trackOn {
+		width: 8px;
+		height: 0;
+		position: relative;
+		margin: 0 0 0 4px;
+		background-position: -8px 100%;
+		top: 2px; left: 0;
+		z-index: 1;
+	}
+
+	.glowCSSVERSION-vSlider .slider-handle {
+		top: 0; left: 0;
+		width: 18px; height: 17px;
+		background-position: -16px 100%;
+	}
+
+	.glowCSSVERSION-vSlider .slider-btn-bk,
+	.glowCSSVERSION-vSlider .slider-btn-fwd {
+		top: 0; left: 2px;
+		background-position: -34px -1976px;
+	}
+
+	.glowCSSVERSION-vSlider .slider-btn-bk {
+		background-position: -34px 100%;
+		left: 2px; top: 100%;
+		margin: -12px 0 0 0;
+	}
+
+	.glowCSSVERSION-vSlider .slider-active .slider-handle {
+		background-position: -16px -1966px;
+	}
+	.glowCSSVERSION-vSlider .slider-disabled .slider-handle {
+		background-position: -16px -1949px;
+	}
+	.glowCSSVERSION-vSlider .slider-disabled .slider-btn-bk {
+		background-position: -34px -1964px;
+	}
+	.glowCSSVERSION-vSlider .slider-disabled .slider-btn-fwd {
+		background-position: -34px -1952px;
+	}
+	.glowCSSVERSION-vSlider .slider-disabled .slider-trackOn {
+		background-position: 0 100%;
+	}
+
+	.glowCSSVERSION-vSlider .slider-noButtons .slider-container {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+/* Dark theme */
+	.glowCSSVERSION-slider .slider-dark .slider-trackOff,
+	.glowCSSVERSION-slider .slider-dark .slider-trackOn,
+	.glowCSSVERSION-slider .slider-dark .slider-handle,
+	.glowCSSVERSION-slider .slider-dark .slider-btn-bk,
+	.glowCSSVERSION-slider .slider-dark .slider-btn-fwd	{
+		background-image: url(images/slider/darkh.png);
+	}
+
+	.glowCSSVERSION-vSlider .slider-dark .slider-trackOff,
+	.glowCSSVERSION-vSlider .slider-dark .slider-trackOn,
+	.glowCSSVERSION-vSlider .slider-dark .slider-handle,
+	.glowCSSVERSION-vSlider .slider-dark .slider-btn-bk,
+	.glowCSSVERSION-vSlider .slider-dark .slider-btn-fwd {
+		background-image: url(images/slider/darkv.png);
+	}
+
+	.glowCSSVERSION-slider .slider-dark .slider-labels .ruler-tickMajor,
+	.glowCSSVERSION-slider .slider-dark .slider-labels .ruler-tickMinor,
+	.glowCSSVERSION-vSlider .slider-dark .slider-labels .ruler-tickMajor,
+	.glowCSSVERSION-vSlider .slider-dark .slider-labels .ruler-tickMinor {
+		background: #e2e2e2;
+	}
+	.glowCSSVERSION-slider .slider-dark .slider-labels .ruler-label,
+	.glowCSSVERSION-vSlider .slider-dark .slider-labels .ruler-label {
+		color: #e2e2e2;
+	}
+
+/* Gosh! No Images! */
+
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-handle,
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-handle {
+		border-style: solid;
+		border-color: #777 #fff;
+		border-width: 18px 8px 0 9px;
+		width: 0;
+		height: 0;
+		font-size: 0;
+	}
+
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-handle {
+		border-width: 8px 0 9px 18px;
+		border-color: #fff #777;
+	}
+
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-trackOff,
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-trackOff {
+		background: #d6d6d6;
+	}
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-trackOn,
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-trackOn {
+		background: #777;
+	}
+
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-btn-bk,
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-btn-fwd,
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-btn-bk,
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-btn-fwd {
+		border-style: solid;
+		border-color: #fff #777;
+		border-width: 6px 0 6px 12px;
+		width: 0; height: 0;
+	}
+
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-btn-bk {
+		border-width: 6px 12px 6px 0;
+	}
+
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-btn-bk {
+		border-color: #666 #fff;
+		border-width: 12px 6px 0 6px;
+	}
+
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-btn-fwd {
+		border-color: #666 #fff;
+		border-width: 0 6px 12px 6px;
+	}
+
+	/* active */
+		.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-active .slider-handle {
+			border-color: #000 #fff;
+		}
+		.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-active .slider-handle {
+			border-color: #fff #000;
+		}
+
+	/* disabled */
+		.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-disabled .slider-trackOn,
+		.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-disabled .slider-trackOn {
+			background: #d6d6d6;
+		}
+		.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-disabled .slider-handle {
+			border-color: #d6d6d6 #fff;
+		}
+		.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-disabled .slider-handle {
+			border-color: #fff #d6d6d6;
+		}
+		.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-disabled .slider-btn-bk,
+		.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-disabled .slider-btn-fwd {
+			border-color: #fff #d6d6d6;
+		}
+		.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-disabled .slider-btn-bk,
+		.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-disabled .slider-btn-fwd {
+			border-color: #d6d6d6 #fff;
+		}
+
+/* no images - dark */
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-dark .slider-handle {
+		border-color: #ccc #000;
+	}
+
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-dark .slider-handle {
+		border-color: #000 #ccc;
+	}
+
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-dark .slider-trackOff,
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-dark .slider-trackOff {
+		background: #555;
+	}
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-dark .slider-trackOn,
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-dark .slider-trackOn {
+		background: #ccc;
+	}
+
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-dark .slider-btn-bk,
+	.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-dark .slider-btn-fwd {
+		border-color: #000 #ccc;
+	}
+
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-dark .slider-btn-bk,
+	.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-dark .slider-btn-fwd {
+		border-color: #ccc #000;
+	}
+
+	/* active */
+		.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-dark .slider-active .slider-handle {
+			border-color: #fff #000;
+		}
+		.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-dark .slider-active .slider-handle {
+			border-color: #000 #fff;
+		}
+
+	/* disabled */
+		.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-dark .slider-disabled .slider-trackOn,
+		.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-dark .slider-disabled .slider-trackOn {
+			background: #555;
+		}
+		.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-dark .slider-disabled .slider-handle {
+			border-color: #555 #000;
+		}
+		.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-dark .slider-disabled .slider-handle {
+			border-color: #000 #555;
+		}
+		.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-dark .slider-disabled .slider-btn-bk,
+		.glowCSSVERSION-basic .glowCSSVERSION-slider .slider-dark .slider-disabled .slider-btn-fwd {
+			border-color: #000 #555;
+		}
+		.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-dark .slider-disabled .slider-btn-bk,
+		.glowCSSVERSION-basic .glowCSSVERSION-vSlider .slider-dark .slider-disabled .slider-btn-fwd {
+			border-color: #555 #000;
+		}
+
+/* RULER */
+
+	.glowCSSVERSION-ruler,
+	.glowCSSVERSION-vRuler {
+		position: relative;
+		zoom: 1;
+	}
+
+	.glowCSSVERSION-ruler .ruler-tickMajor,
+	.glowCSSVERSION-ruler .ruler-tickMinor,
+	.glowCSSVERSION-vRuler .ruler-tickMajor,
+	.glowCSSVERSION-vRuler .ruler-tickMinor {
+		position: absolute;
+		background: #000;
+		width: 1px; height: 1px;
+		top: 0; left: 0;
+		overflow: hidden;
+	}
+
+	.glowCSSVERSION-ruler .ruler-tickMajor,
+	.glowCSSVERSION-ruler .ruler-spacer {
+		height: 10px;
+	}
+	.glowCSSVERSION-ruler .ruler-tickMinor {
+		height: 2px;
+	}
+	.glowCSSVERSION-vRuler .ruler-tickMajor {
+		width: 10px;
+	}
+	.glowCSSVERSION-vRuler .ruler-tickMinor {
+		width: 2px;
+	}
+
+	.glowCSSVERSION-ruler .ruler-labels {
+		position: relative;
+		height: 1.2em;
+	}
+	.glowCSSVERSION-vRuler .ruler-labels {
+		position: absolute;
+		top: 0; left: 15px;
+		height: 100%;
+	}
+
+	.glowCSSVERSION-ruler .ruler-label,
+	.glowCSSVERSION-vRuler .ruler-label {
+		position: absolute;
+		top: 0; left: 0;
+	}
+	.glowCSSVERSION-ruler .ruler-label {
+		text-align: center;
+	}
+	.glowCSSVERSION-ruler .ruler-label span {
+		position: relative;
+		left: -50%;
+	}
+	.glowCSSVERSION-vRuler .ruler-label {
+		/*line-height: 0;*/
+		margin-top: -0.56em;
+	}

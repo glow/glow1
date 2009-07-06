@@ -1,0 +1,20 @@
+Glow Changelog
+
+1.5.0
+
+* glow.forms - Added "is" test, to ensure one field equals a particular value
+* glow.anim - Introduced Animation#destroy to remove animations when they're complete
+* glow.dom.NodeList - Added destroy method for clearing nodes from memory
+
+* glow.dom - Fixing some bugs in the child selector
+* glow.widgets.Overlay - Fixing an unscoped variable
+* glow.widgets.Carousel - Cloning events on duplicate items
+* glow.anim - Improvements to shortcut functions
+* glow.widgets.Overlay - aliasing "roll" transition to "slide" for compatibility with glow.anim shortcuts
+* glow.events - Deprecated addKeyListener, will return 'new and improved' in Glow 2.0
+* glow.widgets.Mask - Deprecated disableScroll
+* glow.embed - Updated "no flash" message to include links to webwise
+* glow.widgets.Overlay - Fixed bug creating inconsistency with Flash hiding when using multiple overlays
+* glow.widgets.Overlay - Now stops Flash within an Overlay playing on hide
+* glow.embed - Fixed bug where IE needs Flash movies to have an ID
+* glow.widgets.Carousel - Improvements to keyboard access

@@ -1,0 +1,65 @@
+/* info panel */
+  .glowCSSVERSION-infoPanel .c {
+	min-height: 125px
+  }
+
+  .glowCSSVERSION-panel .infoPanel-pointerT,
+  .glowCSSVERSION-panel .infoPanel-pointerB,
+  .glowCSSVERSION-panel .infoPanel-pointerL,
+  .glowCSSVERSION-panel .infoPanel-pointerR {
+	display: none;
+  }
+  .glowCSSVERSION-infoPanel-pointT .defaultSkin .infoPanel-pointerT,
+  .glowCSSVERSION-infoPanel-pointL .defaultSkin .infoPanel-pointerL,
+  .glowCSSVERSION-infoPanel-pointR .defaultSkin .infoPanel-pointerR,
+  .glowCSSVERSION-infoPanel-pointB .defaultSkin .infoPanel-pointerB {
+	width: 48px;
+	height: 34px;
+	overflow: hidden;
+	position: relative;
+	display: block;
+  }
+  .glowCSSVERSION-infoPanel-pointL .defaultSkin .infoPanel-pointerL,
+  .glowCSSVERSION-infoPanel-pointR .defaultSkin .infoPanel-pointerR {
+	width: 34px;
+	height: 47px;
+	left: 0;
+	z-index: 1;
+  }
+  .glowCSSVERSION-infoPanel-pointL .defaultSkin .infoPanel-pointerL {
+	position: absolute;
+  }
+  .glowCSSVERSION-panel .infoPanel-pointerT {
+	margin: 0 0 -10px 45px;
+	z-index: 1000;
+	background: url(images/darkpanel/at.png);
+  }
+  .glowCSSVERSION-panel .infoPanel-pointerB {
+	margin: -10px 0 0 45px;
+	background: url(images/darkpanel/ab.png);
+  }
+  .glowCSSVERSION-panel .infoPanel-pointerL {
+	margin: 54px 0 0 0;
+	background: url(images/darkpanel/al.png);
+  }
+  .glowCSSVERSION-infoPanel-pointL .defaultSkin .pc {
+	margin-left: 24px;
+  }
+  .glowCSSVERSION-panel .infoPanel-pointerR {
+	float: right;
+	position: relative;
+	margin: 54px 0 0 -34px;
+	background: url(images/darkpanel/ar.png);
+  }
+  .glowCSSVERSION-infoPanel-pointR .defaultSkin .pc {
+	margin-right: 24px;
+  }
+  .glowCSSVERSION-ielt7 .glowCSSVERSION-infoPanel .c {
+	  height: 125px;
+  }
+  /*without header*/
+	.glowCSSVERSION-panel-noHeader .defaultSkin .infoPanel-pointerL,
+	.glowCSSVERSION-panel-noHeader .defaultSkin .infoPanel-pointerR {
+	  margin-top: 33px;
+	}
+  /*end*/

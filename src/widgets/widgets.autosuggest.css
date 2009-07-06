@@ -1,0 +1,46 @@
+/* AutoSuggest */
+.glowCSSVERSION-autoSuggest ul { /*TODO: handle embedded ul */
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	color: #000;
+	background-color: #FFF;
+	border: 1px solid #333;
+}
+
+.glowCSSVERSION-autoSuggest .autosuggest-dark {
+	background-color: #000;
+	color: #fff;
+}
+
+.glowCSSVERSION-autoSuggest li { /*TODO: handle embedded ul */
+	padding: 1px 9px;
+	margin: 0;
+	zoom: 1;
+	cursor: pointer;
+}
+
+.glowCSSVERSION-autoSuggest li.odd {
+	background-color: #D3D3D3;
+}
+
+.glowCSSVERSION-autoSuggest li.even {
+	background-color: #FFF;
+}
+
+.glowCSSVERSION-autoSuggest li.active {
+	background-color: #A9A9A9;
+}
+
+.glowCSSVERSION-autoSuggest .autosuggest-dark li.odd {
+	background-color: #333;
+}
+
+.glowCSSVERSION-autoSuggest .autosuggest-dark li.even {
+	background-color: #000;
+}
+
+.glowCSSVERSION-autoSuggest .autosuggest-dark li.active {
+	background-color: #999;
+}
+

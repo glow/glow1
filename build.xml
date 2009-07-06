@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="glow" default="all" basedir=".">
+
+	<!-- Build -->
+
+	<property file="build.properties" />
+	<property name="NAME" value="glow" />
+	<property name="ROOT_DIR" value="." />
+	<property name="SRC_DIR" value="${ROOT_DIR}/src" />
+	<property name="TEMP_DIR" value="${ROOT_DIR}/temp" />
+	<property name="TEMP_PKG_DIR" value="${TEMP_DIR}/${NAME}/${VERSION}" />
+	<property name="DIST_DIR" value="${ROOT_DIR}/dist" />
+	<property name="DIST_PKG_DIR" value="${DIST_DIR}/${NAME}/${VERSION}" />
+	<property name="DIST_ZIP" value="${ROOT_DIR}/${NAME}-${VERSION}.zip" />
+	<property name="DIST_TGZ" value="${ROOT_DIR}/${NAME}-${VERSION}.tgz" />
+
+	<!-- Files -->
+
+	<property name="HEADER" value="${SRC_DIR}/header.js" />
+	<property name="MAP" value="${SRC_DIR}/map.js" />
+
+	<property name="BASE_CORE" value="core/core" />
+	<property name="BASE_WIDGETS" value="widgets/widgets" />
+
+	<property name="PKG_CORE" value="${BASE_CORE}.js" />
+	<property name="PKG_WIDGETS" value="${BASE_WIDGETS}.js" />
+	<property name="CSS_WIDGETS" value="${BASE_WIDGETS}.css" />
+
+	<filelist id="FILES_PROJECT"
+		dir="${ROOT_DIR}">
+		<file name="CONTRIBUTORS" />
+		<file name="LICENCE" />
+		<file name="README" />
+		<file name="CHANGES" />
+	</filelist>
+
+	<!-- File order is important -->
+	<filelist id="FILES_CORE"
+		dir="${SRC_DIR}">
+		<file name="glow/glow.js" />
+		<file name="cc-open.js" />
+		<file name="dom/dom.js" />
+		<file name="events/events.js" />
+		<file name="data/data.js" />
+		<file name="net/net.js" />
+		<file name="tweens/tweens.js" />
+		<file name="anim/anim.js" />
+		<file name="forms/forms.js" />
+		<file name="embed/embed.js" />
+		<file name="dragdrop/dragdrop.js" />
+		<file name="cc-close.js" />
+	</filelist>
+
+	<!-- File order is important -->
+	<filelist id="FILES_WIDGETS"
+		dir="${SRC_DIR}">
+		<file name="cc-open.js" />
+		<file name="widgets/widgets.js" />
+		<file name="widgets/mask/mask.js" />
+		<file name="widgets/overlay/overlay.js" />
+		<file name="widgets/panel/panel.js" />
+		<file name="widgets/sortable/sortable.js" />
+		<file name="widgets/infopanel/infopanel.js" />
+		<file name="widgets/slider/slider.js" />
+		<file name="widgets/autosuggest/autosuggest.js" />
+		<file name="widgets/autocomplete/autocomplete.js" />
+		<file name="widgets/carousel/carousel.js" />
+		<file name="widgets/editor/editor.js" />
+		<file name="widgets/timetable/timetable.js" />
+		<file name="cc-close.js" />
+	</filelist>
+	
+	<filelist id="FILES_WIDGETS_CSS"
+		dir="${SRC_DIR}">
+		<file name="widgets/widgets.core.css" />
+		<file name="widgets/widgets.overlay.css" />
+		<file name="widgets/widgets.panel.css" />
+		<file name="widgets/widgets.infopanel.css" />
+		<file name="widgets/widgets.autosuggest.css" />
+		<file name="widgets/widgets.carousel.css" />
+		<file name="widgets/widgets.slider.css" />
+		<file name="widgets/widgets.timetable.css" />
+		<file name="widgets/widgets.editor.css" />
+	</filelist>
+
+	<fileset id="FILES_IMG"
+		dir="${SRC_DIR}"
+		includes="**/*.gif,**/*.png,**/*.jpg" />
+
+	<fileset id="FILES_CSS"
+		dir="${SRC_DIR}"
+		includes="**/*.css" 
+		excludes="widgets/*.css" />
+
+	<!-- Filterchains -->
+
+	<filterchain id="FILTER_VERSION">
+		<fixcrlf eol="lf" />
+		<replacetokens>
+			<token key="VERSION" value="${VERSION}"/>
+		</replacetokens>
+		<tokenfilter>
+			<replacestring from="CSSVERSION" to="${CSSVERSION}"/>
+		</tokenfilter>
+	</filterchain>
+
+	<filterchain id="FILTER_HEADER">
+		<concatfilter prepend="${HEADER}" />
+	</filterchain>
+
+	<!-- Targets -->
+
+	<target name="clean">
+		<delete dir="${TEMP_DIR}" />
+		<delete dir="${DIST_DIR}" />
+		<delete file="${DIST_ZIP}" />
+		<delete file="${DIST_TGZ}" />
+	</target>
+
+	<target name="setup" depends="clean">
+		<mkdir dir="${TEMP_PKG_DIR}" />
+		<mkdir dir="${DIST_PKG_DIR}" />
+	</target>
+
+	<target name="temp" depends="setup">
+		<echo message="Creating temp files"/>
+		<concat destfile="${TEMP_PKG_DIR}/${PKG_CORE}">
+			<filelist refid="FILES_CORE" />
+			<filterchain refid="FILTER_VERSION" />
+		</concat>
+		<concat destfile="${TEMP_PKG_DIR}/${PKG_WIDGETS}">
+			<filelist refid="FILES_WIDGETS" />
+			<filterchain refid="FILTER_VERSION" />
+		</concat>
+		<concat destfile="${TEMP_PKG_DIR}/${CSS_WIDGETS}">
+			<filelist refid="FILES_WIDGETS_CSS" />
+			<filterchain refid="FILTER_VERSION" />
+		</concat>
+		<copy todir="${TEMP_PKG_DIR}">
+			<fileset refid="FILES_CSS" />
+			<filterchain refid="FILTER_VERSION" />
+		</copy>
+		<copy todir="${TEMP_PKG_DIR}">
+			<fileset refid="FILES_IMG" />
+		</copy>
+		<copy todir="${TEMP_DIR}">
+			<filelist refid="FILES_PROJECT" />
+		</copy>
+		<copy todir="${TEMP_DIR}/${NAME}" file="${MAP}" />
+	</target>
+
+	<target name="debug" depends="temp">
+		<echo message="Creating debug files"/>
+		<copy todir="${DIST_DIR}">
+			<fileset dir="${TEMP_DIR}">
+				<include name="**/*.js" />
+			</fileset>
+			<filterchain refid="FILTER_HEADER" />
+			<globmapper from="*.js" to="*.debug.js" />
+		</copy>
+		<copy todir="${DIST_DIR}">
+			<fileset dir="${TEMP_DIR}">
+				<include name="**/*.css" />
+			</fileset>
+			<filterchain refid="FILTER_HEADER" />
+			<globmapper from="*.css" to="*.debug.css" />
+		</copy>
+	</target>
+
+	<target name="min" depends="check.yuicompressor,temp">
+		<echo message="Creating minified files"/>
+		<apply executable="java" parallel="false" failonerror="true">
+			<arg line="-jar"/>
+			<arg path="${YUI_JAR}"/>
+			<arg value="--preserve-semi" />
+			<srcfile/>
+			<fileset dir="${TEMP_DIR}" includes="**/*.js,**/*.css"/>
+			<redirector>
+				<outputmapper type="glob" from="*" to="${DIST_DIR}/*" />
+				<outputfilterchain refid="FILTER_HEADER" />
+			</redirector>
+		</apply>
+	</target>
+
+	<target name="assets" depends="temp">
+		<echo message="Creating asset files"/>
+		<copy todir="${DIST_DIR}">
+			<fileset dir="${TEMP_DIR}" includes="**/*.gif,**/*.png,**/*.jpg" />
+		</copy>
+		<copy todir="${DIST_DIR}">
+			<fileset dir="${TEMP_DIR}" includes="CONTRIBUTORS,LICENCE,README,CHANGES" />
+		</copy>
+	</target>
+
+	<target name="dist" depends="debug,min,assets">
+		<delete dir="${TEMP_DIR}" />
+		<echo message="Creating dist files" />
+		<zip destfile="${DIST_ZIP}"
+			basedir="${DIST_DIR}" />
+		<tar destfile="${DIST_TGZ}" 
+			basedir="${DIST_DIR}" 
+			compression="gzip" />
+	</target>
+
+	<target name="all" depends="check.yuicompressor,dist">
+		<echo message="" />
+		<echo message="**************************************" />
+		<echo message="Glow version ${VERSION} build complete" />
+		<echo message="**************************************" />
+		<echo message="" />
+	</target>
+	
+	<!-- checks -->
+	
+	<target name="check.yuicompressor">
+	  <condition property="yui.ok">
+			<available file="${YUI_JAR}" />
+		</condition>
+		<fail unless="yui.ok">${YUI_JAR} not found. Please ensure YUI Compressor is installed, and referenced properly in build.properties.
+		</fail>
+	</target>
+
+</project>

@@ -1,0 +1,25 @@
+.glowCSSVERSION-cssTest {
+  background: url(images/darkpanel/ctr.png);
+  z-index: 1234;
+}
+
+/* preloader */
+  .glowCSSVERSION-panel-preload {
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	top: -10px;
+	width: 1px;
+	left: -5px;
+  }
+  .glowCSSVERSION-panel-preload .panel-close {
+	display: none;
+	visibility: hidden;
+  }
+  .glowCSSVERSION-panel-preload .infoPanel-pointerT,
+  .glowCSSVERSION-panel-preload .infoPanel-pointerR,
+  .glowCSSVERSION-panel-preload .infoPanel-pointerB,
+  .glowCSSVERSION-panel-preload .infoPanel-pointerL {
+	display: block;
+  }
+/*end */

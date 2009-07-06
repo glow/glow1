@@ -1,0 +1,1547 @@
+(window.gloader || glow).module({
+	name: 'glow.widgets.Editor',
+	library: ['glow', '@VERSION@'],
+	depends: [[
+		'glow', '@VERSION@',
+		'glow.dom',
+		'glow.events',
+		'glow.widgets'
+	]],
+	
+	builder: function(glow) {
+		var $      = glow.dom.get, // shortcuts
+			events = glow.events;
+		
+		/**
+			@name glow.widgets.Editor
+			@class
+			@description A Rich Text Editor to allow text formatting with form inputs.
+
+			<div class="info">Widgets must be called in a <code>glow.onReady()</code> call.</div>
+			@constructor
+			@param {String|glow.dom.NodeList} textarea Textarea HTML element that the Editor replaces on your page
+			@param {Object} opts
+			@_param {String} [opts.toolset="basic"]
+			@param {String} [opts.theme="light"] Visual Theme
+			Currently supported themes are "dark" and "light".
+			@_property {glow.dom.NodeList} element
+			@_property {glow.dom.NodeList} textarea
+			@_property {glow.widgets.Editor.Toolbar} toolbar
+			@_property {glow.widgets.Editor.EditArea} editArea
+			
+			@example
+				var editor = new glow.widgets.Editor("#commentEntry");
+
+			@see <a href="../furtherinfo/widgets/editor/">Editor user guide</a>
+		*/
+		/**
+			@name glow.widgets.Editor#event:commit
+			@event
+			@description Fired whenever the associated textarea is updated by the editor.
+			@param {glow.events.Event} event Event Object
+
+		 */
+		glow.widgets.Editor = function(textarea, opts) {
+			textarea = $(textarea);
+			
+			// we need to create our toolset for the first use
+			if (!TOOLS) {
+				TOOLS = createTools();
+			}
+			
+			opts = this._opts = glow.lang.apply(
+				{
+					toolset: "basic"
+				},
+				opts
+			);
+			this.element = glow.dom.create('<div class="glowCSSVERSION-editor"><p class="glowCSSVERSION-hidden">You are about to enter a Rich Text Editor, <a href="#endOfEditor' + endOfEditorCounter() + '" tabindex="0">Skip past</a></p><div class="editor-' + (opts.theme || "light") + '"><div class="editor-state"></div></div><p id="endOfEditor' + endOfEditorCounter() + '" class="glowCSSVERSION-hidden endOfEditorCounter" tabindex="0">You have left the Rich Text Editor</p></div>');
+			this.textarea = textarea;
+			this.toolbar = new glow.widgets.Editor.Toolbar(this);
+			
+			if (this._opts.toolset == "basic") {
+				this.toolbar._addToolset("italics", "bold", "strike"/*, "blockquote"*/);
+			}
+			else throw new Exception("Unknown toolset name.");
+			
+			this.editArea = new glow.widgets.Editor.EditArea(this);
+			this.cleaner = new TagCleaner();
+			
+			// Safari 2 is not enhanced
+			if (!isSafariTwo()) {
+				place.apply(this);
+				bindEditor.apply(this, []);
+			}
+		}
+
+////
+
+/**
+	@ignore
+	@private
+	@name endOfEditorCounter
+	@description We need to give each hidden accessibility hidden message a unique id, so to do this add a number on the end.  Work out the number by counting how many of these links are already on the page.
+  */
+ var endOfEditorCounter = function() {
+	return glow.dom.get('p.endOfEditorCounter').length+1;
+ }
+
+
+/**
+	@ignore
+	@private
+    @name Idler
+    @constructor
+    @param {String|Object} attachTo The object to attach the idler to.
+    @param {String|String[]} name The event name, or names for multiple events.
+    @param {Number} wait The number of seconds to wait after no event occurs before the callback should run.
+    @param {Object} [opts] Options object
+    @param {Function} [opts.onFire] Function to run when this Idler fires.
+    @param {Number} [opts.rate] Repeat the fire event every x seconds
+ */
+
+var Idler = function(attachTo, name, wait, opts) { /*debug*///console.info("new Idler()");
+	opts = this._opts = glow.lang.apply(
+		{
+			onFire: function() {}
+		},
+		opts
+	);
+	
+	var that = this;
+	this.attachTo = attachTo;
+	this.name = name;
+	this.wait = wait;
+	this.callback = opts.onFire;
+	this.rate = opts.rate;
+	this.running = false;
+	this.initiated = false;
+	
+	if (typeof this.name.pop == "undefined") { // is it an array?
+		this.name = [this.name];
+	}
+	
+	for (var i = 0, l = this.name.length; i < l; i++) {
+		var name = this.name[i];
+		glow.events.addListener(
+			this.attachTo,
+			name,
+			function() {
+				clearInterval(that.intervalId);
+				clearTimeout(that.timeoutId);
+				that._tick();
+			}
+		);
+	}
+	
+	this._start();
+}
+
+/**
+	@ignore
+	@private
+	@name Idler#disabled
+	@function
+	@param {Boolean} [disabledState]
+	@description Sets/gets the disabled state of the Idler. When disabled, any running
+    timers are cancelled and no new timers can be started.
+ */
+Idler.prototype.disabled = function(disabledState) {
+	if (typeof disabledState == "undefined") {
+		return !this.running;
+	}
+	else {
+		if (disabledState) this._stop();
+		else this._start();
+	}
+}
+
+Idler.prototype._tick = function() {/*debug*///console.info("Idler._tick()");
+	var that = this;
+	this.timeoutId = setTimeout(
+		function() {
+			if (typeof that.rate != "undefined") {
+				that.intervalId = setInterval(that.callback, that.rate);
+			}
+			else {
+				that.callback();
+			}
+		},
+		that.wait
+	);
+}
+
+/**
+	@ignore
+	@private
+	@name Idler#_start
+	@function
+	@description Start the idler, if it is not already running.
+ */
+Idler.prototype._start = function() {
+	if (this.running) return;
+
+	this._tick();
+	
+	this.running = true;
+}
+
+/**
+	@ignore
+	@private
+	@name Idler#_stop
+	@function
+	@description Stop the idler, if it is running.
+ */
+Idler.prototype._stop = function() {
+	if (!this.running) return;
+	
+	clearInterval(this.intervalId);
+	clearTimeout(this.timeoutId);
+	
+	this.running = false;
+}
+
+////		
+
+		/**
+			@ignore
+			@private
+			@name place
+			@function
+			@description Positions the toolbar over the textarea.
+			@this glow.widgets.Editor.Toolbar
+		 */
+		function place() {
+			var inputOffset = this.textarea.offset();
+			var height = (this.textarea[0].offsetHeight > 142) ? this.textarea[0].offsetHeight : 142;
+
+			this.element.css('width', (this.textarea[0].offsetWidth-2) + 'px');
+			this.element.css('height', (height-2) + 'px');
+		}
+
+		var bindEditor = function() {
+			// Add the widget into the page
+			this.textarea.before(this.element);
+
+			// Redo height of the iframe.  We need to do it here because we can only get the correct height when the element is in the page.
+			this.element.get('iframe').css( 'height', (parseInt(this.element.css('height'))-42) );
+
+			// Set the textarea so the user can't see it (but a screen reader can)
+			this.textarea.css("display", "block");
+			this.textarea.css("position", "absolute");
+			this.textarea.css("left", "-9999px");
+			this.textarea.css("top", "-9999px");
+			
+			this.bound = true;
+		}
+		
+////////
+		glow.widgets.Editor.prototype.inject = function(html) {
+			this.editArea._setContent(this.cleaner.dirty(this.cleaner.clean(html)));
+		}
+		
+		glow.widgets.Editor.prototype.commit = function() {
+			if (this.bound) {
+				$(this.textarea).val(this.cleaner.clean(this.editArea._getContent()));
+			}
+			glow.events.fire(this, "commit", {});
+		}
+				
+		function TagCleaner(opts) {
+			// assumes nesting of dirty tags is always valid
+			// assumes no '>' in any dirty tag attributes
+			// assumes attributes are quoted with double-quotes, and attribute values contain no escaped double-quotes
+
+			this.opts = opts || {};
+			
+			this.whitelist = ["em", "strong", "strike", "p", "br", "blockquote"]; // TODO: support tags.attributes
+		}
+		
+		// runs before clean
+		TagCleaner.prototype.pretreat = function(input) {
+			// remove html comments
+			input = input.replace(/<!--[\s\S]*?-->/g, "");
+			
+			// remove style tags and their contents
+			input = input.replace(/<style\b[\s\S]*?<\/style>/gi, "");
+			
+			// remove script tags and their contents
+			input = input.replace(/<script\b[\s\S]*?<\/script>/gi, "");
+			
+			return input
+		}
+		
+		TagCleaner.prototype.clean = function(input) { /*debug*///console.log("TagCleaner#clean("+input+")")
+				var output = "",
+			    stack = [];
+			    
+			    input = this.pretreat(input);
+			    
+//var sanity = 99;			
+			while (input) {
+//if (sanity-- == 0) throw new Error("stoopid loops");
+				var skip = 1; // characters
+
+				if (/^(<[^>]+>)/.test(input)) { // tag encountered
+					var foundTag = new TagCleaner.Tag(RegExp.$1);
+
+					this.tagClean(foundTag);
+					
+					if (foundTag.clean && foundTag.opening) { // there's a clean version
+						output += foundTag.clean.start;
+						if (!foundTag.unary) stack.unshift(foundTag);
+						skip = foundTag.text.length;
+					}
+					else if (stack[0] && input.toLowerCase().indexOf(stack[0].end) === 0) { // found tag was closed
+						output += stack[0].clean.end;
+						skip = stack[0].end.length;
+						stack.shift();
+					}
+					else { // unknown tag
+						output += foundTag;
+						skip = foundTag.text.length;
+					}
+				}
+				else { // non-tag content
+					output += input.charAt(0);
+				}
+			
+				// move ahead
+				input = input.substring(skip);
+			}
+			
+			output = this.spin(output);
+			
+			return output;
+		}
+		
+		TagCleaner.prototype.dirty = function(clean) {
+			var dirty;
+	
+			if (glow.env.gecko) { // mozilla?
+				dirty = clean
+					.replace(/<strong>/g, '<b _moz_dirty="">').replace(/<\/strong>/g, '</b>')
+					.replace(/<em>/g, '<i _moz_dirty="">').replace(/<\/em>/g, '</i>')
+					.replace(/<strike>/g, '<strike _moz_dirty="">')
+				;
+			}
+			else if (glow.env.ie || glow.env.opera) {
+				dirty = clean
+					.replace(/<strong>/g, '<STRONG>').replace(/<\/strong>/g, '</STRONG>')
+					.replace(/<em>/g, '<EM>').replace(/<\/em>/g, '</EM>')
+					.replace(/<strike>/g, '<STRIKE>').replace(/<\/strike>/g, '</STRIKE>')
+				;
+			}
+			else if (glow.env.webkit > 528) { // safari 4? TODO: same as safari 2?
+				dirty = clean
+					.replace(/<strong>/g, '<b>').replace(/<\/strong>/g, '</b>')
+					.replace(/<em>/g, '<i>').replace(/<\/em>/g, '</i>')
+					.replace(/<strike>/g, '<span class="Apple-style-span" style="text-decoration: line-through;">').replace(/<\/strike>/g, '</span>')
+				;
+			}
+			else if (glow.env.webkit) {  // safari 3?
+				dirty = clean
+					.replace(/<strong>/g, '<span class="Apple-style-span" style="font-weight: bold;">').replace(/<\/strong>/g, '</span>')
+					.replace(/<em>/g, '<span class="Apple-style-span" style="font-style: italic;">').replace(/<\/em>/g, '</span>')
+					.replace(/<strike>/g, '<span class="Apple-style-span" style="text-decoration: line-through;">').replace(/<\/strike>/g, '</span>')
+				;
+			}
+			else { throw new Error("Can't be dirty: Unknown browser."); }
+			
+			return dirty;
+		}
+		
+		/**
+			@ignore
+			@private
+			@description A single span can become a combination of several semantic tags.
+			@param {TagCleaner.Tag} tag A span Tag object.
+			@returns {String[]} An array of [0] opening tag or tags as a string and [1] closing tag or tags as a string.
+		 */
+		TagCleaner.prototype.spanClean = function(tag) {
+			var clean = {start:"", end:""};
+			
+			if (/\bstyle\s*=\s*"(.+)"/.test(tag.attrText.toLowerCase())) {
+				if (RegExp.$1.indexOf("bold") > -1) {
+					clean.start += "<strong>";
+					clean.end = "<\/strong>"+clean.end;
+				}
+				// safari needs this
+				if (RegExp.$1.indexOf("font-weight: normal") > -1) {
+					clean.start += "<\/strong>";
+					clean.end = "<strong>"+clean.end;
+				}
+				
+				if (RegExp.$1.indexOf("italic") > -1) {
+					clean.start += "<em>";
+					clean.end = "<\/em>"+clean.end;
+				}
+				
+				// safari needs this
+				if (RegExp.$1.indexOf("font-style: normal") > -1) {
+					clean.start += "<\/em>";
+					clean.end = "<em>"+clean.end;
+				}
+				
+				if (RegExp.$1.indexOf("line-through") > -1) {
+					clean.start += "<strike>";
+					clean.end = "<\/strike>"+clean.end;
+				}
+			}
+			
+			return clean;
+		}
+		
+		/**
+			@ignore
+			@private
+			@description Given a dirty tag, add a clean tag property, if one can be found.
+			@param {TagCleaner.Tag} tag A dirty Tag object.
+			@returns {String[]} An array of [0] opening tag or tags as a string and [1] closing tag or tags as a string.
+		 */
+		 TagCleaner.prototype.tagClean = function(tag) {
+			var clean = ["", ""];	
+			
+			if (tag.name == "span")   clean = this.spanClean(tag);
+			else if (tag.name == "b") clean = {start:'<strong>', end:'<\/strong>'};
+			else if (tag.name == "i") clean = {start:'<em>', end:'<\/em>'};
+			
+			if (clean.start) tag.clean = clean;
+		}
+		
+		TagCleaner.Tag = function(tagText) { /*debug*///console.log("new TagCleaner.Tag("+tagText+")");
+			/^<(\/?)([a-zA-Z]+)\b(.*)( ?\/)?>$/.exec(tagText);
+			this.closing = !!RegExp.$1;
+			this.opening = !this.closing;
+			this.unary = !!RegExp.$4;
+			this.name = RegExp.$2.toLowerCase();
+			this.attrText = RegExp.$3;
+			this.text = tagText;
+			
+			// normalise case of tag names
+			this.start = tagText.replace(/^<(\/?)([a-zA-Z]+)\b/, "<$1"+this.name);
+			
+			if (this.opening && !this.unary) {
+				this.end = "<\/"+this.name+">";
+			}
+		}
+		TagCleaner.Tag.prototype.toString = function() {
+			return "<" + RegExp.$1 + this.name/* + this.attrText */+ RegExp.$4 +">";
+		}
+		
+		TagCleaner.prototype.spin = function(input) {
+			var whitetags = this.whitelist.join("\|");
+			// note: Safari 2.0.4 doesn't support unicode in regex, but can use unprintable ASCII characters, like the "Group Separator"
+			var allowedTags = new RegExp("<(\\/?("+whitetags+")\\b[^>]*)>", "g");
+			input = input.replace(allowedTags, "\x1D$1\x1D");     // hide allowed tags
+			input = input.replace(/<[^>]+>/g, "");                // kill all visible tags
+			input = input.replace(/\x1D([^\x1D]+)\x1D/g, "<$1>"); // restore allowed tags
+			
+			// general final clean up...
+			input = input.replace(/<>/g, ""); // remove Safari droppings
+			
+			return input;
+		}
+		
+////////
+
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar
+			@description
+			@constructor
+			@_param {glow.widgets.Editor} editor
+			@_param {Object} opts
+		 */
+		glow.widgets.Editor.Toolbar = function(editor, opts) {
+			opts = opts || {};
+			this.editor = editor;
+			this.element = glow.dom.create('<fieldset class="editor-toolbar"><ul class="editor-toolbar-tools"></ul></fieldset>');
+			this._tools = [];
+			this.editor.element.get(".editor-state").prepend(this.element);
+		}
+			
+		 /**
+		     @ignore
+		     @private
+			 @name glow.widgets.Editor.Toolbar#_addToolset
+			 @description Quickly add several tools at once to the toolbar.
+			 @function
+			 @param {String} ... Either the name of a built-in set of tools,
+			 like "fontFormatting" [TBD] and/or the predefined names of
+			 built-in tools.
+			 @returns {glow.widgets.Editor.Toolbar} this
+			 @example
+				myToolbar._addToolset("Bold", "Italics")
+				.addButton("MyCustomButton", opts); // will be chainable
+		 */
+		 glow.widgets.Editor.Toolbar.prototype._addToolset = function() {
+		 	var toolToAdd;
+		 	for (var i = 0, l = arguments.length; i < l; i++) {
+		 		if ( (toolToAdd = TOOLS[arguments[i]]) ) {
+					var newTool = new glow.widgets.Editor.Toolbar.Button(toolToAdd.name, toolToAdd.opts);
+					addTool.call(this, newTool);
+				}
+		 	}
+		 	
+			// Give the toolbar one focusable button
+			// this.element.get('a').item(0).tabIndex = 0;
+			addToolbarIntoTabIndex.apply(this);
+
+		 	return this;
+		 }
+		
+		// modifies HTML in place, while preserving the cursor position
+		glow.widgets.Editor.blackList = {
+			FORM:       true,
+			TABLE:      true,
+			TBODY:      true,
+			CAPTION:	true,
+			TH:			true,
+			TR:         true,
+			TD:         true,
+			SCRIPT:     true,
+			STYLE:      true,
+			INPUT:      true,
+			BUTTON:     true,
+			OBJECT:		true,
+			EMBED:		true,
+			SELECT:     true,
+			H1:         true,
+			H2:         true,
+			H3:         true,
+			H4:         true,
+			H5:         true,
+			H6:         true,
+			DIV:        true,
+			ADDRESS:	true,
+//			BLOCKQUOTE: true,
+			CENTER:		true,
+			PRE:        true,
+			CODE:       true,
+			A:          true,
+			UL:         true,
+			OL:         true,
+			LI:         true,
+			DL:         true,
+			DT:         true,
+			DD:         true,
+			ABBR:       true,
+			ACRONYM:	true,
+			DFN:		true,
+			INS:		true,
+			DEL:		true,
+			SAMP:		true,
+			VAR:		true,
+			BIG:		true,
+			SMALL:		true,
+			BLINK:		true,
+			MARQUEE:    true,
+			FONT:       true,
+			Q:			true,
+			U:			true,
+			KBD:		true,
+			SUB:		true,
+			SUP:		true,
+			CITE:       true,
+			HTML:       true,
+			BODY:       true,
+			FIELDSET:   true,
+			LEGEND:     true,
+			LABEL:      true,
+			TEXTAREA:   true,
+			HR:         true,
+			IMG:        true,
+			IFRAME:     true,
+			ILAYER:     true,
+			LAYER:      true
+        };
+		glow.widgets.Editor.prototype._rinse = function() { /*debug*///console.log("glow.widgets.Editor#_rinse()");		
+			if (this._lastRinse == this.editArea._getContent()) return; /*debug*///console.log("rinsing");
+
+			var doc = this.editArea.contentWindow.document;
+			var node = doc.body;
+			
+			var that = this; // keep track of me, even when recursing
+			function walkNode(node) {
+				if (node.childNodes) {
+					for (var i = 0; i < node.childNodes.length; i++) {
+						var keepStatus = glow.widgets.Editor.blackList[node.childNodes[i].nodeName];
+						
+						if (node.nodeType == 1) { // an element node
+							if (keepStatus) {
+									var replacementNode = doc.createElement("SPAN");
+									//replacementNode.setAttribute('class', 'glow-rinsed');
+									
+									replacementNode.innerHTML = that.cleaner.clean(node.childNodes[i].innerHTML+" ");
+									node.replaceChild(replacementNode, node.childNodes[i]);
+							}
+							else {
+								// it's an allowed node but we should limit external styles as much as possible
+								if (node.childNodes[i].nodeName == "P") node.childNodes[i].removeAttribute("style");
+								if (node.childNodes[i].nodeName == "SPAN") { // webkit may use font-size spans to show headings
+									if (/font-size/.test(node.childNodes[i].getAttribute("style"))) node.childNodes[i].removeAttribute("style");
+								}
+								walkNode(node.childNodes[i]);
+							}
+						}
+					}
+				}
+				else {
+					if (glow.widgets.Editor.blackList[node.nodeName]) {
+						node.parentNode.removeChild(node);
+					}
+				}
+			}
+
+			walkNode(node);
+			
+			this._lastRinse = this.editArea._getContent();
+		}
+
+		/**
+			@ignore
+			@name addTool
+			@private
+			@function
+			@param {glow.widgets.Editor.Toolbar.Tool} toolToAdd
+		 */
+		function addTool(toolToAdd) { /*debug*///console.log("addTool("+toolToAdd+")")
+		 	toolToAdd.editor = this.editor;
+		 	this._tools.push(toolToAdd);
+			this.element.get(".editor-toolbar-tools").append(toolToAdd.element);
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar#addButton
+			@description
+			@function
+			@param {String} name
+			@param {Object} opts
+		 */
+		glow.widgets.Editor.Toolbar.prototype.addButton = function(name, opts) {
+			var newTool = new glow.widgets.Editor.Toolbar.Button(name, opts, this);
+			addTool.call(this, newTool);
+			return this;
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar#getTool
+			@description
+			@function
+			@param {String} name
+			@returns {glow.widgets.Editor.Toolbar.Tool}
+		 */
+		glow.widgets.Editor.Toolbar.prototype.getTool = function(name) {
+			var i = this._tools.length;
+			while (--i >= 0) {
+				if (this._tools[i].name == name) return this._tools[i];
+			}
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar#_update
+			@description
+			@function
+			@param {String} name
+			@returns {glow.widgets.Editor.Toolbar.Tool}
+		 */
+		glow.widgets.Editor.Toolbar.prototype._update = function(domPath) { /*debug*///console.log("glow.widgets.Editor.Toolbar.prototype._update("+domPath+")")
+		 	var handled = false;
+		 	for (var i = 0, l = this._tools.length; i < l; i++) {
+		 		if (domPath.indexOf("|"+this._tools[i].tag+"|") > -1) {
+		 			this._tools[i].activate();
+		 			handled = true;
+		 		}
+		 		else {
+		 			this._tools[i].deactivate();
+		 		}
+			}
+		 	return handled;
+		}
+		
+		/** 
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar#_shortcut 
+			@description 
+			@function 
+			@param {String} name 
+			@returns {glow.widgets.Editor.Toolbar.Tool} 
+		 */ 
+	   glow.widgets.Editor.Toolbar.prototype._shortcut = function(letter) { 
+			var i = this._tools.length;
+			var handled = false;
+			while (--i >= 0) { 
+				if (this._tools[i].shortcut == letter) {
+					this._tools[i].press(); 
+					return true;
+				}
+			} 
+			return false;
+	   }
+
+////////
+
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar.Tool
+			@constructor
+			@description Generic base class for all Tools.
+		 */
+		glow.widgets.Editor.Toolbar.Tool = function(name, opts, context) { /*debug*///console.log("glow.widgets.Editor.Toolbar.Tool("+name+", "+opts.toSource()+")")
+			this.name = name;
+			this.opts = opts || {};
+			this.action = this.opts.action || function(){};
+			this.tag = this.opts.tag;
+			this.command = this.opts.command;
+			this.shortcut = this.opts.shortcut;
+			this.isActive = false;
+			this.isEnabled = true;
+			
+			if (this.opts.onDeactivate) glow.events.addListener(this, "deactivate", this.opts.onDeactivate, context);
+			if (this.opts.onActivate)   glow.events.addListener(this, "activate", this.opts.onActivate, context);
+			if (this.opts.onDisable)    glow.events.addListener(this, "disable", this.opts.onDisable, context);
+			if (this.opts.onEnable)     glow.events.addListener(this, "enable", this.opts.onEnable, context);
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar.Tool#activate
+			@description
+			@function
+		 */
+		 glow.widgets.Editor.Toolbar.Tool.prototype.activate = function() {
+			this.isActive = true;
+			glow.events.fire(this, 'activate');
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar.Tool#deactivate
+			@description
+			@function
+		 */
+		glow.widgets.Editor.Toolbar.Tool.prototype.deactivate = function() {
+			this.isActive = false;
+			glow.events.fire(this, 'deactivate');
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar.Tool#disable
+			@description
+			@function
+		 */
+		glow.widgets.Editor.Toolbar.Tool.prototype.disable = function() {
+			this.isEnabled = false;
+			glow.events.fire(this, 'disable');
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar.Tool#enable
+			@description
+			@function
+		 */
+		glow.widgets.Editor.Toolbar.Tool.prototype.enable = function() {
+			this.isEnabled = true;
+			glow.events.fire(this, 'enable');
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar.Tool#press
+			@description
+			@function
+		 */
+		glow.widgets.Editor.Toolbar.Tool.prototype.press = function() {
+			if (this.isEnabled) {
+				this.action.call(this);
+				if (!this.isActive) this.activate();
+				else this.deactivate();
+				this.editor._lastDomPath = null; // invalidate the current dom path (this is required on some browsers that "wrap" selections) to force ondompathchange to fire when the user clicks away from the current selection
+			}
+		}
+
+////////
+
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar.Button
+			@constructor
+			@extends glow.widgets.Editor.Toolbar.Tool
+		 */
+		glow.widgets.Editor.Toolbar.Button = function(name, opts) { /*debug*///console.log("new glow.widgets.Editor.Toolbar.Button("+name+", "+opts.toSource()+")")
+			this.Base = arguments.callee.base; this.base = this.Base.prototype;
+			this.Base.apply(this, arguments);
+			
+			// a button's CSS classname is defined here 
+			var buttonClass = name.toLowerCase() + "-button";
+			this.element = glow.dom.create('<li class="editor-toolbar-item"><span class="editor-toolbar-button"><a href="#" title="'+(opts.title || name)+'" tabindex="-1"><span class="editor-toolbar-icon '+buttonClass+'"><span>'+(opts.label || name)+'<\/span><\/span><\/a><\/span><\/li>');
+ 			
+ 			// shortcuts
+ 			var toolLink = this.element.get("a");
+ 			this.icon = this.element.get(".editor-toolbar-icon"); 
+ 
+			var key_listener;
+
+ 			glow.events.addListener(this.icon, "mouseover", function() { if (this.isEnabled && !this.isActive) toolLink.addClass("hover"); }, this);
+			glow.events.addListener(toolLink, "focus", function() { if (this.isEnabled) toolLink.addClass("hover"); key_listener = enable_key_listener(this); }, this);
+ 			glow.events.addListener(this.icon, "mouseout",  function() { toolLink.removeClass("hover"); }, this);
+			glow.events.addListener(toolLink, "blur",  function() { toolLink.removeClass("hover"); glow.events.removeListener(key_listener);}, this);
+ 			glow.events.addListener(this, "disable", function() { toolLink.addClass("disabled"); }, this);
+ 			glow.events.addListener(this, "enable", function() { toolLink.removeClass("disabled"); }, this);
+ 			glow.events.addListener(this, "activate", function() { if (this.isEnabled) toolLink.addClass("active"); }, this);
+ 			glow.events.addListener(this, "deactivate", function() { toolLink.removeClass("active"); }, this);
+
+ 			var that = this;
+			glow.events.addListener(this.element.get("a"), "mousedown", function() { that.press(); return false; }, this); // bind the click handler context to the Tool (not the HTMLElement)
+			glow.events.addListener(this.element.get("a"), "click", function() { return false; }); 
+		}
+		
+		glow.lang.extend(glow.widgets.Editor.Toolbar.Button, glow.widgets.Editor.Toolbar.Tool);
+		
+// TODO: all these would be better handled by onWhatever event handlers passed into the Tool constructor call
+		glow.widgets.Editor.Toolbar.Button.prototype.activate = function() {
+			this.base.activate.apply(this, arguments);
+		}
+		
+		glow.widgets.Editor.Toolbar.Button.prototype.deactivate = function() {
+			this.base.deactivate.apply(this, arguments);
+		}
+		
+		glow.widgets.Editor.Toolbar.Button.prototype.enable = function(name) {
+			this.base.enable.apply(this, arguments);
+		}
+		
+		glow.widgets.Editor.Toolbar.Button.prototype.disable = function(name) {
+			this.base.disable.apply(this, arguments);
+		}
+
+		
+
+		/**
+			@ignore
+			@private
+			@name enable_key_listener
+			@description	Adds listener onto each button when it has focus.  Listens for a keyup event with the ENTER key.  This allows users to 'press' the button via the keyboard when the button has focus.
+		 */
+		function enable_key_listener(button) {
+
+			return glow.events.addListener(glow.dom.get(document), 'keyup', function(event){
+				if(event.key == 'ENTER') {
+					button.press();
+					if (event.preventDefault) event.preventDefault();
+					return false;
+				}
+			});
+
+
+
+		}
+
+		/* built-in tools here. */		 
+		var TOOLS;
+		// this is called when the first instance of editor is created
+		function createTools() {
+			return {
+				bold: new glow.widgets.Editor.Toolbar.Button(
+					"bold",
+					{
+						title:      "Bold",
+						label:      "B",
+						tag:		"strong",
+						command:    "bold",
+						shortcut:   "b",
+						action:     function() { tag.call(this.editor.editArea, this.command); return false; }
+					}
+				),
+				italics: new glow.widgets.Editor.Toolbar.Button(
+					"italics",
+					{
+						title:      "Italics",
+						label:      "I",
+						tag:		"em",
+						command:    "italic",
+						shortcut:   "i",
+						action:     function() { tag.call(this.editor.editArea, this.command); return false; }
+					}
+				),
+				strike: new glow.widgets.Editor.Toolbar.Button(
+					"strike", 
+					{
+						title:      "Strikethrough",
+						label:      "Strike",
+						tag:		"strike",
+						command:    "strikethrough",
+						action:     function() { tag.call(this.editor.editArea, this.command); return false; }
+					}
+				)
+				/* tag.call(this.editor.editArea, this.command)
+				,
+				blockquote: new glow.widgets.Editor.Toolbar.Button(
+					"blockquote", 
+					{
+						title:      "Blockquote",
+						label:      "blockquote",
+						tag:		"blockquote",
+						command:    "formatblock",
+						action:     function() { tag.call(this.editor.editArea, this.command, 'blockquote'); return false; }
+					}
+				),
+				heading1: new glow.widgets.Editor.Toolbar.Button(
+					"heading1", 
+					{
+						title:      "Heading1",
+						label:      "Heading1",
+						tag:		"Heading1",
+						command:    "formatblock",
+						action:     function() { tag.call(this.editor.editArea, this.command, 'h1'); return false; }
+					}
+				),
+				toggle: new glow.widgets.Editor.Toolbar.Button(
+					"toggle", 
+					{
+						title:      "toggle",
+						label:      "toggle",
+						tag:		"toggle",
+						command:    "toggle",
+						action:     function() { this.editor.editArea.toggle_designMode(); return false; }
+					}
+				) */
+			};
+		}
+
+////////
+
+		/**
+			@ignore
+			@private
+			@constructor
+			@name glow.widgets.Editor.EditArea
+		 */
+		glow.widgets.Editor.EditArea = function(editor, opts) {
+			opts = opts || {};
+			this.editor = editor;
+			this.element = $(document.createElement("iframe"));
+			this.element.attr('frameBorder', 0);
+			this.element.src = "javascript:false";
+			this.editor.element.get(".editor-state").append(this.element);
+			var that = this;
+			setTimeout(
+				function() { // For FF
+					that.element[0].contentWindow.document.designMode = "on";
+					that.contentWindow = that.element[0].contentWindow;
+	
+					if (that.editor.textarea.val()) {
+						that.contentWindow.document.write(that.editor.textarea.val());
+					}
+					else {
+						that.contentWindow.document.write("<p>&nbsp;</p>");
+					}
+					that.contentWindow.document.close();
+					that.editor.iframeFocus = false;
+					addKeyboardListener.call(that);
+					manageToolbarFocus(that);
+					if (glow.env.ie || glow.env.opera) { //TODO: /sigh
+						glow.dom.get(that.element[0].contentWindow.document).item(0).attachEvent('onclick', function() { updateArea.call(that); } );
+						glow.dom.get(that.element[0].contentWindow.document).item(0).attachEvent('onkeyup', function() { updateArea.call(that); } );
+						//glow.dom.get(that.element[0].contentWindow.document).item(0).attachEvent('onmouseup', function() { updateArea.call(that); });
+						//events.addListener(that.element[0], 'focus', function () { updateArea.call(that); } );
+						//events.addListener(that.element[0].contentWindow, 'blur', function () { updateArea.call(that); } );
+					}
+					else {
+						events.addListener(that.contentWindow, 'blur', function () { updateArea.call(that); } );
+						//events.addListener(that.contentWindow, 'focus', function () { updateArea.call(that); } );
+						events.addListener(that.contentWindow, 'click', function () { updateArea.call(that); } );
+						events.addListener(that.contentWindow, 'mouseup', function () { updateArea.call(that); } );
+						events.addListener(that.contentWindow, 'keyup', function () { updateArea.call(that); } );
+					}
+					if (glow.env.gecko) {
+						that.contentWindow.document.execCommand("styleWithCSS", false, false);
+					}
+					
+					// see Webkit bug related to onbeforeunload and iframes 
+					// https://bugs.webkit.org/show_bug.cgi?id=21699
+					// http://code.google.com/p/chromium/issues/detail?id=5773
+					events.addListener(that.element[0].contentWindow, 'beforeunload', function () { that.editor.commit(); return true; } );
+					events.addListener(window, 'beforeunload', function () { that.editor.commit(); return true; } );
+					
+					// Give the toolbar one focusable button
+					// Boolean that we use to make sure we only do this once
+					that._toolbarInTabIndex = false;
+					
+					// Listener for when the user clicks on the editor
+					glow.events.addListener(
+						that.editor.element.get(".editor-state"),
+						"click",
+						function() {
+							addToolbarIntoTabIndex.apply(that);
+						},
+						that
+					);
+					
+					// Listener for when the user tabs into the iframe
+					if (!isNaN(glow.env.ie)) {
+						that.contentWindow.attachEvent(
+							'onfocus',
+							function() {
+									addToolbarIntoTabIndex.apply(that);
+							},
+							that
+						);
+					}
+					else {
+						that.contentWindow.addEventListener(
+							'focus',
+							function() {
+									addToolbarIntoTabIndex.apply(that);
+							},
+							that
+						);
+					}
+	
+					if (that.editor.bound) {
+						that.idler = new Idler(
+							that.contentWindow,
+							["mousedown", "keypress"],
+							350,
+							{
+								onFire: function() {
+									that.editor._rinse();
+								},
+								rate: 700
+							}
+						);
+					}
+				},
+				0
+			)
+		}
+
+		/**
+			@ignore
+			@name addToolbarIntoTabIndex
+			@description 
+		 */
+		function addToolbarIntoTabIndex() {
+			if (this.editor._toolbarInTabIndex == true) return;
+			this.editor.toolbar.element.get('a').item(0).tabIndex = 0;
+			this.editor._toolbarInTabIndex = true;
+		}
+
+		/**
+			@ignore
+			@name addKeyboardListener
+			@description
+			@function
+		 */
+		function addKeyboardListener() {
+			// If ie then use attachEvent with onkeydown
+			if (!isNaN(glow.env.ie)) {
+				glow.dom.get(this.contentWindow.document).item(0).attachEvent(
+					'onkeydown',
+					(function(that){
+						return function(event){
+							event = event || window.event;
+							return checkingKeyCombos.call(that, event);
+						}
+					})(this)
+				);
+			}
+			// If opera then use attachEvent with onkeypress
+			else if (!isNaN(glow.env.opera)) {
+				glow.dom.get(this.contentWindow.document).item(0).addEventListener(
+					'keypress',
+						(function(that){
+							return function(event){
+								event = event || window.event;
+								return checkingKeyCombos.call(that, event);
+							}
+						})(this),
+					true
+				);
+			}
+			// Everything else use addEventListener with keydown
+			else {
+
+				glow.dom.get(this.contentWindow.document).item(0).addEventListener(
+					'keydown', 
+					(function(that){
+						return function(event){
+							event = event || window.event;
+							return checkingKeyCombos.call(that, event);
+						}
+					})(this),
+					true
+				);
+			}
+		}
+
+		/**
+			@ignore
+			@private
+			@name checkingKeyCombos
+			@description	Handles keyboard combinations
+			@function
+		 */
+		function checkingKeyCombos(event) {
+
+			// Safari on a mac is too screwy to be trusted with this change to tabbing so I'm filtering it out
+			if ((navigator.platform.toLowerCase().indexOf('mac') == -1) || isNaN(glow.env.webkit))
+			{
+				// Set [TAB]+[SHIFT] to tab up the page
+					if ((event.keyCode == 9) && (event.shiftKey == true)) {	//console.log('shift up');
+						
+						// If [TAB]+[SHIFT] then we want to set the focus to the tool in the toolbar that has been set to receive focus (see function 'manageToolbarFocus')
+						var arrIcons = glow.dom.get(this.editor.element).get('ul.editor-toolbar-tools a');
+						arrIcons.each(function(i) {
+							if (arrIcons[i].tabIndex == 0) {
+								window.focus(); // This forces the iframe to loose focus, otherwise we end up with two elements on the page responding to keyboard events
+								arrIcons[i].focus();
+							}
+						});
+						if (event.preventDefault) event.preventDefault();
+						return false;
+					}
+
+				// Set [TAB] to tab down the page
+					if ( (event.keyCode == 9) ) { //console.log('shift down');
+						window.focus(); // This forces the iframe to loose focus, otherwise we end up with two elements on the page responding to keyboard events
+						this.element[0].focus(); // This lets gecko loose focus on the iframe
+						glow.dom.get(this.editor.element).get('p.endOfEditorCounter').item(0).focus(); // Send the focus to the last element in the editor (this is a paragraph that screen readers will see)
+						if (event.preventDefault) event.preventDefault();
+						return false;
+					}
+			}
+
+			// [modifier] plus [toolbar shortcut] key
+				if (appliedModifierKey.call(this, event)) {
+					if
+					(
+						( this.editor.toolbar._shortcut(String.fromCharCode(event.keyCode).toLowerCase()) ) ||	// If toolbar shortcut is related to the key being pressed then it returns true
+						( String.fromCharCode(event.keyCode).toLowerCase() == 'u' )								// Don't allow [modifier] + [i] (makes text underlined)
+					)
+					{
+						if (event.preventDefault) event.preventDefault();
+						return false;
+					}
+				}
+			return true;
+		}
+
+		/**
+			@ignore
+			@private
+			@name appliedModifierKey
+			@description Returns boolean stating if the modifier key is being pressed
+			@function
+		 */
+		function appliedModifierKey(event) {
+			if (navigator.platform.toLowerCase().indexOf('mac') != -1) {
+				if (!isNaN(glow.env.opera)) return event.ctrlKey;
+				return event.metaKey;
+			}
+			else {
+				return event.ctrlKey;
+			}
+		}
+
+		/**
+			@ignore
+			@private
+			@name isSafariTwo
+			@description	Returns boolean if browser is Safari version 2
+			@function
+		 */
+		function isSafariTwo() {
+			if ((glow.env.webkit > 400) && (glow.env.webkit < 500)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+
+		/**
+			@ignore
+			@private
+			@name moveCursorLeft
+			@description	Gives the toolbar a single tabindex, allowing you to tab in and out of the toolbar with cycling through the buttons.  When the toolbar does have focus, move between buttons using the LEFT and RIGHT arrow keys.
+		 */
+		function manageToolbarFocus(editArea) {
+			var left_listener,
+				right_listener,
+				arrButtons = editArea.editor.toolbar.element.get('a');
+
+
+			// Add key event listeners whenever the 'buttons' the in the toolbar are in focus
+			// NOTE: We could potential use event delegation but right now I'm not too sure
+			// how this would work with the browser giving the element focus.
+			// When the button has focus...
+			glow.events.addListener(
+				glow.dom.get(arrButtons),
+				'focus',
+				function() { // console.log('on');
+
+					// ... swap focus to its siblings if the user presses the LEFT or RIGHT arrow keys
+					right_listener = glow.events.addKeyListener('RIGHT', 'down', moveFocusRight);
+					left_listener  = glow.events.addKeyListener('LEFT',  'down', moveFocusLeft);
+
+				}
+			);
+
+			glow.events.addListener(
+				glow.dom.get(arrButtons),
+				'blur',
+				function() { // console.log('off');
+
+					glow.events.removeListener(right_listener);
+					glow.events.removeListener(left_listener);
+
+				}
+			);
+		}
+
+		/**
+			@ignore
+			@private
+			@name moveCursorLeft
+			@description Receives left arrow key down event, passes the previous sibling of the element source to moveCursor function.
+		 */
+		function moveFocusLeft(event) {
+			moveFocus( getDistantSibling( glow.dom.get(event.source), -1) );
+		}
+
+		/**
+			@ignore
+			@private
+			@name moveCursorRight
+			@description Receives right arrow key down event, passes the next sibling of the element source to moveCursor function.
+		 */
+		function moveFocusRight(event) {
+			moveFocus( getDistantSibling( glow.dom.get(event.source), 1) );
+		}
+
+		/**
+			@ignore
+			@private
+			@name getDistantSibling
+			@description  Builds an array of the hyperlinks in the toolbar, sets all their tabIndexes to -1 and then returns either 
+			              the next or previous element in the array based on the element passed in as a param
+		 */
+		function getDistantSibling(elm, move) { // console.log('changing the toolbar');
+			var itemIndexToFocus = 0,
+				arrLinks         = glow.dom.get(elm).parent().parent().parent().get('a'),
+				trueArrayLength  = (arrLinks.length-1);
+
+			// Loop through array...
+			arrLinks.each(function(y) {
+				// If this item is the passed in element item, then set 'itemIndexTofocus'
+				if (this == elm.item(0)) itemIndexToFocus = (y+move);
+				// Reset tabIndex
+				this.tabIndex = -1;
+			});
+
+			// Make sure 'itemIndexToFocus' stays within the bounds of the array length
+			if (itemIndexToFocus < 0) itemIndexToFocus = 0;
+			if (itemIndexToFocus > trueArrayLength) itemIndexToFocus = trueArrayLength;
+
+			// Return either the next or previous item compared the the element passed in via 'elm' param
+			return arrLinks.item(itemIndexToFocus);
+		}
+
+		/**
+			@ignore
+			@private
+			@name moveCursor
+			@description Moves the focus from the focused element, to one of its siblings.  Also manages the tabindex of the toolbar
+		 */
+		function moveFocus(item) {
+			if (typeof item != 'undefined') {
+				// Set the tab index of the item that is to gain focus to 0 and give it focus.
+				item.tabIndex = 0;
+				item.focus();
+			}
+		}
+
+		/**
+			@ignore
+			@private
+			@name tag
+			@description Applies execCommand 
+			@function
+		 */
+
+		function tag(tagName, attr) { /*debug*///console && console.log("glow.widgets.Editor.EditArea.prototype.tag("+tagName+", "+attr+")");
+			attr = attr || null;
+			if (this[tagName + "_" + attr]) {
+				this[tagName + "_" + attr]();
+			}
+			else {
+				this._domPath();
+				this.contentWindow.document.execCommand(tagName, false, null);
+			}
+			this.contentWindow.focus();
+			updateArea.call(this);
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.EditArea._getSelected
+			@description gets the selected text
+			@function
+		 */
+		glow.widgets.Editor.EditArea.prototype._getSelected = function() { 
+			if (glow.env.ie) {
+				// IE doesn't use the DOM2 methods for selection and determining range 
+				return this.contentWindow.document.selection;
+			}
+			else {
+				return this.contentWindow.getSelection();
+			}
+		}
+		
+		/**
+			@ignore
+			@private
+			@name updateArea
+			@description Commits the iframe content to the hidden textarea
+			@function
+		 */
+		function updateArea() { /*debug*///console.log("updateArea()")
+			this.editor.commit();
+			// Update Toolbar
+			var currentDomPath = this._domPath();
+			if (currentDomPath != this.editor._lastDomPath) {
+				this.editor._lastDomPath = currentDomPath;
+				var e = glow.events.fire(this, 'domPathChange', {
+					domPath: currentDomPath
+				});
+				
+				if (!e.defaultPrevented()) {
+					this.editor.toolbar._update(currentDomPath);
+				}
+			}
+		}
+		
+// 		glow.widgets.Editor.EditArea.prototype.formatblock_blockquote = function() {
+// 			elmPath = this._domPath();
+// 			currentTag = elmPath.split("|");
+// 			if (currentTag[1] && currentTag[1].toUpperCase() == "BLOCKQUOTE") {
+// 				if (glow.env.webkit) { // Webkit doesn't follow the blockquote spec requiring <p> elements
+// 					this.contentWindow.document.execCommand("formatblock", false, "<p>");
+// 				}
+// 				else {
+// 					this.contentWindow.document.execCommand("outdent", false, null);
+// 					// Need to remove from IE generated code?
+// 					// dir=ltr style="MARGIN-RIGHT: 0px"
+// 					// style="MARGIN-RIGHT: 0px" dir=ltr
+// 				}
+// 			}
+// 			else {
+// 				if (glow.env.ie) { // IE incorrect applies a blockquote instead of an indent, which is good because it doesn't support formatblock(blockquote)
+// 					this.contentWindow.document.execCommand("indent", false, null);
+// 				}
+// 				else if (glow.env.gecko <= 2) { // Oddly ff2 will accept almost any string and make it a new tag
+// 					this.contentWindow.document.execCommand("formatblock", false, "blockquote");
+// 				}
+// 				else {
+// 					this.contentWindow.document.execCommand("formatblock", false, "<blockquote>");
+// 				}
+// 			}
+// 		}
+		
+		/* TODO: Use for later release...
+		glow.widgets.Editor.EditArea.prototype.formatblock_h1 = function() {
+			this.formatblock_heading("h1");
+		}
+		glow.widgets.Editor.EditArea.prototype.formatblock_h2 = function() {
+			this.formatblock_heading("h2");
+		}
+		glow.widgets.Editor.EditArea.prototype.formatblock_h3 = function() {
+			this.formatblock_heading("h3");
+		}
+		glow.widgets.Editor.EditArea.prototype.formatblock_h4 = function() {
+			this.formatblock_heading("h4");
+		}
+		glow.widgets.Editor.EditArea.prototype.formatblock_h5 = function() {
+			this.formatblock_heading("h5");
+		}
+		glow.widgets.Editor.EditArea.prototype.formatblock_h6 = function() {
+			this.formatblock_heading("h6");
+		}
+		glow.widgets.Editor.EditArea.prototype.formatblock_p = function() {
+			this.formatblock_heading("p");
+		}
+		glow.widgets.Editor.EditArea.prototype.formatblock_heading = function(lvl) {
+			elmPath = this._domPath();
+			currentTag = elmPath.split("|");
+			if (currentTag[1].toUpperCase() == lvl.toUpperCase()) {
+				this.contentWindow.document.execCommand("formatblock", false, "<p>");
+			}
+			else {
+				this.contentWindow.document.execCommand("formatblock", false, "<"+lvl+">");
+			}
+		}
+		glow.widgets.Editor.EditArea.prototype.toggleDesignMode = function() {
+			if (this.contentWindow.document.designMode.toLowerCase() == "on") {
+				if (glow.env.ie) { //IE resets the document, so...
+					cntWin = glow.dom.get(this.editor.editArea.contentWindow.document).get('body').html();
+					this.contentWindow.document.designMode = "off";
+					this.editor.editArea.contentWindow.document.write(cntWin);
+				}
+				else {
+					this.contentWindow.document.designMode = "off";
+				}
+			}
+			else {
+				this.contentWindow.document.designMode = "on";
+			}
+		} */
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.EditArea#_domPath
+			@description
+			@function
+			@param {String} name
+			@returns {glow.widgets.Editor.Toolbar.Tool}
+		 */
+		glow.widgets.Editor.EditArea.prototype._domPath = function(elm) {
+			elm = elm || this._getSelectedNode();
+			var elmBody = glow.dom.get(this.editor.editArea.contentWindow.document).get('body').item(0);
+			var trail = "";
+			
+			while (elm.nodeName.toUpperCase() != elmBody.nodeName.toUpperCase()) {
+				trail = '<' + elm.nodeName.toLowerCase() + ((elm.getAttribute('style'))? ' style="'+elm.getAttribute('style')+'"' : '') + '>' + trail;
+				elm = elm.parentNode;
+			}
+			
+			var cleanTrail = this.editor.cleaner.clean(trail);
+			cleanTrail = cleanTrail.replace(/></g, "|").replace(/>/g, "|").replace(/</g, "|");
+			cleanTrail = cleanTrail.replace(/\|\/[^\|]+\|/g, "|"); // collapse /named nodes that sometimes appear
+			return cleanTrail;
+		}
+
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.EditArea#_getSelectedNode
+			@description Returns the parent node of the selected text in the edit area
+			@function
+			@returns {HTML node}
+		 */
+		glow.widgets.Editor.EditArea.prototype._getSelectedNode = function() { 
+			if (!glow.env.ie) {
+				selectedNode = this._getSelected().getRangeAt(0).commonAncestorContainer;
+				if (selectedNode.nodeType === 3) {
+					return selectedNode.parentNode;
+				}
+				else {
+					return selectedNode;
+				}
+			}
+			else { // ie 6
+				return this._getSelected().createRange().parentElement();
+			}
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.EditArea#_nodeAt
+			@description Given a character offset, return the node that character is in.
+			Useful for unit testing.
+		 */
+		glow.widgets.Editor.EditArea.prototype._nodeAt = function(location) {
+			var w = this.contentWindow;
+			var d = w.document;
+			
+			var counter = 0;
+			var node = d.body;
+			
+			function walkNode(node, location) {
+				if (node.nodeName == "#text") {
+					counter += node.nodeValue.length;
+					if (counter >= location) {					
+						return node.parentNode;
+					}
+					
+				}
+				if (node.childNodes) {
+					for (var i = 0; i < node.childNodes.length; i++) {
+						var foundNode = walkNode(node.childNodes[i], location);
+						if (foundNode) return foundNode;
+					}
+				}
+			}
+			
+			var foundNode = walkNode(node, location);
+			return foundNode;
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.EditArea#_getContent
+			@description Get the entire contents of the editArea. This will be in the browser's native format.
+		 */
+		glow.widgets.Editor.EditArea.prototype._getContent = function() { /*debug*///console.log("glow.widgets.Editor.EditArea#_getContent()");
+			return this.contentWindow.document.body.innerHTML;
+		}
+		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.EditArea#_setContent
+			@description Set the entire contents of the editArea. This should be in the browser's native format.
+		 */
+		glow.widgets.Editor.EditArea.prototype._setContent = function(content) {
+			this.contentWindow.document.body.innerHTML = content;
+		}
+
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.EditArea#_select
+			@description Select the entire contents of the editArea. Useful for unit testing.
+		 */
+		glow.widgets.Editor.EditArea.prototype._select = function() {
+			var el = this.contentWindow;
+			el.focus();
+
+			if (glow.env.ie) { // ie, but not opera (faker)
+				r = el.document.body.createTextRange();
+				r.moveEnd('textedit');
+				r.select();
+			}
+   			else { // moz, saf, opera
+   				var r = el.document.createRange();
+   				r.selectNodeContents(el.document.body.firstChild.childNodes[0]);
+   				
+   				var s = el.getSelection();
+   				s.removeAllRanges();
+   				el.getSelection().addRange(r);
+			}
+		}
+	}
+});

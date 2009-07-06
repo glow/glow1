@@ -1,0 +1,115 @@
+
+body {
+    font-family:verdana,helvetica,arial,sans-serif;
+    background-color: white;
+	color:#000000;
+	font-size:62.5%;
+}
+
+#container {
+    width: 800px;
+	margin: 0 auto;
+}
+
+.pass {
+	background-color: green;
+	display: none;
+	float: right;
+}
+
+.fail {
+	background-color: red;
+	display: none;
+	float: right;
+}
+
+.test-case {
+	clear: both;
+}
+
+.not-started .test-steps {
+    display: none;
+}
+
+.quiet .finished .test-steps, .quiet .finished .diagnostics, .quiet p.success, .quiet p.failure {
+	display: none;
+}
+
+ul span.success, ul span.failure {
+   display: none;
+}
+
+.quiet span.success, .quiet span.failure {
+   display: inline;
+   margin-left: 10px;
+}
+
+p {
+  width: 600px;
+}
+
+ul p {
+   width: 500px;
+}
+
+.failure {
+    color: #900;
+}
+
+.success {
+    color: #090;
+}
+
+p.failure {
+	padding: 4px;
+    background-color: #FEE;
+    border: 1px solid #C33;
+}
+
+p.success {
+	padding: 4px;
+    background-color: #EFE;
+    border: 1px solid #3C3;
+}
+
+
+.small-test-box {
+    position: relative;
+	height: 50px;
+	width: 50px;
+	border: 1px solid black;
+}
+
+.keyinfo {
+    position: relative;
+	border: 1px solid white;
+	overflow: auto;
+    clear: both;
+	width: 80%;
+}
+
+.keyinfo div {
+    position: relative;
+	width: 30%;
+    float: left;
+	padding: 5px;
+}
+
+.keyinfo ul {
+    list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.keyinfo li {
+	padding: 0;
+	margin: 0;
+}
+
+.keyinfo h3 {
+	margin: 0;
+}
+
+.fired {
+    background-color: red;
+}

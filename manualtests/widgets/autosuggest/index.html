@@ -1,0 +1,519 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>AutoSuggest Manual Test Area</title>
+	
+	<style type="text/css" title="text/css" media="screen">
+		.swatch {
+			width: 10px;
+			height: 10px;
+			margin: 0 2px;
+			float: left;
+			border: 1px solid #000;
+		}
+		
+	</style>
+
+ 	<script type="text/javascript">
+		if (typeof console == 'undefined') {
+			document.write('<script src="/pendrive/firebug-lite.js" type="text/javascript"><'+'/script>');
+		}
+	</script>
+
+	
+	<script type="text/javascript" src="../../../loader/svnloader.js"></script>
+	
+	<script type="text/javascript" language="javascript">
+		loadUnbuiltGlow(
+			createGlowMap('../../../'),
+			{
+				loadMethod: 'scriptTags',
+				modules: ['glow', '1', 'glow.widgets.AutoSuggest'/*, 'glow.widgets.AutoComplete'*/],
+				onLoad: function(glow) {
+					window.glow = glow;
+				}
+			}
+		);
+	</script>
+	
+	<script type="text/javascript" language="javascript">
+		$ = glow.dom.get;
+		
+		glow.ready(		
+			function() {
+				new glow.widgets.AutoSuggest(
+					"#colornames1",
+					"colornames.js",
+					{
+						onInputChange : function(event) {
+							// only hit the server when we have 2 or more chars
+							if (event.value.length < 2) {
+								event.preventDefault();
+								this.hide();
+							}
+							// default for URL datasources is to loadData() and find()
+						},
+						complete: true, delim: " "
+					}
+				)
+				.loadData();
+				
+				new glow.widgets.AutoSuggest(
+					"#colornames2",
+					"colornames.js",
+					{
+						onItemSelect: function(e){
+						    this.setValue(e.selectedItem.name);
+						},
+						formatItem: function(item) { 
+						    var html = '<div  style="clear: both; padding: 2px},"><div ';
+							html += 'class="swatch" style="background-color:#'+item.hex+'">';
+							html += '<'+'/div><'+'/div>';
+							html += item.name;
+							return html;
+						}
+					}
+				).loadData();
+				
+				new glow.widgets.AutoSuggest(
+					"#colornames3",
+					"colornames.js",
+					{
+						onItemSelect: function(e){
+						    this.setValue(e.selectedItem.name);
+						},
+						isMatch: function(indexedWord, inputWord) {
+							return (
+								inputWord.length > 1 && indexedWord.indexOf(inputWord) > -1
+							);
+						},
+						formatItem: function(item) {
+							var pat = new RegExp(glow.lang.trim(this.getValue()), 'i');
+						    return item.name.replace(pat, "<u>$&<"+"/u>");
+						},
+						delim: "," // complete option makes no sense here
+					}
+				).loadData();
+				
+				new glow.widgets.AutoSuggest(
+					"#colornames4",
+					"colornames.js",
+					{
+						onItemSelect: function(e){
+						    this.setValue("#"+e.selectedItem.hex);
+						},
+						caseSensitive: true,
+						maxListLength: 10,
+        				complete: true,
+						delim: ","
+					}
+				).loadData();
+				
+				new glow.widgets.AutoSuggest(
+					"#colornames5",
+					"colornames.js",
+					{
+						onItemSelect: function(e){
+							this.setValue(e.selectedItem.name);
+						},
+						width: 600,
+						height: 100,
+						theme: "dark"
+					}
+				).loadData();
+				
+
+//  				
+//  				var recipes = [
+// 					{
+// 					  name: "Apple Flan",
+// 					  ingredients: ["apples", "brown sugar", "pastry"],
+// 					  chef: "Delia Smith"
+// 					},
+// 					{
+// 					  name: "Easy Shortbread",
+// 					  ingredients: ["butter", "caster sugar", "flour"],
+// 					  chef: "Delia Smith"
+// 					},
+// 					{
+// 					  name: "Apple FlapJack",
+// 					  ingredients: ["oats", "apples", "golden syrup"],
+// 					  chef: "Jamie Oliver"
+// 					},
+// 					{
+// 					  name: "Flambé of Brandied Apple Ice",
+// 					  ingredients: ["apples", "brandy", "golden syrup"],
+// 					  chef: "Heston Blumenthal"
+// 					}
+// 				];
+//  
+// 				new glow.widgets.AutoSuggest(
+// 					"#recipes1",
+// 					recipes,
+// 					{
+// 						onItemSelect: function(e) {
+// 							this.setValue(e.selectedItem.name);
+// 						},
+// 						complete: true, delim: ","
+// 					}
+// 				);
+// 				
+// 				new glow.widgets.AutoSuggest(
+// 					"#recipes2",
+// 					recipes,
+// 					{
+// 						onItemSelect: function(e) {
+// 							this.setValue(e.selectedItem.name);
+// 						},
+// 						index: "ingredients",
+// 						complete: true, delim: " "
+// 					}
+// 				);
+// 				new glow.widgets.AutoSuggest(
+// 					"#recipes3",
+// 					recipes,
+// 					{
+// 						onItemSelect: function(e) {
+// 							this.setValue(e.selectedItem.name);
+// 						},
+// 						index: ["chef", "name"]
+// 					}
+// 				);
+// 				new glow.widgets.AutoSuggest(
+// 					"#recipes4",
+// 					recipes,
+// 					{
+// 						onItemSelect: function(e) {
+// 							this.setValue(e.selectedItem.name);
+// 						},
+// 						index: function(item) { return item.name.split(" "); }
+// 					}
+// 				);
+								
+				/* autocomplete ***********************************************/
+				new glow.widgets.AutoComplete(
+					'#complete1',
+					'tags.js'
+				).autosuggest.loadData();
+				
+				new glow.widgets.AutoComplete(
+					'#complete2',
+					'tags.js',
+					{
+						delim: ','
+					}
+				).autosuggest.loadData();
+				
+				new glow.widgets.AutoSuggest(
+					'#complete3',
+					'tags.js',
+					{
+						complete: true,
+						delim: ','
+					}
+				).loadData();
+ 			}
+		);
+	</script>
+</head>
+
+<body>
+
+<h1>glow.widgets.AutoSuggest manual tests</h1>
+	
+<h2>Autosuggest with minimum length, multiple values and completion</h2>
+<pre><code>
+new glow.widgets.AutoSuggest(
+    "#colornames1",
+    "<a href="colornames.js">colornames.js</a>",
+    {
+        onInputChange : function(event) {
+            // only hit the server when we have 2 or more chars
+            if (event.value.length &lt; 2) {
+                event.preventDefault();
+                this.hide();
+            }
+            // default for URL datasources is to loadData() and find()
+        },
+        complete: true, delim: " "
+    }
+)
+.loadData();
+</code></pre>
+
+<form onsubmit="alert('submit: '+this.colornames1.value); return false;">
+<p>Try it: <input type="text" id="colornames1"> (type the name of a web-safe colour delimited with spaces)</p>
+</form>
+
+<h2>Autosuggest with formatItem, no completion</h2>
+
+<pre><code>
+new glow.widgets.AutoSuggest(
+    "#colornames2",
+    "<a href="colornames.js">colornames.js</a>",
+    {
+        onItemSelect: function(e){
+            this.setValue(e.selectedItem.name);
+        },
+        formatItem: function(item) { 
+            var html = '&lt;div  style="clear: both; padding: 2px},">&lt;div ';
+            html += 'class="swatch" style="background-color:#'+item.hex+'">';
+            html += '&lt;'+'/div>&lt;'+'/div>';
+            html += item.name;
+            return html;
+        }
+    }
+).loadData();
+</code></pre>
+
+<form onsubmit="alert('submit: '+this.colornames2.value); return false;">
+<p>Try it: <input type="text" id="colornames2"> (type the name of a web-safe colour delimited with commas)</p>
+</form>
+
+<h2>Autosuggest with isMatch, formatItem and multiple values</h2>
+
+<p>
+If you are not matching on the beginning of the index then completion isn't possible.
+</p>
+
+<pre><code>
+new glow.widgets.AutoSuggest(
+    "#colornames3",
+    "<a href="colornames.js">colornames.js</a>",
+    {
+        onItemSelect: function(e){
+            this.setValue(e.selectedItem.name);
+        },
+        isMatch: function(indexedWord, inputWord) {
+            return (
+                inputWord.length > 1 && indexedWord.indexOf(inputWord) > -1
+            );
+        },
+        formatItem: function(item) {
+            var pat = new RegExp(glow.lang.trim(this.getValue()), 'i');
+            return item.name.replace(pat, "&lt;u>$&amp;&lt;"+"/u>");
+        },
+        delim: "," // complete option makes no sense here
+    }
+).loadData();
+</code></pre>
+
+<form onsubmit="alert('submit: '+this.colornames3.value); return false;">
+<p>Try it: <input type="text" id="colornames3"> (type the name of a web-safe colour)</p>
+</form>
+
+
+<h2>Autosuggest with caseSensitive, maxListLength, completion and multiple values</h2>
+
+<p>
+If you are not matching on the beginning of the index then completion isn't possible.
+</p>
+
+<pre><code>
+new glow.widgets.AutoSuggest(
+    "#colornames4",
+    "<a href="colornames.js">colornames.js</a>",
+    {
+        onItemSelect: function(e){
+            this.setValue("#"+e.selectedItem.hex);
+        },
+        caseSensitive: true,
+        maxListLength: 10,
+        complete: true,
+        delim: ","
+    }
+).loadData();
+</code></pre>
+
+<form onsubmit="alert('submit: '+this.colornames4.value); return false;">
+<p>Try it: <input type="text" id="colornames4"> (type the name of a web-safe colour)</p>
+</form>
+
+<h2>Autosuggest with appearance options</h2>
+
+<p>
+If you are not matching on the beginning of the index then completion isn't possible.
+</p>
+
+<pre><code>
+new glow.widgets.AutoSuggest(
+    "#colornames5",
+    "<a href="colornames.js">colornames.js</a>",
+    {
+        onItemSelect: function(e){
+            this.setValue(e.selectedItem.name);
+        },
+        width: 600,
+        height: 100,
+        theme: "dark"
+    }
+).loadData();
+</code></pre>
+
+<form onsubmit="alert('submit: '+this.colornames5.value); return false;">
+<p>Try it: <input type="text" id="colornames5"> (type the name of a web-safe colour)</p>
+</form>
+
+
+
+
+	
+
+<h1>glow.widgets.AutoComplete manual tests</h1>
+
+<h2>Single-value glow.widgets.AutoComplete</h2>
+
+<pre><code>
+new glow.widgets.AutoComplete(
+    '#complete1',
+    '<a href="tags.js">tags.js</a>'
+).autosuggest.loadData();
+</code></pre>
+					
+<p>Try it: <input type="text" id="complete1"> (type a tag name)</p>
+	
+<h2>Multi-value glow.widgets.AutoComplete</h2>
+	
+<pre><code>
+new glow.widgets.AutoComplete(
+    '#complete2',
+    '<a href="tags.js">tags.js</a>',
+    {
+        delim: ','
+    }
+).autosuggest.loadData();
+</code></pre>
+
+<p>Try it: <input type="text" id="complete2"> (type tag names separated by a comma)</p>
+
+<h2>Same with glow.widgets.AutoSuggest (using array of strings as dataSource)</h2>
+	
+<pre><code>
+new glow.widgets.AutoSuggest(
+    '#complete3',
+    '<a href="tags.js">tags.js</a>',
+    {
+        complete: true,
+        delim: ','
+    }
+).loadData();
+</code></pre>
+
+<p>Try it: <input type="text" id="complete3"> (type tag names separated by a comma)</p>
+
+
+
+
+<!-- 
+	
+	
+	
+	<h2>Indexing your data</h2>
+	
+	<p>The dataObject you provide will be an array of objects, each object with one or more properties (keys and values). Therefore you must specify which of those properties will be used to compare with the user input to see if there is a match; the key name you specify will be the "index property." By default, if you don't specify <em>any</em> index, AutoSuggest will attempt to use a property named simply "name." Or you can specify a <code>opts.index</code> that will be either a single property name, an array of property names, or a function that will generate index values.</p>
+	
+	<p>Assuming your dataObject is equivalent to the following...</p>
+	
+	<pre><code id="recipesData">
+	[
+		{
+		  name: "Apple Flan",
+		  ingredients: ["apples", "brown sugar", "pastry"],
+		  chef: "Delia Smith"
+		},
+		{
+		  name: "Easy Shortbread",
+		  ingredients: ["butter", "caster sugar", "flour"],
+		  chef: "Delia Smith"
+		},
+		{
+		  name: "Apple FlapJack",
+		  ingredients: ["oats", "apples", "golden syrup"],
+		  chef: "Jamie Oliver"
+		},
+		{
+		  name: "Flambé of Brandied Apple Ice",
+		  ingredients: ["apples", "brandy", "golden syrup"],
+		  chef: "Heston Blumenthal"
+		}
+	];
+	</code></pre>
+	
+	<p>If <em>no</em> index is specified in your options object, then the default <code>name</code> property will be used as the index, if it exists.</p>
+	
+	<p>Try it: <input type="text" id="recipes1"> (type the name of a recipe)</p>
+	
+	<p>Or you can specify any property name, and AutoSuggest will use that as the index instead.</p>
+	
+	<pre><code>
+	myOpts = {
+		index: "ingredients"
+	}
+	</code></pre>
+	
+	<p>Try it: <input type="text" id="recipes2"> (type the name of an ingredient)</p>
+	
+	<p>Or you can also specify a series of property names, and AutoSuggest will use all of them as the index.</p>
+	
+	<pre><code>
+	myOpts = {
+		index: ["chef", "name"]
+	}
+	</code></pre>
+	
+	<p>Try it: <input type="text" id="recipes3"> (type the name of a chef or a recipe)</p>
+	
+	<p>Finally, you can specify a function that will return an array of values to be indexed.</p>
+	
+	<pre><code>
+	myOpts = {
+		// map each word of the recipe name to the data item
+		index: function(item) { return item.name.split(" "); }
+	}
+	</code></pre>
+	
+	<p>Try it: <input type="text" id="recipes4"> (type any word in the name of a recipe)</p>
+	
+	<h2>What happens when a result is selected</h2>
+	
+	<p>When a user selects one of the displayed results, you will likely want some response to occur. By default nothing will happen, but you can specify what you want to happen by creating an <code>opts.onItemSelect</code> handler.</p>
+	
+	<pre><code>
+	myOpts = {
+		onItemSelect: function(event) {
+			this.setValue(event.selectedItem.name);
+		}
+	}
+	</code></pre>
+
+	
+	
+	<p>
+	By adding an <code>opt.delim</code> character, the widget will handle multiple values entered into the same input element.
+	</p>
+ -->
+	
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+
+</body>
+</html>

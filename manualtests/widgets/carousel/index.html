@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Carousel Manual Test Area</title>
+	
+	<style type="text/css">
+		ol#carousel {
+		}
+		ol#carousel li {
+		    background: #fff;
+			width: 100px;
+			height: 73px;
+			margin: 4px;
+		}
+		
+		ol#carousel2 {
+		}
+		ol#carousel2 li {
+		    background: #fff;
+		    width: 100px;
+			height: 73px;
+			margin: 4px;
+		}
+		
+		ol#carousel3 {
+		}
+		ol#carousel3 li {
+		    background: #fff;
+		    width: 100px;
+			height: 73px;
+			margin: 20px 10px;
+		}
+		img {
+			display: block;
+		}
+	</style>
+	
+	<style type="text/css">
+		#carousel1 {
+			list-style: none;
+		}
+		#carousel1 li {
+			width: 98px;
+			height: 98px;
+			border: 1px solid black;
+		}
+	</style>
+
+	<script type="text/javascript" src="../../../loader/svnloader.js"></script>
+	
+	<script type="text/javascript" language="javascript">
+		loadUnbuiltGlow(
+			createGlowMap('../../../'),
+			{
+				loadMethod: 'scriptTags',
+				modules: ['glow', '1', 'glow.widgets.Carousel'],
+				onLoad: function(glow) {
+					var $ = glow.dom.get;
+					
+					glow.ready(		
+						function() {
+							window.carousel = new glow.widgets.Carousel(
+								"#carousel"
+								
+								,{
+									  size: 8
+									//, slideOnScroll: 1
+									//, step: 3
+									//, className: "myownclass"
+									//, id: "myownid"
+									//, theme: "dark"
+									//, animDuration: .5
+									//, loop: 1
+									//, pageNav: 1
+									//, vertical: 0
+									//, scrollOnHold: 0
+									/*, onAfterScroll: function(e) {
+										if (typeof console != "undefined") console.log("after scroll: "+e.position);
+									}
+									, onScroll: function(e) {
+										if (typeof console != "undefined") console.log("before scroll: "+e.currentPosition);
+									}
+									, onItemClick: function(e) {
+										 if (typeof console != "undefined") console.log("clicked item is "+e.itemIndex);
+									}
+									, onAddItem: function(e) {
+										if (typeof console != "undefined") console.log("onAddItem handler fired");
+									}
+									, onRemoveItem: function(e) {
+										if (typeof console != "undefined") console.log("onRemoveItem handler fired");
+									}*/
+								}
+								
+							);
+							
+							window.carousel2 = new glow.widgets.Carousel("#carousel2",{
+							    loop: true,
+								slideOnScroll: true,
+							    size: 4,
+							    step: 4,
+							    theme: "dark",
+								vertical: 1
+							});
+							
+							window.carousel3 = new glow.widgets.Carousel("#carousel3",{
+							    loop: true,
+								size: 3,
+							    step: 1,
+								pageNav: 1
+							}).moveBy(-1);
+						}
+					);
+
+				}
+			}
+		);
+	</script>
+</head>
+
+<body>
+
+<h1>glow.widgets.Carousel swooshable demo</h1>
+	<p>
+	Nulla enim leo, venenatis in, laoreet vel, pulvinar et, augue. Curabitur viverra mi vitae justo. Morbi eu leo. Donec consectetur augue sit amet justo. Nulla mollis venenatis felis. Phasellus non nunc rutrum turpis volutpat mollis. Pellentesque condimentum, erat a mollis tincidunt, sapien justo aliquam mauris, eget sollicitudin purus tortor eu eros. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut ultricies mattis elit. Etiam posuere purus in risus congue rutrum. Sed eros pede, viverra sit amet, venenatis ut, porta vel, neque. Aenean quis augue. Quisque quis nisi. Nulla hendrerit sapien non turpis. Donec tempus. Praesent adipiscing. Praesent nibh nisl, sagittis et, faucibus quis, elementum a, eros. Suspendisse feugiat varius odio. 
+	</p>
+	<ol id="carousel">
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_one.gif" alt="BBC One" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_two.gif" alt="BBC Two" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_three.gif" alt="BBC Three" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_four.gif" alt="BBC Four" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_hd.gif" alt="BBC HD" width="100" height="32" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/cbbc.gif" alt="CBBC" width="100" height="62" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/cbeebies.gif" alt="CBeebies" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/news.gif" alt="BBC News" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/parliament.gif" alt="BBC Parliament width="100" height="73"/></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_1.gif" alt="Radio 1" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_2.gif" alt="Radio 2" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_3.gif" alt="Radio 3" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_4.gif" alt="Radio 4" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/five_live.gif" alt="Five Live" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/6_music.gif" alt="6Music" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_7.gif" alt="BBC 7" width="100" height="56" /></li>
+	</ol>
+	
+<pre class="prettyprint"><code>var carousel = new glow.widgets.Carousel("#carousel");</code></pre>
+
+	<p>
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sed urna sit amet metus mattis ullamcorper. Nunc turpis. Quisque imperdiet diam eget sem. Nulla felis mi, tincidunt non, aliquet nec, commodo at, magna. Duis non enim. Aliquam et justo. Nam neque. Morbi venenatis. Aenean suscipit. Aliquam pulvinar pellentesque urna. Aenean vel dolor a elit consectetur fermentum. Nam nibh elit, laoreet et, lacinia vel, ultrices in, mi. Sed auctor faucibus urna. Fusce sodales velit. Morbi ac felis at velit dapibus congue.
+	</p>
+	
+	<ol id="carousel2">
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_one.gif" alt="BBC One" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_two.gif" alt="BBC Two" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_three.gif" alt="BBC Three" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_four.gif" alt="BBC Four" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_hd.gif" alt="BBC HD" width="100" height="32" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/cbbc.gif" alt="CBBC" width="100" height="62" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/cbeebies.gif" alt="CBeebies" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/news.gif" alt="BBC News" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/parliament.gif" alt="BBC Parliament width="100" height="73"/></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_1.gif" alt="Radio 1" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_2.gif" alt="Radio 2" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_3.gif" alt="Radio 3" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_4.gif" alt="Radio 4" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/five_live.gif" alt="Five Live" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/6_music.gif" alt="6Music" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_7.gif" alt="BBC 7" width="100" height="56" /></li>
+	</ol>
+	
+<pre class="prettyprint"><code>carousel2 = new glow.widgets.Carousel("#carousel2",{
+	loop: true,
+	slideOnScroll: true,
+	size: 4,
+	step: 4,
+	theme: "dark",
+	vertical: 1
+});</code></pre>
+
+<p>
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sed urna sit amet metus mattis ullamcorper. Nunc turpis. Quisque imperdiet diam eget sem. Nulla felis mi, tincidunt non, aliquet nec, commodo at, magna. Duis non enim. Aliquam et justo. Nam neque. Morbi venenatis. Aenean suscipit. Aliquam pulvinar pellentesque urna. Aenean vel dolor a elit consectetur fermentum. Nam nibh elit, laoreet et, lacinia vel, ultrices in, mi. Sed auctor faucibus urna. Fusce sodales velit. Morbi ac felis at velit dapibus congue.
+	</p>
+	
+	<ol id="carousel3">
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_one.gif" alt="BBC One" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_two.gif" alt="BBC Two" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_three.gif" alt="BBC Three" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_four.gif" alt="BBC Four" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_hd.gif" alt="BBC HD" width="100" height="32" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/cbbc.gif" alt="CBBC" width="100" height="62" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/cbeebies.gif" alt="CBeebies" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/news.gif" alt="BBC News" width="100" height="73" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/parliament.gif" alt="BBC Parliament width="100" height="73"/></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_1.gif" alt="Radio 1" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_2.gif" alt="Radio 2" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_3.gif" alt="Radio 3" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_4.gif" alt="Radio 4" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/five_live.gif" alt="Five Live" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/6_music.gif" alt="6Music" width="100" height="56" /></li>
+		<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_7.gif" alt="BBC 7" width="100" height="56" /></li>
+	</ol>
+
+<pre class="prettyprint"><code>carousel3 = new glow.widgets.Carousel("#carousel3",{
+	loop: true,
+	size: 3,
+	step: 1,
+	pageNav: 1
+});</code></pre>
+
+<p>
+Plaeing tea vath jae trashe te roo je koorl chees greing breav sashe da, stea glae vaes ir bav cooh ir vi vi quep ir tru, bli I, la sheell hev dewel cae whoon pi civ cliro, san slae; Adrae cu gloo wha. Stu blae ghu clal, sta plu steed cee delee, ir cleesh en. Quusting enrast whuro zuckall cleell trae. Cliing. Craeing nae dupiff breas chu bugh wu wroo sla the kipis regi wooro wu ple ir, perfres sheap crooer ir brepij wae en, deaing graero, en; Ir, nea, crae, inchuth bi weash soo su goo perjuh sto rojing wi. Plu draffs vae pae hith steagh na ghee si a, sho bloing stoo, choons cre cle joob fru, a hap?
+</p>
+
+	
+</body>
+</html>

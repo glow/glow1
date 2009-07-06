@@ -1,0 +1,107 @@
+/* EDITOR */
+		.glowCSSVERSION-editor {border: 1px solid #000;}
+
+		.glowCSSVERSION-editor .editor-toolbar
+		{
+			border: none;
+			display: block;
+			margin: 0;
+			padding: 0;
+			background-color: #EFEFEF;
+			/*height: 28px;*/
+		}
+
+		.glowCSSVERSION-editor .editor-toolbar legend { display: none; }
+		.glowCSSVERSION-editor .editor-toolbar-tools h3 { display: none; }
+
+		.glowCSSVERSION-editor ul.editor-toolbar-tools
+		{
+			display: block;
+			margin: 0 !important;
+			padding: 9px !important;
+			overflow: hidden;
+			zoom: 1;
+		}
+
+		.glowCSSVERSION-editor ul.editor-toolbar-tools li
+		{
+			list-style: none;
+			float: left;
+			display: block;
+			width: 26px;
+			/*height: 28px;*/
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+
+		.glowCSSVERSION-editor .editor-toolbar-button
+		{
+			display: block;
+			margin: 0;
+			padding: 0;
+			width: 26px;
+			/*height: 28px;*/
+			overflow: hidden;
+		}
+
+		.glowCSSVERSION-editor .editor-toolbar-button a { outline: none; text-decoration: none; }
+		.glowCSSVERSION-editor .editor-toolbar-button img { border: none; }
+
+		/* with images */
+		.glowCSSVERSION-editor .editor-toolbar-icon
+		{
+			display: block;
+			width: 26px;
+			height: 24px;
+		}
+
+		.glowCSSVERSION-editor .editor-toolbar-icon span
+		{
+			display: block;
+			height: 1px;
+			overflow: hidden;
+			width: 1px;
+		}
+
+		.glowCSSVERSION-editor .editor-toolbar-icon span		{			display: block;			height: 1px;			overflow: hidden;			width: 1px;		}							.glowCSSVERSION-editor .editor-toolbar-item .bold-button { background-image: url(images/editor/button-bold.png); }
+		.glowCSSVERSION-editor .editor-toolbar-item .default  .bold-button { background-position: 0px 0px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .disabled .bold-button { background-position: 0px -28px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .active   .bold-button { background-position: 0px -85px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .hover    .bold-button { background-position: 0px -56px; }
+
+		.glowCSSVERSION-editor .editor-toolbar-item .italics-button { background-image: url(images/editor/button-italics.png); }
+		.glowCSSVERSION-editor .editor-toolbar-item .default  .italics-button { background-position: 0px 0px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .disabled .italics-button { background-position: 0px -28px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .active   .italics-button { background-position: 0px -85px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .hover    .italics-button { background-position: 0px -56px; }
+
+		.glowCSSVERSION-editor .editor-toolbar-item .strike-button { background-image: url(images/editor/button-strike.png); }
+		.glowCSSVERSION-editor .editor-toolbar-item .default  .strike-button { background-position: 0px 0px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .disabled .strike-button { background-position: 0px -28px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .active   .strike-button { background-position: 0px -85px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .hover    .strike-button { background-position: 0px -56px; }
+		
+		.glowCSSVERSION-editor .editor-toolbar-item .blockquote-button { background-image: url(images/editor/button-blockquote.png); }
+		.glowCSSVERSION-editor .editor-toolbar-item .default  .blockquote-button { background-position: 0px 0px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .disabled .blockquote-button { background-position: 0px -28px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .active   .blockquote-button { background-position: 0px -85px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .hover    .blockquote-button { background-position: 0px -56px; }
+
+		.glowCSSVERSION-editor .glowCSSVERSION-hidden {position: absolute; left: -2500px; width: 1px;}
+
+
+		/* without images */
+		.glowCSSVERSION-basic .glowCSSVERSION-editor .editor-toolbar-icon span { border: none; height: auto; overflow: normal; width: auto; }
+		.glowCSSVERSION-basic .glowCSSVERSION-editor .editor-toolbar-item .hover span span {border: 1px solid #000;}
+
+		.glowCSSVERSION-editor iframe {border: 0; margin: 0; padding: 0; width: 100%;}
+
+		/* dark theme */
+		.editor-dark .editor-toolbar {background: #333; color: #fff;}
+		.editor-dark .editor-toolbar-item .bold-button { background-image: url(images/editor/dark-button-bold.png); }
+		.editor-dark .editor-toolbar-item .italics-button { background-image: url(images/editor/dark-button-italics.png); }
+		.editor-dark .editor-toolbar-item .strike-button { background-image: url(images/editor/dark-button-strike.png); }
+		.editor-dark .editor-toolbar-item .blockquote-button { background-image: url(images/editor/dark-button-blockquote.png); }
+
+
+/* END EDITOR */

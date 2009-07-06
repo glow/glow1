@@ -1,0 +1,26 @@
+<hello>
+	<foo>Foo</foo>
+	<bar>Bar</bar>
+	<foo hello="world">Bar</foo>
+	<bar pittyThe="foo">Foo</bar>
+	<nested id="test">
+		<foo>Bar</foo>
+	</nested>
+	<!-- no more foo elements please, else it'll break glow.net tests -->
+	<nodeListTest>
+		<testOne id="testOneId" something="pass" isEmpty="">
+			<w hello="everyone">
+				<o y="3">One</o>
+				<o>Two</o>
+				<o y="3">Three</o>
+			</w>
+		</testOne>
+		<testTwo y="3">
+			<o>FAIL</o>
+			<o>FAIL</o>
+			<o>FAIL</o>
+			<o>FAIL</o>
+			<b><b id="innerId">Pass</b></b>
+		</testTwo>
+	</nodeListTest>
+</hello>

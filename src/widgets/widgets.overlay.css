@@ -1,0 +1,27 @@
+.glowCSSVERSION-overlay {
+	visibility: hidden;
+	display: none;
+	overflow: hidden;
+	position: absolute;
+}
+
+/* stop the dotted line around the overlay focal point when it has focus */
+.glowCSSVERSION-overlay .overlay-focalPoint:focus {
+  outline: none;
+}
+.glowCSSVERSION-overlay .overlay-focalPoint {
+  overflow: hidden;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+/*hide stuff offscreen*/
+.glowCSSVERSION-overlay .panelAccess {
+  position: absolute;
+  overflow: hidden;
+  height: 0;
+  width: 0;
+  top: -5000px;
+  left: -5000px;
+}

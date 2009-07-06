@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB" lang="en-GB">
+<head profile="http://dublincore.org/documents/dcq-html/">
+
+<title>GLOW - Interaction tests</title>
+
+<script type="text/javascript">
+
+window.onload = function()
+{
+
+	document.getElementById('launch').onclick = function()
+	{
+		arrSelects = document.getElementsByTagName('SELECT');
+
+		window.location = 'selenium/core/TestRunner.html?test=..%2F..%2Ftest_suite.html#' + arrSelects[0].options[arrSelects[0].selectedIndex].value;
+	}
+
+}
+
+</script>
+
+</head>
+
+<body>
+
+<h1>GLOW Interaction Tests</h1>
+
+<dl id="summary">
+	<dt>Loading Method</dt>
+	<dd>
+		<select>
+			<option value="0">Script tags, no gloader</option>
+			<option value="1">Gloader - Async</option>
+			<option value="2">Gloader - Sync with callback</option>
+			<option value="3">Gloader - Sync without callback</option>
+		</select>
+	</dd>
+</dl>
+
+<input type="button" id="launch" value="START" />
+
+<h2>Instructions on how to use Glow Interaction Tests</h2>
+
+<h3>Setting up the tests</h3>
+
+<ol>
+
+	<li>
+	
+		<p>Download <a href="http://release.seleniumhq.org/selenium-core/1.0-beta-2/selenium-core-1.0-beta-2.zip">Selenium Core Zip</a>, uncompress it into the 'manualtests' folder.  Make sure the created folder is called 'selenium'.</p>
+		
+	</li>
+
+	<li>
+	
+		<p>Move the file 'user-extension.js' from 'manualtests' folder into 'manualtest/selenium/core/scripts' folder.</p>
+	
+	</li>
+
+	<li>
+	
+		<p>Now you need to test the Glow Interaction Test.  View the 'manualtests' folder in a web browser.  Press the [START] button to initiate the tests.</p>
+	
+	</li>
+
+	<li>
+	
+		<p>If the tests ran, then you are ready to add your own test.</p>
+	
+	</li>
+
+</ol>
+
+<h3>Writing a test</h3>
+
+<ol>
+
+	<li>
+	
+		<p>Inside the 'manualtests' folder is the file 'test_suite.html', this file controls how the tests are ran.  This is what the content of the file looks like...</p>
+
+		<pre>
+
+			&lt;html&gt;
+				&lt;body&gt;
+					&lt;table id="suiteTable" class="selenium"&gt;&lt;tbody&gt;
+						&lt;tr&gt;&lt;td&gt;&lt;b&gt;Test Suite&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;
+						&lt;tr&gt;&lt;td&gt;&lt;a href="tweens/tweens.testcase.html"&gt;glow.tweens&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+						&lt;tr&gt;&lt;td&gt;&lt;a href="dragdrop/dragdrop.testcase.html"&gt;glow.dragdrop&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+						&lt;tr&gt;&lt;td&gt;&lt;a href="end_test_suite.html"&gt;Finish&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+					&lt;/tbody&gt;&lt;/table&gt;
+				&lt;/body&gt;
+			&lt;/html&gt;
+
+		</pre>
+
+		<p>Each test that is performed in this suite has its own line...</p>
+
+
+		<pre>
+
+			&lt;tr&gt;&lt;td&gt;&lt;a href="dragdrop/dragdrop.testcase.html"&gt;glow.dragdrop&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+
+		</pre>
+
+		<p>Add a new row into the table for your test, so for example the HTML file would then look like this...</p>
+
+		<pre>
+
+			&lt;html&gt;
+				&lt;body&gt;
+					&lt;table id="suiteTable" class="selenium"&gt;&lt;tbody&gt;
+						&lt;tr&gt;&lt;td&gt;&lt;b&gt;Test Suite&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;
+						&lt;tr&gt;&lt;td&gt;&lt;a href="tweens/tweens.testcase.html"&gt;glow.tweens&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+						&lt;tr&gt;&lt;td&gt;&lt;a href="dragdrop/dragdrop.testcase.html"&gt;glow.dragdrop&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+						<strong>&lt;tr&gt;&lt;td&gt;&lt;a href="example/example.testcase.html"&gt;example&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;</strong>
+						&lt;tr&gt;&lt;td&gt;&lt;a href="end_test_suite.html"&gt;Finish&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+					&lt;/tbody&gt;&lt;/table&gt;
+				&lt;/body&gt;
+			&lt;/html&gt;
+
+		</pre>
+
+		<p>NOTE: Make sure you put it just before the last line.  to function correctly, the last line needs to be the one with 'FINISH' in it.</p>
+
+	</li>
+
+	<li>
+
+		<p>Next step is to add a folder for your test into 'manualtests'.  This is the current folder structure of 'manualtests'...</p>
+
+		<pre>
+
+			- [dir] manualtests
+
+				+ [dir] includes
+
+				+ [dir] dragdrop
+
+				- [dir] tweens
+
+					[file] tweens.html
+
+					[file] tweens.testcase.html
+
+		</pre>
+
+		<p>As you can see the folder 'tweens' has two files in it.  Make a copy of the folder 'tweens', changing the name of the new folder to the name that you set in the step below, like this for example...</p>
+
+		<pre>
+
+			- [dir] manualtests
+
+				+ [dir] includes
+
+				+ [dir] dragdrop
+
+				- [dir] tweens
+
+					[file] tweens.html
+
+					[file] tweens.testcase.html
+
+				<strong>- [dir] example
+
+					[file] example.html
+
+					[file] example.testcase.html</strong>
+
+		</pre>
+
+		<p>In the new folder there are two files. 'example.testcase.html' is the selenium file that the test suite points to. 'example.html' is the actual test that you will write.</p>
+
+	</li>
+
+	<li>
+
+		<p>Go into the new folder that you have just created and edit the file 'example.testcase.html'.  This is quite a long file so here is just an extract of it, the first row of the table...</p>
+
+		<pre>
+
+			&lt;tr&gt;
+				&lt;td&gt;open&lt;/td&gt;
+				&lt;td&gt;tweens/tweens.html&lt;/td&gt;
+				&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+
+		</pre>
+
+		<p>Change the second td tag so it points to the file in your new folder, so for example you would change it to look like this...</p>
+
+		<pre>
+
+			&lt;tr&gt;
+				&lt;td&gt;open&lt;/td&gt;
+				<strong>&lt;td&gt;example/example.html&lt;/td&gt;</strong>
+				&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+
+		</pre>
+
+		<p>You are now ready to make your test.</p>
+	
+	</li>
+
+	<li>
+
+		<p>Open the file 'example.html'.  This file has four main parts to it:</p>
+
+		<ul>
+
+			<li>Javascript function setup_test()</li>
+
+			<li>H1 header tag</li>
+
+			<li>OL instructions list</li>
+
+			<li>DIV called "play_area"</li>
+		
+		</ul>
+		
+		<p>First, edit the H1 header tag to give your new test a meaningful name.  Because we write one test for a part of Glow to test, it is best practice to give this test the name of the part of Glow that is to be tested.</p>
+
+		<p>Now add in your instructions on how the tester will perform the test.  Edit the UL instructions list.  You can break the test down into seperate parts, for each part use an LI.  The Glow Interaction Test interface will show each step one at a time.</p>
+
+		<p>The DIV "play_area" is where you should perform the test.  You can use the Javascript function setup_test() to add what ever elements you need to perform your test, or you can write them in here yourself.</p>
+
+		<p>Now edit the Javascript function setup_test().  Please note, that this function is only called once, so if you want to test two different elements of Glow in one test, it is best to split your test into two.</p>
+
+	</li>
+
+</ol>
+
+</body>
+</html>
