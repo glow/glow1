@@ -1,5 +1,9 @@
 Glow Changelog
 
+1.5.1
+
+* glow.anim.css - now silently fails if an empty nodelist is passed in, rather than throwing an error
+
 1.5.0
 
 * glow.forms - Added "is" test, to ensure one field equals a particular value
