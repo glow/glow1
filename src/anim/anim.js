@@ -320,16 +320,13 @@
 		r.css = function(element, duration, spec, opts) {
 
 			element = get(element);
-			
-			// Fix for trac 156 - glow.anim.css should fail better if the element doesn't exist
-			if (!element[0]) {
-				throw new Error("Invalid element passed into glow.anim.css");
-			}
-			
-			var anim = new r.Animation(duration, opts),
-				cssProp;
 
-			events.addListener(anim, "frame", buildAnimFunction(element, spec));
+			var anim = new r.Animation(duration, opts);
+
+			// Fix for trac 156 - glow.anim.css should fail better if the element doesn't exist
+			if (element[0]) {
+				events.addListener(anim, "frame", buildAnimFunction(element, spec));
+			}
 			return anim;
 		};
 		
