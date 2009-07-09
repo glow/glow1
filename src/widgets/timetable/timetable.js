@@ -1640,6 +1640,11 @@
 				itemLength -= border * ((!timetable._opts.collapseItemBorders) + 1);
 				// size and position
 
+				// it's possible the itemLength has gone below 0, which it shouldn't
+				if (itemLength < 0) {
+					itemLength = 0;
+				}
+
 				itemElm.css(vocab.pos, itemPos)
 					.css(vocab.length, itemLength);
 
