@@ -742,7 +742,7 @@ glow.forms.tests = {
 		var request = glow.net.get(url, {
 			onLoad: function(response) { /*debug*///console.log("glow.forms.tests.ajax - onLoad()");
 				var verdict = opts.arg(response);
-				if (typeof verdict == "boolean") verdict = [verdict, message];
+				if (typeof verdict.push == "undefined") verdict = [verdict, message];
 				callback(verdict[0], verdict[1]);
 			},
 			onError: function(response) {
