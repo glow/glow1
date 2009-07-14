@@ -726,7 +726,9 @@ glow.forms.tests = {
 		);
 	 */
 	ajax: function(values, opts, callback, formValues) { /*debug*///console.log("glow.forms.tests.ajax() - "+opts.url);
-		var queryValues = {};
+		var queryValues = {},
+		    message = (opts.message || "server responded");
+		    
 		for (var p in formValues) {
 			if (typeof formValues[p] == "string") {
 				queryValues[p] = escape(formValues[p]);
@@ -739,7 +741,9 @@ glow.forms.tests = {
 
 		var request = glow.net.get(url, {
 			onLoad: function(response) { /*debug*///console.log("glow.forms.tests.ajax - onLoad()");
-				callback(opts.arg(response), "server responded");
+				var verdict = opts.arg(response);
+				if (typeof verdict == "boolean") verdict = [verdict, message];
+				callback(verdict[0], verdict[1]);
 			},
 			onError: function(response) {
 				alert("Error getting file: "+url);
