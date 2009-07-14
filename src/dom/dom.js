@@ -2902,8 +2902,7 @@
 									}
 									sSelector = sSelector.slice(aRx[0].length);
 								} else {
-									//make this more user friendly?
-									throw new Error("Invalid Selector");
+									throw new Error("glow.dom.get('" + originalSelector + "') error: bad selector used.");
 								}
 							} else {
 								matchedCondition = false;
@@ -2914,8 +2913,7 @@
 					}
 
 					if (sSelector !== "") {
-						//make this more user friendly?
-						throw new Error("Invalid Selector");
+						throw new Error("glow.dom.get('" + originalSelector + "') error: bad selector used.");
 					}
 
 					//add to cache and return
