@@ -2845,7 +2845,8 @@
 						aRx, //temp regex result
 						matchedCondition, //have we matched a condition?
 						sLastSelector, //holds last copy of selector to prevent infinite loop
-						firstLoop = true;
+						firstLoop = true,
+						originalSelector = sSelector;
 
 					while (sSelector && sSelector != sLastSelector) {
 						tagTmp = "";
