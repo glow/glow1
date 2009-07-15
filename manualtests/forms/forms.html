@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB" lang="en-GB"> 
+	<head> 
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>Glow Forms Test</title>
+		
+		<script type="text/javascript" src="../../../gloader/src/gloader.js">
+			gloader.use(
+				"glow",
+				{
+					$base: "../../src",
+					map:   "../../srcloader/map.js"
+				}
+			)
+		</script>
+		
+		<style type="text/css">
+			label {
+				display:block;
+				float:left;
+				clear:both;
+				width:280px;
+				height:20px;
+				line-height:20px;
+				margin:5px 0;
+			}
+			input {
+				float:left;
+			}
+			#testForm {
+				width:46%;
+				margin:0 2%;
+				float:left;
+			}
+			#output {
+				width:46%;
+				margin:0 2%;
+				float:left;
+				padding-top:10px;
+				font-weight:bold;
+			}
+			.error {color:red;}
+			
+		</style>
+	</head>
+
+	<body> 
+		<h2>Webform</h2>
+
+		<h3>Webform Heading</h3>
+
+		<p>If you wish to contact us, please do so by filling in the form below. Please note that fields marked with * are mandatory.</p> 
+		
+		<form method="get" action="thankyou.html" id="testForm">
+			<fieldset>
+				<legend>Personal Details</legend>
+				
+				<label for="username">Select a User Name</label>
+				<input id="username" name="username" type="text" />
+				
+				<label for="title">Title (i.e. Mr, Mrs, etc)</label>
+				<input id="title" name="title" type="text" />
+				
+				<label for="title">Title (i.e. Mr, Mrs, etc)</label>
+				<input id="title" name="title" type="text" />
+				
+				<label for="title">Enter your name (required):</label>
+				<input type="text" name="name" value="anyone" />
+				
+				<label for="title">Enter your email:</label>
+				<input type="text" name="email" value="anyone@example.com" />
+				
+				<label for="title">Enter a password (letters and numbers only):</label>
+				<input type="password" name="password" value="Abc123" />
+			</fieldset>
+			
+			<fieldset>
+				<legend>Numbers</legend>
+				
+				<label for="minNumber">Enter a number (Min: 6):</label>
+				<input type="text" name="minNumber" value="6" />
+				
+				<label for="maxNumber">Enter a number (Max: 6):</label>
+				<input type="text" name="maxNumber" value="6" />
+
+				<label for="rangeNumber">Enter a number (Range: 1..10):</label>
+				<input type="text" name="rangeNumber" value="6" />
+
+			</fieldset>
+			
+			<fieldset>
+				<legend>Maths</legend>
+				
+				<label for="sum">Enter the sum of 2 plus 2:</label>
+				<input type="text" name="sum" value="4" />
+				
+				<label for="notZero">Enter any value except the number zero:</label>
+				<input type="text" name="notZero" value="1" />
+				
+				<label for="notZeroAgain">Enter that same value again:</label>
+				<input type="text" name="notZeroAgain" value="1" />
+				
+				<label for="seven">Enter the number 7 or the word "seven":</label>
+				<input type="text" name="seven" value="7" />
+			</fieldset>	
+			
+			<fieldset>
+				<legend>Range</legend>
+				
+				<label for="fruit">Choose less than five fruits:</label>
+				
+				<div>
+					<label for="apple">Apple</label>
+					<input type="checkbox" checked="checked" name="fruit" value="apple" id="apple" />
+				</div>
+				<div>
+					<label for="orange">Orange</label>
+					<input type="checkbox" checked="checked" name="fruit" value="orange" id="orange" />
+				</div>
+				<div>
+					<label for="pear">Pear</label>				
+					<input type="checkbox" checked="checked" name="fruit" value="pear" id="pear" />
+				</div>
+				<div>
+					<label for="grape">Grape</label>				
+					<input type="checkbox" checked="checked" name="fruit" value="grape" id="grape" />				
+				</div>
+				<div>
+					<label for="bannana">Bannana</label>				
+					<input type="checkbox" checked="checked" name="fruit" value="bannana" id="bannana" />				
+				</div>
+				<div>
+					<label for="kiwi">Kiwi</label>				
+					<input type="checkbox" name="fruit" value="kiwi" id="kiwi" />								
+				</div>
+				
+				<hr style="clear:both;" />
+		
+				<label for="films">Choose at least one film:</label>
+		
+				<select name="films" size="4" multiple="multiple">
+					<option value="1" selected="selected">Raiders of the Lost Ark</option>										
+					<option value="2">The Temple of Doom</option>					
+					<option value="3">The Last Crusade</option>										
+					<option value="4">The Kingdom of the Crystal Skull</option>																				
+				</select>
+
+				<hr style="clear:both;" />
+				
+				<label for="numbers">Choose between 2 and 5 numbers:</label>
+		
+				<select name="numbers" size="4" multiple="multiple">
+					<option value="1" selected="selected">1</option>
+					<option value="2" selected="selected">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+				</select>
+		
+				<hr style="clear:both;" />
+				
+				<label for="colours">Choose 3 colours:</label>
+		
+				<select name="colours" size="4" multiple="multiple">
+					<option value="red" selected="selected">Red</option>
+					<option value="yellow" selected="selected">Yellow</option>
+					<option value="green" selected="selected">Green</option>
+					<option value="blue">Blue</option>
+					<option value="indigo">Indigo</option>
+					<option value="violet">Violet</option>
+				</select>	
+			</fieldset>
+			
+					<script type="text/javascript">// <![CDATA[
+			gloader.load(
+				["glow", "@VERSION@", "glow.forms", "glow.dom", "glow.events"],
+				{
+					async: true, 
+					onLoad: function(glow) {
+						var form = new glow.forms.Form("#testForm");
+						addTests(form, glow);
+						addListeners(form, glow);
+					}
+				}
+			);
+
+			function addTests(form, glow) {
+				form
+					.addTests(
+						"username",
+						[
+							"ajax",
+							{
+								on: "change",
+								arg: function(response) {
+						            var result = response.text();
+						            if (result == "AVAILABLE") return true;
+						            else return [false, " That name is already taken."];
+						        },
+						        url: "check_username.php?username={username}"
+							}
+						]
+					) 
+					.addTests(
+						"title",
+						["required", {
+						on: "submit",
+						message:"Please provide an answer"
+						}]
+					) 
+					.addTests(
+					    "name",
+						["required"]
+					)
+					.addTests(
+					    "email",
+						["isEmail"]
+					)
+					.addTests(
+					    "password",
+						["regex", { arg: "^[a-zA-Z0-9]+$", message: "Only letters and numbers are allowed."}],
+						["minLen", { arg: "6" }],
+						["maxLen", { arg: "10" }]
+					)
+					.addTests(
+					    "minNumber",
+						["required"],
+					    ["isNumber"],
+						["min", { arg: "6" }]
+					)
+					.addTests(
+					    "maxNumber",
+					    ["required"],
+					    ["isNumber"],
+						["max", { arg: "6" }]
+					)
+					.addTests(
+					    "rangeNumber",
+					    ["required"],
+					    ["isNumber"],
+						["range", { arg: "1..10" }]
+					)
+					.addTests(
+					    "fruit",
+					    ["maxCount", { arg: "5" }]
+					)
+					.addTests(
+					    "films",
+					    ["minCount", { arg: "1" }]
+					)
+					.addTests(
+					    "numbers",
+					    ["minCount", { arg: "2" }],
+						["maxCount", { arg: "5" }]
+					)
+					.addTests(
+					    "colours",
+					    ["count", { arg: "3" }]
+					)
+					.addTests(
+					    "sum",
+					    ["is", { arg: "4" }]
+					)
+					.addTests(
+					    "notZero",
+					    ["isNot", { arg: "0" }]
+					)
+					.addTests(
+					    "notZeroAgain",
+						["required"],
+					    ["sameAs", { arg: "notZero" }]
+					)
+					.addTests(
+					    "seven",
+						["custom", {
+							arg: function(values, opts, callback, formData) {
+								for (var i = 0, len = values.length; i < len; i++) {
+									if (values[i] != "seven" && values[i] != "7") {
+										callback(glow.forms.FAIL, "The value must be seven or 7.");
+										return;
+									}
+								}
+								callback(glow.forms.PASS, "You entered seven.");
+							}
+						}]
+					);
+			}
+			
+			function addListeners(form, glow) {
+				var outputElement = glow.dom.get("#output");
+				
+				glow.events.addListener(
+					"#testForm",
+					'submit',
+					function(e) {
+						return false;
+					}
+				);
+				
+				glow.events.addListener(
+					form,
+					'validationError',
+					function(e) {
+						outputElement.append("<span class='error'>" + e.field + " : " + e.message + "</span><br />");
+					}
+				);
+				
+				glow.events.addListener(
+					"#testFormSubmit",
+					'click',
+					function(e) {
+						outputElement.html("");
+					}
+				);					
+			}
+				
+		// ]]></script>
+			<!-- need ajax test -->
+			
+			<p>
+				<input type="submit" value="Submit" id="testFormSubmit" style="clear:both;" />
+			</p>			
+		</form>
+		
+		<p id="output"></p>
+	
+		
+	</body> 
+
+</html> 
