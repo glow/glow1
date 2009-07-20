@@ -316,8 +316,11 @@
 				//
 				this._opts.loop = this._originalOptsLoop;
 				this.element.get(".carousel-window").removeClass("carousel-notEnoughItems");
-				this._navPrev.removeClass("carousel-prev-disabled");
-				this._navNext.removeClass("carousel-next-disabled");
+				if (this._navPrev)
+				{
+					this._navPrev.removeClass("carousel-prev-disabled");
+					this._navNext.removeClass("carousel-next-disabled");
+				}
 			}
 
 
@@ -335,6 +338,8 @@
 			}
 			// use the first item as a model for our pads
 			var pad = $(this.items[0]).clone().attr('role', 'presentation'); // hide the padding item from screenreaders
+			pad.attr('tabIndex', '-1');
+			pad.get('a, img, input').attr('tabIndex', '-1');
 			pad.removeAttr("id");
 			pad.addClass("carousel-added");
 			pad.addClass("carousel-pad");
@@ -352,6 +357,8 @@
 				var clonesToAdd = this._opts.size + Number(this._itemHangingOffEnd);
 				var clone = this.items.slice(0, clonesToAdd).clone(true).attr('role', 'presentation');
 				/*debug*///clone.attr("style", "float:left;filter:alpha(opacity=40);opacity:.4;");
+				clone.attr('tabIndex', '-1');
+				clone.get('a, img, input').attr('tabIndex', '-1');
 				clone.addClass("carousel-added");
 				this._content.append(clone);
 				this.items = this._content.children();
@@ -477,8 +484,10 @@
 			if (this._notEnoughContent) { 
 				// Added for bug fix trac 152 ***
 				// If there isn't enough content to require scrolling then disable both buttons
-				this._navPrev.addClass("carousel-prev-disabled");
-				this._navNext.addClass("carousel-next-disabled");
+				if (this._navPrev) {
+					this._navPrev.addClass("carousel-prev-disabled");
+					this._navNext.addClass("carousel-next-disabled");
+				}
 			} else if (!this._opts.loop) {
 				if (!canGo.apply(this, ["prev"])) this._navPrev.addClass("carousel-prev-disabled");
 				else if (!canGo.apply(this, [])) this._navNext.addClass("carousel-next-disabled");
@@ -586,6 +595,114 @@
 					}
 				}
 			});
+
+
+////
+/*
+	Tabbing interaction
+	===================
+	This block of code makes the carousel play nice when tabbing through it.  Everytime 
+	you tab through an item in the carousel, the widget will move to keep the selected 
+	item in view.
+	
+	Event delegation is used on the widget with focus and blur events.  There are issues
+	with doing this which are explained in detail by PPK:
+	http://www.quirksmode.org/blog/archives/2008/04/delegating_the.html
+*/
+
+			if (glow.env.ie) {
+
+				// If IE then we need to use propriety event "focusin":
+				// http://msdn.microsoft.com/en-us/library/ms536935(VS.85).aspx
+
+				glow.events.addListener(this.element, "focusin", function(e) {
+					_focusCallback( glow.dom.get(e.source) );
+				});
+
+			}
+			else {
+
+				// Everything else can use this event (set to use event capturing instead of event bubbling)
+
+				this.element.item(0).addEventListener('focus', function(e) {
+					_focusCallback(glow.dom.get(e.target));
+				}, true);
+
+			}
+
+
+			/**
+				@name _focusCallback
+				@function
+				@private
+				@param {glow.dom.nodeList} Element where the focus event came from
+				@description If the focused element isn't one of the next/previous buttons then move the carousel to that element
+			*/
+			function _focusCallback(elm) {
+
+				// If the element is not one of the nav buttons (and is not in the pageNav) ...
+				if (
+					   (elm.item(0) != that._navNext[0])
+					&& (elm.item(0) != that._navPrev[0])
+					&& (elm.parent().parent().hasClass('pageNav') == false)
+				) {
+
+					// Get the element's index number from it's parent
+					var elmItemNum = _getCarouselItemNum(elm);
+
+					// And Check to see if the index number is in the array of visible indexes...
+					if ( ('|' + that.visibleIndexes().toString() + '|').replace(/,/g, '|').indexOf('|' + elmItemNum + '|') == -1) {
+
+						// If so, then move the carousel to that index
+						that.moveTo(elmItemNum);
+						setTimeout(function() {
+							glow.dom.get(that._content).parent().item(0).scrollLeft = 0;
+						}, 0);		
+						
+					}
+
+				}
+
+			}
+
+
+			/**
+			@name_getCarouselItemNum
+			@function
+			@private
+			@param {glow.dom.nodeList} Element where the focus event came from
+			@description Work out the index number of the element within the carousel
+			*/
+			function _getCarouselItemNum(elm) {
+
+				// Recurse back through parents until we find the carousel item
+				while (elm.is('.carousel-item') == false) {
+					elm = elm.parent();
+				}
+				
+				// Create nodeList of passed in element's siblings
+				var elmSiblings = elm.parent().children();
+
+				// Default return value is -1, we'll update this if we find a match (we should always find a match so this value is redundant)
+				var x = -1;
+
+				// Loop through sibling nodes until we find a match with the original element
+				elmSiblings.each(function(i){
+
+					// When we get a match set the value of x to match the index value
+					if (elmSiblings[i] == elm.item(0)) {
+						x = i;
+					}
+
+				});
+
+				return x;
+
+			}
+
+//// 
+
+
 		}
 		
 		/**
@@ -691,6 +808,7 @@
 			@private
 		 */
 		function beforeScroll() { /*debug*///console.log("Carousel-beforeScroll()");
+
 			this._navPrev.removeClass("carousel-prev-disabled");
 			this._navNext.removeClass("carousel-next-disabled");
 
@@ -995,8 +1113,10 @@
 			this.rightarrow = dom.create("<li class='arrow' id='rightarrow'><a href='#' class='dotLabel'>next</a></li>");
 
 			var pageNavHtml = "";
+	
 			for (var i = 0; i < pagecount; i++) {
-				pageNavHtml += "<li class='dot' id='dot"+i+"'><div class='dotLabel'>"+(i+1)+"</div></li>";
+//				pageNavHtml += "<li class='dot dot" + i + "' id='dot"+i+"'><div class='dotLabel'>"+(i+1)+"</div></li>";
+				pageNavHtml += "<li class='dot dot" + i + "'><div class='dotLabel'>"+(i+1)+"</div></li>";
 			}
 			
 			this.element = dom.create("<ul class='pageNav'>"+pageNavHtml+"</ul>");		
@@ -1007,8 +1127,9 @@
 			glow.events.addListener(this.element, "click",
 				function(e) {
 					if ($(e.source).parent().hasClass('dot')) { // clicked a dot?
-						var newPage = $(e.source).parent()[0].id.replace(/[^0-9]*/, "");
-						onClick.apply(that, [newPage]);
+//						var newPage = $(e.source).parent()[0].id.replace(/[^0-9]*/, "");
+//						onClick.apply(that, [newPage]);
+						onClick.apply(that, [parseInt($(e.source).html())-1]);
 					}
 				}
 			);
@@ -1018,8 +1139,8 @@
 		
 		PageNav.prototype.update = function(newPage) { /*debug*///console.log("PageNav.prototype.update("+newPage+")");
 			if (typeof newPage == "undefined") newPage = this.currentPage;
-			this.element.get("#dot"+this.currentPage+"").removeClass("dotActive");
-			this.element.get("#dot"+newPage+"").addClass("dotActive");
+			this.element.get("li.dot"+this.currentPage+"").removeClass("dotActive");
+			this.element.get("li.dot"+newPage+"").addClass("dotActive");
 			this.currentPage = newPage;
 		}
 	}

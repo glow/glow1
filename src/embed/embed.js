@@ -186,7 +186,7 @@
 				}
 			}
 
-			result.toString = function(){return this.major ? [this.major,this.minor,this.release].join(".") : "No <a title='BBC Webwise article about downloading' href='http://www.bbc.co.uk/webwise/askbruce/articles/download/howdoidownloadflashplayer_1.shtml'>Flash</a> player installed, or version is pre 6.0.0.  Visit <a href='http://www.bbc.co.uk/webwise/'>BBC Webwise</a> for full instructions"};
+			result.toString = function(){return this.major ? [this.major,this.minor,this.release].join(".") : "No flash player installed, or version is pre 6.0.0"};
 
 			return result;
 

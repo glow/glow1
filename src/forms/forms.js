@@ -707,26 +707,33 @@ glow.forms.tests = {
 			
 			'arg' is the function to handle the response from the server.
 			
+			This function should return a truthy value to indicate whether the server 
+			response should be considered a PASS or a FAIL. Optionally you can include a bespoke
+			error message by returning an array of two elements, the first being
+			the PASS or FAIL verdict, and the second being the error message to display.
+			
 			'url' is the url to call. You can use placeholders in here for form values (see example).
 		@example
-		function handleResponseText(response) {
-			if (response.text() == "OK") {
-				return glow.forms.PASS;
-			} else {
-				return glow.forms.FAIL;
-			}
-		}
-
+		
 		myForm.addTests(
 			"username",
 			["ajax", {
-				arg: handleResponseText,
-				url: "/cgi/checkname.cgi?name={username}"
+				url: "/cgi/checkname.cgi?name={username}",
+				arg: function (response) {
+					if (response.text() == "OK") {
+						return glow.forms.PASS;
+					} else {
+						return [glow.forms.FAIL, "That name is already taken."];
+					}
+				},
+				message: "The server responded: that name is not permitted."
 			}]
 		);
 	 */
 	ajax: function(values, opts, callback, formValues) { /*debug*///console.log("glow.forms.tests.ajax() - "+opts.url);
-		var queryValues = {};
+		var queryValues = {},
+		    message = (opts.message || "server responded");
+		    
 		for (var p in formValues) {
 			if (typeof formValues[p] == "string") {
 				queryValues[p] = escape(formValues[p]);
@@ -739,7 +746,9 @@ glow.forms.tests = {
 
 		var request = glow.net.get(url, {
 			onLoad: function(response) { /*debug*///console.log("glow.forms.tests.ajax - onLoad()");
-				callback(opts.arg(response), "server responded");
+				var verdict = opts.arg(response);
+				if (typeof verdict.push == "undefined") verdict = [verdict, message];
+				callback(verdict[0], verdict[1]);
 			},
 			onError: function(response) {
 				alert("Error getting file: "+url);
