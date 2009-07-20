@@ -159,10 +159,11 @@ of &lt;body> which have class "glowNoMask" will be left as children of
 
 				function resizeMask() {
 					var bodyHeight = body.height();
-					
 					// we do this twice to catch scrollbars showing & hiding
 					for (var i = 0; i < 2; i++) {
-						that.maskElement.css("width", "100%").
+						// Fix for git bug 60: mask now set to the correct width even when horizontal scrolling is being applied to the page
+						// Work out the required width to set the mask (this is basically the width of the content but without the mask!)
+						that.maskElement.css("width", getScrollWidth() + "px").
 							css("height", ( that.opts.disableScroll ? noScrollContainer.height() : Math.max(bodyHeight, win.height()) ) + "px");
 					}
 					if (glow.env.ie < 7) {
@@ -170,6 +171,29 @@ of &lt;body> which have class "glowNoMask" will be left as children of
 						that._iframe.css("width", maskStyle.width).css("height", maskStyle.height);
 					}
 				}
+
+//				function getScrollWidth() {
+//					var width;
+//					if (glow.env.gecko)
+//					{
+//						that.maskElement.hide();
+//						width = document.documentElement.scrollWidth;
+//						that.maskElement.show();
+//					}
+//					else
+//					{
+//						width = (glow.env.webkit || glow.env.ie) ? document.body.scrollWidth : document.documentElement.scrollWidth;
+//					}
+//					return width;
+//				}
+
+				function getScrollWidth() {
+					that.maskElement.hide(); // Hide mask element so it doesn't confuse Firefox (FF treats the width of the mask as the width of the page)
+					var width = (glow.env.webkit || glow.env.ie) ? document.body.scrollWidth : document.documentElement.scrollWidth;
+					that.maskElement.show();
+					return width;
+				}
+
 				this.maskElement.css("visibility", "visible").css("display", "block");
 				if (glow.env.ie < 7) {
 					this._iframe.css("display", "block");
