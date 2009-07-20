@@ -685,7 +685,9 @@
 				];
 			}
 			
-			timeline = new glow.anim.Timeline(channels);
+			timeline = new glow.anim.Timeline(channels, {
+				destroyOnComplete: true
+			});
 			
 			events.addListener(timeline, "start", opts.onStart);
 			events.addListener(timeline, "complete", opts.onComplete);
