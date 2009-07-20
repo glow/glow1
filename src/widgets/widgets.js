@@ -18,16 +18,17 @@
 			doc = document;
 			docBody = doc.body;
 			
-			// block any further ready calls until our widgets CSS has loaded
-			glow._addReadyBlock("glow_widgetsCSS");
-			
 			//check if css or images are disabled, add class name "glow-basic" to body if they aren't
-			var testDiv = glow.dom.create('<div class="glowCSSVERSION-cssTest" style="height:20px;position:absolute;visibility:hidden;top:-20px;display:block"></div>').appendTo(docBody);
+			var testDiv = glow.dom.create('<div class="glowCSSVERSION-cssTest" style="height:0;position:absolute;visibility:hidden;top:-20px;display:block"></div>').appendTo(docBody);
 			
-			if (testDiv.height() != 20) {
+			// not testing for height as that break in some browsers' 'zoom' implementations
+			if (testDiv.css("visibility") != 'hidden') {
 				//css disabled
 				docBody.className += " glowCSSVERSION-basic";
 			} else {
+				// block any further ready calls until our widgets CSS has loaded
+				glow._addReadyBlock("glow_widgetsCSS");
+				
 				(function() {
 					if (testDiv.css("z-index") != "1234") {
 						//css hasn't loaded yet

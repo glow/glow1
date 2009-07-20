@@ -368,7 +368,7 @@
 					}
 					completeHeight = 0;
 					fromHeight = element.slice(i, i+1).height();
-				} else if (action == "down" || (action = "toggle" && element.slice(i, i+1).height() == 0)) {
+				} else if (action == "down" || (action == "toggle" && element.slice(i, i+1).height() == 0)) {
 					fromHeight = element.slice(i, i+1).height();
 					element[i].style.height = "auto";
 					completeHeight = element.slice(i, i+1).height();
@@ -383,7 +383,9 @@
 
 			}
 			
-			timeline = new glow.anim.Timeline(channels);
+			timeline = new glow.anim.Timeline(channels, {
+				destroyOnComplete: true
+			});
 			
 			events.addListener(timeline, "complete", function() {
 				// return heights to "auto" for slide down
@@ -604,7 +606,9 @@
 				];
 			}
 			
-			timeline = new glow.anim.Timeline(channels);
+			timeline = new glow.anim.Timeline(channels, {
+				destroyOnComplete: true
+			});
 			
 			events.addListener(timeline, "start", opts.onStart);
 			events.addListener(timeline, "complete", opts.onComplete);
@@ -1258,8 +1262,11 @@
 				i = this._channels.length; while (i--) {
 					// loop through all the animations
 					j = this._channels[i].length; while (j--) {
-						// DESTROYYYYY!
-						this._channels[i][j].destroy();
+						// check it has a destroy method (making sure it's an animation & not a function)
+						if (this._channels[i][j].destroy) {
+							// DESTROYYYYY!
+							this._channels[i][j].destroy();
+						}
 					}
 				}
 				return this;
