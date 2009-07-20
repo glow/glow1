@@ -299,7 +299,11 @@
 		@param {Boolean} [opts.useSeconds=true] Specifies whether duration should be in seconds rather than frames.
 
 		@param {Function} [opts.tween=linear tween] The way the value moves through time. See {@link glow.tweens}.
-
+		
+		@param {Boolean} [opts.destroyOnComplete=false] Destroy the animation once it completes?
+			This will free any DOM references the animation may have created. Once
+			the animation completes, you won't be able to start it again.
+		
 		@example
 		// an example of an spec object
 		{
