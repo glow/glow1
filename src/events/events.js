@@ -548,7 +548,12 @@
    			if (! name) throw 'glow.events.fire: required parameter name not passed';
 			if (! e) { e = new r.Event(); }
 			if ( e.constructor === Object ) { e = new r.Event( e ) }
-			
+
+			if (typeof attachedTo == 'string') {
+				if (! glow.dom) { throw "glow.dom must be loaded to use a selector as the first argument to glow.events.addListener"; }
+				attachedTo = $(attachedTo);
+			}
+
 			e.type = name;
 			e.attachedTo = attachedTo;
 			if (! e.source) { e.source = attachedTo; }
@@ -558,25 +563,80 @@
 				objEventListeners = objListeners && objListeners[name];
 			
 			// 3 assignments, but stop assigning if any of them are false
-			(objIdent = attachedTo[psuedoPrivateEventKey]) &&
+//			(objIdent = attachedTo[psuedoPrivateEventKey]) &&
+//				(objListeners = listenersByObjId[objIdent]) &&
+//				(objEventListeners = objListeners[name]);
+
+//			if (! objEventListeners) { return e; } // Moved this to inside the else below
+
+
+
+			if (typeof attachedTo.addClass == 'function') {
+
+				attachedTo.each(function(i){
+
+					(objIdent = attachedTo[i][psuedoPrivateEventKey]) &&
+					(objListeners = listenersByObjId[objIdent]) &&
+					(objEventListeners = objListeners[name]);
+		
+					if (! objEventListeners) { return e; }
+
+					checkListeners(attachedTo[i], objEventListeners.slice(0), e);
+
+				});
+
+			} else {
+
+				(objIdent = attachedTo[psuedoPrivateEventKey]) &&
 				(objListeners = listenersByObjId[objIdent]) &&
 				(objEventListeners = objListeners[name]);
+
+//				console.log(typeof attachedTo);
+//				console.log(attachedTo);
+//				console.log(attachedTo[psuedoPrivateEventKey]);
+//				console.log(psuedoPrivateEventKey);
+
+				//console.log("obj: " + objEventListeners);
 			
-			if (! objEventListeners) { return e; }
+				if (! objEventListeners) { return e; }
+
+				checkListeners(attachedTo, objEventListeners.slice(0), e);
+
+			}
+
+			
+			
+//			var listener;
+//
+//			// we make a copy of the listeners before calling them, as the event handlers may
+//			// remove themselves (took me a while to track this one down)
+//			var listeners = objEventListeners.slice(0);
+//			for (var i = 0, len = listeners.length; i < len; i++) {
+//				listener = listeners[i];
+//				if ( listener[2].call(listener[3] || attachedTo, e) === false ) {
+//					e.preventDefault();
+//				}
+//			}
+
+
+
+			return e;
+		};
+
+		function checkListeners(attachedTo, listeners, e) {
 			
 			var listener;
 
 			// we make a copy of the listeners before calling them, as the event handlers may
 			// remove themselves (took me a while to track this one down)
-			var listeners = objEventListeners.slice(0);
 			for (var i = 0, len = listeners.length; i < len; i++) {
 				listener = listeners[i];
 				if ( listener[2].call(listener[3] || attachedTo, e) === false ) {
 					e.preventDefault();
 				}
 			}
-			return e;
-		};
+
+		}
 
 		/**
 		@private
@@ -951,5 +1011,6 @@
 		r.addListener(window, "unload", clearEvents);
 
 		glow.events = r;
+		glow.events.listenersByObjId = listenersByObjId;
 	}
 });

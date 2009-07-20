@@ -79,6 +79,40 @@ t.test("Load DOM", function() {
   });
 });
 
+t.test("glow.events.fire used with all selector types", function() {
+
+	t.expect(3);
+
+	// Add DOM element to the page
+	glow.dom.get("body").append(glow.dom.create('<div id="firingTest"></div>'));
+
+	// Add event listener onto the element
+	var customEvent = new glow.events.Event(),
+		listener = glow.events.addListener(
+		glow.dom.get('div#firingTest'),
+		'click',
+		function (e) {
+			t.ok(true, e.testMessage);
+		}
+	);
+
+	// Fire event using a DOM node selector
+	customEvent.testMessage = "events.fire with DOM node: glow.dom.get('div#firingTest')[0]";
+	glow.events.fire(glow.dom.get('div#firingTest')[0], 'click', customEvent);
+
+	// Fire event using a nodeList selector
+	customEvent.testMessage = "events.fire with nodeList: glow.dom.get('div#firingTest')";
+	glow.events.fire(glow.dom.get('div#firingTest'), 'click', customEvent);
+
+	// Fire event using a string selector
+	customEvent.testMessage = "events.fire with string: 'div#firingTest'";
+	glow.events.fire('div#firingTest', 'click', customEvent);
+
+	// Remove DOM element from the page
+	glow.dom.get('div#firingTest').remove();
+
+});
+
 t.test("Removing all events from an object / nodelist", function() {
 	t.expect(5);
 	
