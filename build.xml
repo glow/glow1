@@ -168,7 +168,7 @@
 		</copy>
 	</target>
 
-	<target name="min" depends="check.yuicompressor,temp">
+	<target name="min" depends="temp">
 		<echo message="Creating minified files"/>
 		<apply executable="java" parallel="false" failonerror="true">
 			<arg line="-jar"/>
@@ -203,22 +203,12 @@
 			compression="gzip" />
 	</target>
 
-	<target name="all" depends="check.yuicompressor,dist">
+	<target name="all" depends="dist">
 		<echo message="" />
 		<echo message="**************************************" />
 		<echo message="Glow version ${VERSION} build complete" />
 		<echo message="**************************************" />
 		<echo message="" />
-	</target>
-	
-	<!-- checks -->
-	
-	<target name="check.yuicompressor">
-	  <condition property="yui.ok">
-			<available file="${YUI_JAR}" />
-		</condition>
-		<fail unless="yui.ok">${YUI_JAR} not found. Please ensure YUI Compressor is installed, and referenced properly in build.properties.
-		</fail>
 	</target>
 
 </project>
