@@ -13,6 +13,7 @@
 	<property name="DIST_PKG_DIR" value="${DIST_DIR}/${NAME}/${VERSION}" />
 	<property name="DIST_ZIP" value="${ROOT_DIR}/${NAME}-${VERSION}.zip" />
 	<property name="DIST_TGZ" value="${ROOT_DIR}/${NAME}-${VERSION}.tgz" />
+	<property name="YUI_JAR" value="build/lib/yuicompressor-2.4.2.jar" />
 
 	<!-- Files -->
 
