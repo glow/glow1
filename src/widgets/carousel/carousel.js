@@ -155,7 +155,6 @@
 			
 			// cast the integers
 			opts.animDuration = Number(opts.animDuration);
-//			opts.step = Number(opts.step);
 			opts.size = Number(opts.size);
 			
 
@@ -291,7 +290,109 @@
 			this._originalOptsLoop = this._opts.loop; // Added for bug fix trac 152 ***
 
 			rebuild.apply(this);
+			
+			// apply delegated events
+			addKeyboardNavEvents.call(this);
+			addItemClickEvent.call(this);
+			
 			this._ready = true;
+		}
+		
+		/**
+			Deal with delegation for the itemClick event
+			@private
+		*/
+		function addItemClickEvent() {
+			// set up item events
+			var that = this;
+			
+			glow.events.addListener(that._content, "click", function(e) { /*debug*///console.log("item clicked "+e.source);
+				for (var el = $(e.source); el[0] != that.element[0]; el = el.parent()) { // climb up the dom tree
+					if (el.hasClass("carousel-item")) {
+						if (!el.hasClass("carousel-pad")) {
+							glow.events.fire(that, "itemClick", {
+								item: el[0],
+								itemIndex: el[0]["_index"+glow.UID] % that._countReal
+							});
+						}
+						break;
+					}
+				}
+			});
+		}
+		
+		/**
+			Add the events needed for keboard navigation
+			@private
+		*/
+		function addKeyboardNavEvents() {
+			// keyboard nav
+			var currentKeyDown,
+				that = this;
+				
+			events.addListener(this.element, "keydown", function(e) {
+				if (currentKeyDown) {
+					return false;
+				}
+				switch (e.key) {
+					case "UP":
+					case "LEFT":
+						currentKeyDown = e.key
+						if ( !that._isPlaying() ) {
+							that.prev();
+							startRepeatOrSlide.call(that, true);
+						}
+						return false;
+					case "DOWN":
+					case "RIGHT":
+						currentKeyDown = e.key
+						if ( !that._isPlaying() ) {
+							that.next();
+							startRepeatOrSlide.call(that);
+						}
+						return false;
+					case "ENTER":
+						currentKeyDown = e.key
+						if ( e.source == that._navNext[0] || (that._pageNav && e.source.parentNode == that._pageNav.rightarrow[0]) ) {
+							that.next();
+							startRepeatOrSlide.call(that);
+							return false;
+						} else if (e.source == that._navPrev[0] || (that._pageNav && e.source.parentNode == that._pageNav.leftarrow[0]) ) {
+							that.prev();
+							startRepeatOrSlide.call(that, true);
+							return false;
+						}
+				}
+				
+			});
+			events.addListener(this.element, "keyup", function(e) {
+				switch (e.key) {
+					case "UP":
+					case "LEFT":
+					case "DOWN":
+					case "RIGHT":
+					case "ENTER":
+						currentKeyDown = null;
+						stopRepeatOrSlide.call(that);
+				}
+			});
+			// prevent scrolling in opera
+			events.addListener(this.element, "keypress", function(e) {
+				switch (e.key) {
+					case "UP":
+					case "LEFT":
+					case "DOWN":
+					case "RIGHT":
+						return false;
+					case "ENTER":
+						if (
+							e.source == that._navNext[0] || (that._pageNav && e.source.parentNode == that._pageNav.rightarrow[0]) ||
+							e.source == that._navPrev[0] || (that._pageNav && e.source.parentNode == that._pageNav.leftarrow[0])
+						) {
+							return false;
+						}
+				}
+			});
 		}
 		
 		/**
@@ -509,87 +610,7 @@
 				if (e.relatedTarget && (e.relatedTarget == that._navNext[0] || $(e.relatedTarget).isWithin(that._navNext))) {
 					return;
 				}
-				stopRepeatOrSlide.call(that); });
-			
-			// keyboard nav
-			var currentKeyDown;
-			events.addListener(this.element, "keydown", function(e) {
-				if (currentKeyDown) {
-					return false;
-				}
-				switch (e.key) {
-					case "UP":
-					case "LEFT":
-						currentKeyDown = e.key
-						if ( !that._isPlaying() ) {
-							that.prev();
-							startRepeatOrSlide.call(that, true);
-						}
-						return false;
-					case "DOWN":
-					case "RIGHT":
-						currentKeyDown = e.key
-						if ( !that._isPlaying() ) {
-							that.next();
-							startRepeatOrSlide.call(that);
-						}
-						return false;
-					case "ENTER":
-						currentKeyDown = e.key
-						if ( e.source == that._navNext[0] || (that._pageNav && e.source.parentNode == that._pageNav.rightarrow[0]) ) {
-							that.next();
-							startRepeatOrSlide.call(that);
-							return false;
-						} else if (e.source == that._navPrev[0] || (that._pageNav && e.source.parentNode == that._pageNav.leftarrow[0]) ) {
-							that.prev();
-							startRepeatOrSlide.call(that, true);
-							return false;
-						}
-				}
-				
-			});
-			events.addListener(this.element, "keyup", function(e) {
-				switch (e.key) {
-					case "UP":
-					case "LEFT":
-					case "DOWN":
-					case "RIGHT":
-					case "ENTER":
-						currentKeyDown = null;
-						stopRepeatOrSlide.call(that);
-				}
-			});
-			// prevent scrolling in opera
-			events.addListener(this.element, "keypress", function(e) {
-				switch (e.key) {
-					case "UP":
-					case "LEFT":
-					case "DOWN":
-					case "RIGHT":
-						return false;
-					case "ENTER":
-						if (
-							e.source == that._navNext[0] || (that._pageNav && e.source.parentNode == that._pageNav.rightarrow[0]) ||
-							e.source == that._navPrev[0] || (that._pageNav && e.source.parentNode == that._pageNav.leftarrow[0])
-						) {
-							return false;
-						}
-				}
-			});
-			
-			// set up item events
-			glow.events.addListener(this._content, "click", function(e) { /*debug*///console.log("item clicked "+e.source);
-				for (var el = $(e.source); el[0] != that.element[0]; el = el.parent()) { // climb up the dom tree
-					if (el.hasClass("carousel-item")) {
-						if (!el.hasClass("carousel-pad")) {
-							glow.events.fire(that, "itemClick", {
-								item: el[0],
-								itemIndex: el[0]["_index"+glow.UID] % that._countReal
-							});
-						}
-						break;
-					}
-				}
+				stopRepeatOrSlide.call(that);
 			});
 		}
 		
