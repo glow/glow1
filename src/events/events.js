@@ -263,6 +263,27 @@
 		}
 		
 		/**
+		Add mouseEnter or mouseLeave 'event' to an element
+		@private
+		@param {HTMLElement} attachTo Element to create mouseenter / mouseleave for
+		@param {Boolean} isLeave Create mouseleave or mouseenter?
+		*/
+		function addMouseEnterLeaveEvent(attachTo, isLeave) {
+			var elm = $(attachTo),
+				listenFor = isLeave ? "mouseout" : "mouseover",
+				toFire = isLeave ? "mouseleave" : "mouseenter";
+			
+			r.addListener(attachTo, listenFor, function(e) {
+				var relatedTarget = $(e.relatedTarget);
+				// if the mouse has come from outside elm...
+				if ( !relatedTarget.eq(elm) && !relatedTarget.isWithin(elm) ) {
+					// return false if default is prevented by mouseEnter event
+					return !r.fire(elm[0], toFire, e).defaultPrevented();
+				}
+			})
+		}
+		
+		/**
 		@name glow.events._copyListeners 
 		@function
 		@private
@@ -318,6 +339,15 @@
 		@name glow.events.addListener
 		@function
 		@description Adds an event listener to an object (e.g. a DOM Element or Glow widget).
+		
+			Some non-standard dom events are available:
+			
+			<dl>
+				<dt>mouseenter</dt>
+				<dd>Fires when the mouse enters this element specifically, does not bubble</dd>
+				<dt>mouseleave/dt>
+				<dd>Fires when the mouse leaves this element specifically, does not bubble</dd>
+			</dl>
 		
 		@param {String | NodeList | Object} attachTo The object to attach the event listener to.
 		
@@ -387,6 +417,18 @@
 			objEventListeners[objEventListeners.length] = listener;
 
 			if ((attachTo.addEventListener || attachTo.attachEvent) && ! domListeners[objIdent + ':' + name]) {
+				
+				// handle 'special' dom events (ie, ones that aren't directly mapped to real dom events)
+				// we don't actually add a dom listener for these event names
+				switch (name) {
+					case "mouseenter":
+						addMouseEnterLeaveEvent(attachTo, false);
+						return ident;
+					case "mouseleave":
+						addMouseEnterLeaveEvent(attachTo, true);
+						return ident;
+				}
+				
 				addDomListener(attachTo, name);
 				domListeners[objIdent + ':' + name] = true;
 			}
@@ -561,15 +603,6 @@
 			var objIdent,
 				objListeners,
 				objEventListeners = objListeners && objListeners[name];
-			
-			// 3 assignments, but stop assigning if any of them are false
-//			(objIdent = attachedTo[psuedoPrivateEventKey]) &&
-//				(objListeners = listenersByObjId[objIdent]) &&
-//				(objEventListeners = objListeners[name]);
-
-//			if (! objEventListeners) { return e; } // Moved this to inside the else below
-
-
 
 			if (typeof attachedTo.addClass == 'function') {
 
@@ -590,35 +623,12 @@
 				(objIdent = attachedTo[psuedoPrivateEventKey]) &&
 				(objListeners = listenersByObjId[objIdent]) &&
 				(objEventListeners = objListeners[name]);
-
-//				console.log(typeof attachedTo);
-//				console.log(attachedTo);
-//				console.log(attachedTo[psuedoPrivateEventKey]);
-//				console.log(psuedoPrivateEventKey);
-
-				//console.log("obj: " + objEventListeners);
 			
 				if (! objEventListeners) { return e; }
 
 				checkListeners(attachedTo, objEventListeners.slice(0), e);
 
 			}
-
-			
-			
-//			var listener;
-//
-//			// we make a copy of the listeners before calling them, as the event handlers may
-//			// remove themselves (took me a while to track this one down)
-//			var listeners = objEventListeners.slice(0);
-//			for (var i = 0, len = listeners.length; i < len; i++) {
-//				listener = listeners[i];
-//				if ( listener[2].call(listener[3] || attachedTo, e) === false ) {
-//					e.preventDefault();
-//				}
-//			}
-
-
 
 			return e;
 		};
