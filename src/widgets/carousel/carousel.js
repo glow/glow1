@@ -286,7 +286,7 @@
 				|| this._navNext[0].style.width
 				|| this._navNext[0].style.height
 			);
-
+			
 			this._originalOptsLoop = this._opts.loop; // Added for bug fix trac 152 ***
 
 			rebuild.apply(this);
