@@ -985,7 +985,7 @@
 			@example
 				var myNodeList = glow.dom.get("a");
 				myNodeList.each(function(i){
-					this == myNodeList[i];
+					// in this function: this == myNodeList[i]
 				});
 			*/
 			each: function (callback) {
