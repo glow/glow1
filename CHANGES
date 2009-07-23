@@ -1,5 +1,14 @@
 Glow Changelog
 
+1.6.0
+
+* glow.events - Focus/blur events allow bubbling on all elements.
+* glow.widgets.Overlay - closeToEsc param added to constructor option.  Enabling this allows user to close overlay with ESC button.
+* glow.events.fire - Allow attachTo parameter to be DOM node, glow.dom.nodeList or string.
+* glow.widgets.Carousel - Better keyboard interaction.  User can tab through items in the carousel.
+* glow.widgets.Mask - Mask now correctly calculates the required width (previously wasn't doing this when the content scrolled horizontally).
+* glow.dom.get - Extended "invalid selector" error message with value of invalid selector used.
+
 1.5.1
 
 * glow.anim.css - now silently fails if an empty nodelist is passed in, rather than throwing an error
