@@ -15,6 +15,7 @@
 				XML_ERR:"Cannot get response as XML, check the mime type of the data",
 				POST_DEFAULT_CONTENT_TYPE:'application/x-www-form-urlencoded;'
 			},
+			endsPlusXml = /\+xml$/,
 			/**
 			 * @name glow.net.scriptElements
 			 * @private
@@ -626,10 +627,23 @@
 				Response as XML
 			*/
 			xml: function() {
-				if (!this.nativeResponse.responseXML) {
+				var nativeResponse = this.nativeResponse;
+				
+				// check property exists
+				if (!nativeResponse.responseXML) {
 					throw new Error(STR.XML_ERR);
 				}
-				return this.nativeResponse.responseXML;
+				
+				// IE 6 & 7 fail to recognise Content-Types ending +xml (eg application/rss+xml)
+				// as XML, so we create an XML object from the text here
+				if ( glow.env.ie < 8 && endsPlusXml.test(this.header("Content-Type")) ) {
+					var doc = new ActiveXObject("Microsoft.XMLDOM");
+                    doc.loadXML( nativeResponse.responseText );
+					return doc;
+				}
+				else {
+					return nativeResponse.responseXML;
+				}				
 			},
 
 			/**
