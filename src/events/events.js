@@ -263,7 +263,7 @@
 		}
 		
 		/**
-		Add mouseEnter or mouseLeave 'event' to an element
+		Add mouseenter or mouseleave 'event' to an element
 		@private
 		@param {HTMLElement} attachTo Element to create mouseenter / mouseleave for
 		@param {Boolean} isLeave Create mouseleave or mouseenter?
@@ -277,7 +277,7 @@
 				var relatedTarget = $(e.relatedTarget);
 				// if the mouse has come from outside elm...
 				if ( !relatedTarget.eq(elm) && !relatedTarget.isWithin(elm) ) {
-					// return false if default is prevented by mouseEnter event
+					// return false if default is prevented by mouseenter event
 					return !r.fire(elm[0], toFire, e).defaultPrevented();
 				}
 			})
