@@ -2492,7 +2492,25 @@
 					return {left:left, top:top};
 				}
 			},
+			
+			/**
+			@name glow.dom.NodeList#position
+			@function
+			@description Get the top & left position of an element relative to its positioned parent
+				
+				This is useful if you want to make a position:static element position:absolute
+				and retain the original position of the element
+				
+			@returns {Object} An object with 'top' and 'left' number properties
 
+			@example
+				// get the top distance from the positioned parent
+				glow.dom.get("#elm").position().top
+			*/
+			position: function() {
+				
+			},
+			
 			/**
 			@name glow.dom.NodeList#append
 			@function

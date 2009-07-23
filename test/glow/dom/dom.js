@@ -1764,39 +1764,6 @@ t.test("glow.dom.NodeList.height", function() {
 	node.parentNode.removeChild(node);
 });
 
-t.test("glow.dom.NodeList.offset", function() {
-  t.expect(4);
-  var node = glow.dom.create("" +
-	'<div id="offsetTests" style="position:absolute;top:0;left:0;">' +
-	  '<div style="height:100px"></div>' +
-	  '<div class="scroller1" style="width: 300px; height: 300px; overflow: scroll; position: relative">' +
-		'<div style="height: 500px"></div>' +
-		'<div class="test1 scroller2" style="width: 300px; height: 300px; overflow: scroll; position: relative; background:#f00">' +
-		  '<div class="test2" style="position:absolute; left: 400px; top: 800px; width: 200px; height: 200px; background:#ff0"></div>' +
-		'</div>' +
-		'<div style="height: 500px"></div>' +
-	  '</div>' +
-	'</div>' +
-  '').appendTo(document.body);
-  
-  
-  
-  //safari 1.3 is annoying and won't set the scroll position straight away, so we need to do this...
-  t.stop();
-  setTimeout(function() {
-	node.get("div.scroller1")[0].scrollTop = 400;
-	node.get("div.scroller2")[0].scrollTop = 700;
-	
-	t.equals(node.get("div.test1").offset().top, 200, "y position with scrolling");
-	t.equals(node.get("div.test1").offset().left, 0, "x position with scrolling");
-	t.equals(node.get("div.test2").offset().top, 300, "nested y position with scrolling");
-	t.equals(node.get("div.test2").offset().left, 400, "nested x position with scrolling");
-
-	node.remove();
-	t.start();
-  }, 50);
-});
-
 t.todo("glow.dom.NodeList.css getting", function() {
 	t.expect(61);
 	var node = glow.dom.create("" +
@@ -1978,4 +1945,90 @@ t.todo("glow.dom.NodeList.css getting", function() {
 	//strange value from this in firefox 3
 	t.equals(glow.dom.get("#cssTests div.posTest2").css("bottom"), "30px", "bottom (px val)");
 	node.parentNode.removeChild(node);
+});
+
+t.module("glow.dom.NodeList position detecting");
+
+t.test("Load DOM", function() {
+  t.expect(1);
+  t.stop();
+  glow.ready(function() {
+    t.ok(glow.isReady, "Document Ready");
+    t.start();
+  });
+});
+
+t.test("glow.dom.NodeList#offset", function() {
+  t.expect(4);
+  var node = glow.dom.create("" +
+	'<div id="offsetTests" style="position:absolute;top:0;left:0;">' +
+	  '<div style="height:100px"></div>' +
+	  '<div class="scroller1" style="width: 300px; height: 300px; overflow: scroll; position: relative">' +
+		'<div style="height: 500px"></div>' +
+		'<div class="test1 scroller2" style="width: 300px; height: 300px; overflow: scroll; position: relative; background:#f00">' +
+		  '<div class="test2" style="position:absolute; left: 400px; top: 800px; width: 200px; height: 200px; background:#ff0"></div>' +
+		'</div>' +
+		'<div style="height: 500px"></div>' +
+	  '</div>' +
+	'</div>' +
+  '').appendTo(document.body);
+  
+  
+  
+  //safari 1.3 is annoying and won't set the scroll position straight away, so we need to do this...
+  t.stop();
+  setTimeout(function() {
+	node.get("div.scroller1")[0].scrollTop = 400;
+	node.get("div.scroller2")[0].scrollTop = 700;
+	
+	t.equals(node.get("div.test1").offset().top, 200, "y position with scrolling");
+	t.equals(node.get("div.test1").offset().left, 0, "x position with scrolling");
+	t.equals(node.get("div.test2").offset().top, 300, "nested y position with scrolling");
+	t.equals(node.get("div.test2").offset().left, 400, "nested x position with scrolling");
+
+	node.destroy();
+	t.start();
+  }, 50);
+});
+
+t.test("glow.dom.NodeList#position", function() {
+	t.expect(1);
+	
+	var node = glow.dom.create('' +
+		'<div id="positionTest" style="position:relative; background:#000">' +
+			'<div id="pos1" style="position:relative; height:20px; width:300px; padding:20px; margin:10px">' +
+				'<div id="pos1_1" style="height:5px; width:5px; padding:5px; border:5px solid #000"></div>' +
+			'</div>' +
+			'<div id="pos2" style="position:relative; height:40px; width:300px; padding:20px; margin:10px; border: 10px solid red">' +
+				'<div id="pos2_1" style="height:5px; width:5px; padding:20px; border:5px solid #000"></div>' +
+			'</div>' +
+			'<div id="pos3" style="height:20px; width:300px; padding:20px; margin:10px">' +
+				'<div id="pos3_1" style="height:5px; width:5px; padding:20px; border:5px solid #000; margin: 10px"></div>' +
+			'</div>' +
+			'<div id="pos4" style="position:absolute; height:50px; width:50px; padding:5px; margin:10px; top:5px; left: 5px">' +
+				'<div id="pos4_1" style="height:5px; width:5px; padding:0px; margin:5px"></div>' +
+			'</div>' +
+		'</div>' +
+	'').appendTo(document.body);
+	
+	var pos1Position = glow.dom.get("#pos1").position();
+	var pos1_1Position = glow.dom.get("#pos1_1").position();
+	var pos2Position = glow.dom.get("#pos2").position();
+	var pos2_1Position = glow.dom.get("#pos2_1").position();
+	var pos3Position = glow.dom.get("#pos3").position();
+	var pos3_1Position = glow.dom.get("#pos3_1").position();
+	var pos4Position = glow.dom.get("#pos4").position();
+	var pos4_1Position = glow.dom.get("#pos4_1").position();
+	
+	t.equals(pos1Position.top, 0, "pos1 top position");
+	t.equals(pos1Position.left, 0, "pos1 left position");
+	
+	t.equals(pos1_1Position.top, 20, "pos1_1 top position");
+	t.equals(pos1_1Position.left, 20, "pos1_1 left position");
+	
+	t.equals(pos2Position.top, 60, "pos2 top position");
+	t.equals(pos2Position.left, 0, "pos2 left position");
+	
+	// TODO: finish the rest of the test values
+	
 });
