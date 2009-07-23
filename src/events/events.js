@@ -144,7 +144,7 @@
 
 		/*
 		PrivateMethod: addDomListener
-			Adds an event listener to a browser object. Massages differences with certain events.
+			Adds an event listener to a browser object. Manages differences with certain events.
 
 		Arguments:
 			attachTo - the browser object to attach the event to.
@@ -236,15 +236,54 @@
 					}
 				}
 
+				// If IE then change focus/blur events to focusin/focusout events.
+				// This allows input elements to bubble, so form elements work with event delegation.
+				if (glow.env.ie)
+				{
+					if (name == 'focus') name = 'focusin';
+					if (name == 'blur') name = 'focusout';
+				}
+
 				r.fire(this, name, event);
 				if (event.defaultPrevented()) {
 					return false;
 				}
 			};
-			
+
+
 			if (attachTo.addEventListener && (!glow.env.webkit || glow.env.webkit > 418)) {
-				attachTo.addEventListener(name.toLowerCase() == 'mousewheel' && glow.env.gecko ? 'DOMMouseScroll' : name, callback, false);
+
+				// Convert focus/blur events to use capturing.
+				// This allows form elements to be used with event delegation.
+				var capturingMode = false;
+				if (
+					   (name == 'focus')
+					|| (name == 'blur')
+				) {
+					capturingMode = true;
+
+					// This is to fix an issue between Opera and everything else.
+					// Opera needs to have an empty eventListener attached to the parent
+					// in order to fire a captured event (in our case we are using capture if
+					// the event is focus/blur) on an element when the element is the eventTarget.
+					//
+					// It is only happening in Opera 9, Opera 10 doesn't show this behaviour.
+					// It looks like Opera has a bug, but according to the W3C Opera is correct...
+					//
+					// "A capturing EventListener will not be triggered by events dispatched 
+					// directly to the EventTarget upon which it is registered."
+					// http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-flow-capture
+					if (glow.env.opera)
+					{
+						glow.dom.get(attachTo).parent()[0].addEventListener(name, function(){},true);
+					}
+
+				}
+
+				attachTo.addEventListener(name.toLowerCase() == 'mousewheel' && glow.env.gecko ? 'DOMMouseScroll' : name, callback, capturingMode);
+
 			} else {
+
 				var onName = 'on' + name;
 				var existing = attachTo[onName];
 				if (existing) {
@@ -258,12 +297,15 @@
 				} else {
 					attachTo[onName] = callback;
 				}
+
 			}
+
 			attachTo = null;
+
 		}
 		
 		/**
-		Add mouseenter or mouseleave 'event' to an element
+		Add mouseEnter or mouseLeave 'event' to an element
 		@private
 		@param {HTMLElement} attachTo Element to create mouseenter / mouseleave for
 		@param {Boolean} isLeave Create mouseleave or mouseenter?
@@ -277,7 +319,7 @@
 				var relatedTarget = $(e.relatedTarget);
 				// if the mouse has come from outside elm...
 				if ( !relatedTarget.eq(elm) && !relatedTarget.isWithin(elm) ) {
-					// return false if default is prevented by mouseenter event
+					// return false if default is prevented by mouseEnter event
 					return !r.fire(elm[0], toFire, e).defaultPrevented();
 				}
 			})
@@ -401,7 +443,15 @@
 				
 				return listenerIds;
 			}
-			
+	
+			// If IE then change focus/blur events to focusin/focusout events.
+			// This allows input elements to bubble, so form elements work with event delegation.
+			if (glow.env.ie)
+			{
+				if (name == 'focus') name = 'focusin';
+				if (name == 'blur') name = 'focusout';
+			}
+	
 			var objIdent;
 			if (! (objIdent = attachTo[psuedoPrivateEventKey])) {
 				objIdent = attachTo[psuedoPrivateEventKey] = objid++;
@@ -596,6 +646,14 @@
 				attachedTo = $(attachedTo);
 			}
 
+			// If IE then change focus/blur events to focusin/focusout events.
+			// This allows input elements to bubble, so form elements work with event delegation.
+			if (glow.env.ie)
+			{
+				if (name == 'focus') name = 'focusin';
+				if (name == 'blur') name = 'focusout';
+			}
+	
 			e.type = name;
 			e.attachedTo = attachedTo;
 			if (! e.source) { e.source = attachedTo; }
@@ -608,6 +666,7 @@
 
 				attachedTo.each(function(i){
 
+					// 3 assignments, but stop assigning if any of them are false
 					(objIdent = attachedTo[i][psuedoPrivateEventKey]) &&
 					(objListeners = listenersByObjId[objIdent]) &&
 					(objEventListeners = objListeners[name]);
@@ -620,6 +679,7 @@
 
 			} else {
 
+				// 3 assignments, but stop assigning if any of them are false
 				(objIdent = attachedTo[psuedoPrivateEventKey]) &&
 				(objListeners = listenersByObjId[objIdent]) &&
 				(objEventListeners = objListeners[name]);
@@ -748,7 +808,7 @@
 		        function () { alert("CTRL+ALT+a pressed"); }
 		    );
 			glow.events.addKeyListener("SHIFT+\u00A9", "down",
-				function () { alert("SHIFT+© pushed") }
+				function () { alert("SHIFT+Â© pushed") }
 			);
 		*/
 		var keyRegex = /^((?:(?:ctrl|alt|shift)\+)*)(?:(\w+|.)|[\n\r])$/i;
