@@ -2535,16 +2535,10 @@
 					parentBorderLeft = parseInt( offsetParent.css("border-left-width") ) || 0,
 					parentBorderTop = parseInt( offsetParent.css("border-top-width") ) || 0,
 					
-					//this is for IE6 only, which positions things horizontally within the padding
-					/*parentPaddingLeft = (glow.env.ie == 6) ? parseInt( offsetParent.css("padding-left") ) : 0,
-					parentPaddingLeft = 0,*/
-					
 					// element offsets
 					elOffset = this.offset(),
 					offsetParentOffset = offsetParent.offset();
-
-				//alert(elOffset.left + " - " + offsetParentOffset.left + " - " + marginLeft + " - " + parentBorderLeft + " - " + parentPaddingLeft);
-
+				
 				return {
 					left: elOffset.left - offsetParentOffset.left - marginLeft - parentBorderLeft,
 					top:  elOffset.top  - offsetParentOffset.top  - marginTop  - parentBorderTop
