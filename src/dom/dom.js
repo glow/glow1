@@ -761,6 +761,23 @@
 				y: docElm.scrollTop || win.pageYOffset || 0
 			};
 		}
+		
+		/*
+		 Get the 'real' positioned parent for an element, otherwise return document body
+		*/
+		function getPositionedParent(elm) {
+			var offsetParent = elm.offsetParent;
+			
+			// IE places elements with hasLayout in the offsetParent chain even if they're position:static,
+			// here we work around this
+			if (glow.env.ie) {
+				// get the real offset parent
+				while (offsetParent && offsetParent.currentStyle.position == "static") {
+					offsetParent = offsetParent.offsetParent;
+				}
+			}
+			return offsetParent || document.body;
+		}
 
 		//public
 		var r = {}; //object to be returned
@@ -2431,7 +2448,7 @@
 						left = 0,
 						originalElm = elm,
 						nodeNameLower,
-						//does the parent chain
+						//does the parent chain contain a position:fixed element
 						involvesFixedElement = false,
 						offsetParentBeforeBody;
 
@@ -2508,7 +2525,30 @@
 				glow.dom.get("#elm").position().top
 			*/
 			position: function() {
+				var offsetParent = r.get( getPositionedParent(this[0]) ),
 				
+					// element margins to deduct
+					marginLeft = parseInt( this.css("margin-left") ) || 0,
+					marginTop = parseInt( this.css("margin-top") ) || 0,
+					
+					// offset parent borders to deduct
+					parentBorderLeft = parseInt( offsetParent.css("border-left-width") ) || 0,
+					parentBorderTop = parseInt( offsetParent.css("border-top-width") ) || 0,
+					
+					//this is for IE6 only, which positions things horizontally within the padding
+					/*parentPaddingLeft = (glow.env.ie == 6) ? parseInt( offsetParent.css("padding-left") ) : 0,
+					parentPaddingLeft = 0,*/
+					
+					// element offsets
+					elOffset = this.offset(),
+					offsetParentOffset = offsetParent.offset();
+
+				//alert(elOffset.left + " - " + offsetParentOffset.left + " - " + marginLeft + " - " + parentBorderLeft + " - " + parentPaddingLeft);
+
+				return {
+					left: elOffset.left - offsetParentOffset.left - marginLeft - parentBorderLeft,
+					top:  elOffset.top  - offsetParentOffset.top  - marginTop  - parentBorderTop
+				}
 			},
 			
 			/**

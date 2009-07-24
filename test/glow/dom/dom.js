@@ -1992,17 +1992,17 @@ t.test("glow.dom.NodeList#offset", function() {
 });
 
 t.test("glow.dom.NodeList#position", function() {
-	t.expect(1);
+	t.expect(16);
 	
 	var node = glow.dom.create('' +
-		'<div id="positionTest" style="position:relative; background:#000">' +
-			'<div id="pos1" style="position:relative; height:20px; width:300px; padding:20px; margin:10px">' +
+		'<div id="positionTest" style="position:relative; background:#000; zoom:1; overflow: hidden">' +
+			'<div id="pos1" style="position:relative; height:120px; width:300px; padding:20px; margin: 0 10px 10px 10px">' +
 				'<div id="pos1_1" style="height:5px; width:5px; padding:5px; border:5px solid #000"></div>' +
 			'</div>' +
-			'<div id="pos2" style="position:relative; height:40px; width:300px; padding:20px; margin:10px; border: 10px solid red">' +
+			'<div id="pos2" style="position:relative; height:140px; width:300px; padding:20px; margin:10px; border: 10px solid red">' +
 				'<div id="pos2_1" style="height:5px; width:5px; padding:20px; border:5px solid #000"></div>' +
 			'</div>' +
-			'<div id="pos3" style="height:20px; width:300px; padding:20px; margin:10px">' +
+			'<div id="pos3" style="height:200px; width:130px; padding:20px; margin:10px">' +
 				'<div id="pos3_1" style="height:5px; width:5px; padding:20px; border:5px solid #000; margin: 10px"></div>' +
 			'</div>' +
 			'<div id="pos4" style="position:absolute; height:50px; width:50px; padding:5px; margin:10px; top:5px; left: 5px">' +
@@ -2026,22 +2026,22 @@ t.test("glow.dom.NodeList#position", function() {
 	t.equals(pos1_1Position.top, 20, "pos1_1 top position");
 	t.equals(pos1_1Position.left, 20, "pos1_1 left position");
 	
-	t.equals(pos2Position.top, 60, "pos2 top position");
+	t.equals(pos2Position.top, 160, "pos2 top position");
 	t.equals(pos2Position.left, 0, "pos2 left position");
 	
 	t.equals(pos2_1Position.top, 20, "pos2_1 top position");
 	t.equals(pos2_1Position.left, 20, "pos2_1 left position");
 	
-	t.equals(pos3Position.top, 170, "pos3 top position");
+	t.equals(pos3Position.top, 370, "pos3 top position");
 	t.equals(pos3Position.left, 0, "pos3 left position");
 	
-	t.equals(pos3_1Position.top, 200, "pos3_1 top position");
+	t.equals(pos3_1Position.top, (glow.env.ie == 6) ? 390 : 400, "pos3_1 top position");
 	t.equals(pos3_1Position.left, 30, "pos3_1 left position");
 	
 	t.equals(pos4Position.top, 5, "pos4 top position");
 	t.equals(pos4Position.left, 5, "pos4 left position");
 	
-	t.equals(pos4_1Position.top, 5, "pos4_1 top position");
+	t.equals(pos4_1Position.top, (glow.env.ie == 6) ? 0 : 5, "pos4_1 top position");
 	t.equals(pos4_1Position.left, 5, "pos4_1 left position");
 	
 });
