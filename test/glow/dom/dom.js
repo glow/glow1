@@ -2029,6 +2029,15 @@ t.test("glow.dom.NodeList#position", function() {
 	t.equals(pos2Position.top, 60, "pos2 top position");
 	t.equals(pos2Position.left, 0, "pos2 left position");
 	
+	t.equals(pos2_1Position.top, 20, "pos2_1 top position");
+	t.equals(pos2_1Position.left, 20, "pos2_1 left position");
+	
+	t.equals(pos3Position.top, 170, "pos3 top position");
+	t.equals(pos3Position.left, 0, "pos3 left position");
+	
+	t.equals(pos3_1Position.top, 20, "pos3_1 top position");
+	t.equals(pos3_1Position.left, 20, "pos3_1 left position");
+	
 	// TODO: finish the rest of the test values
 	
 });
