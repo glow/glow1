@@ -21,7 +21,8 @@
 			_zIndex = 1000,
 			_ieStrict = (document.compatMode == "CSS1Compat" && glow.env.ie >= 5) ? true : false,
 			_ieTrans= (document.compatMode != "CSS1Compat" && glow.env.ie >= 5) ? true : false,
-			_ie = glow.env.ie >= 5;
+			_ie = glow.env.ie >= 5,
+			sides = ['top', 'right', 'bottom', 'left'];
 
 		/*
 		PrivateFunction: memoize(clss, name)
@@ -46,6 +47,18 @@
 				if (cachedName in this) return this[cachedName];
 				return this[cachedName] = orig.apply(this, arguments);
 			};
+		}
+		
+		/*
+		 Copy margins from one element to another
+		*/
+		function copyMargins(to, from) {
+			var i = sides.length, margin;
+			
+			while (i--) {
+				margin = 'margin-' + sides[i];
+				to.css(margin, from.css(margin));
+			}
 		}
 
 		/*
@@ -364,12 +377,10 @@
 			*/
 
 			surroundWidth: function () {
-				return this.val('margin-left')
-					 + this.val('border-left-width')
+				return this.val('border-left-width')
 					 + this.val('padding-left')
 					 + this.val('padding-right')
-					 + this.val('border-right-width')
-					 + this.val('margin-right');
+					 + this.val('border-right-width');
 			},
 
 			/*
@@ -382,12 +393,10 @@
 			*/
 
 			surroundHeight: function () {
-				return this.val('margin-top')
-					 + this.val('border-top-width')
+				return this.val('border-top-width')
 					 + this.val('padding-top')
 					 + this.val('padding-bottom')
-					 + this.val('border-bottom-width')
-					 + this.val('margin-bottom');
+					 + this.val('border-bottom-width');
 			},
 
 			/*
@@ -585,17 +594,23 @@
 				var placeholderBox = new Box(placeholder),
 					el = this.el,
 					position = pos || el.css('position');
+				
 				placeholder.css('display', 'none');
-
+				
 				el.after(placeholder);
-
-				placeholder.css('width', (this.outerWidth() - placeholderBox.surroundWidth()) + 'px');
-				placeholder.css('height', (this.outerHeight() - placeholderBox.surroundHeight()) + 'px');
-
+				
+				console.log(el[0].offsetWidth);
+				
+				placeholder.css('width', (el[0].offsetWidth - placeholderBox.surroundWidth()) + 'px')
+					.css('height', (el[0].offsetHeight - placeholderBox.surroundHeight()) + 'px');
+				
+				// copy margin values
+				copyMargins(placeholder, el);
+				
 				placeholder.remove();
-
+				
 				placeholder.css('display', 'block');
-
+				
 				if (position != 'static') {
 					placeholder.css('left', startLeft + 'px');
 					placeholder.css('top', startTop + 'px');
@@ -1699,8 +1714,8 @@
 					position = box.el.position();
 					
 				draggable._startOffset = {
-					x: position.left - marginLeft,
-					y: position.top - marginTop
+					x: position.left,
+					y: position.top
 				};
 				draggable._dropIndicator = dropIndicator;
 				delete this._dropIndicator;
