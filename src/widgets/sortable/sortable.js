@@ -14,26 +14,7 @@
 			events = glow.events,
 			fire = events.fire,
 			addListener = events.addListener;
-		/**
-		@private
-		@name glow.widgets.Sortable#offsetTop
-		@function
-		@description Get the offsetTop of an element in a way that works in IE.
-		@param {glow.dom.NodeList} element The element to get the offsetTop of.
-		@returns {Number} An integer pixel offset.
-		*/
-		// TODO - this is a copy of the one in dragdrop, which should be moved to dom, removing the need for this
-		function offsetTop (element) {
-			var offsetParent = element[0].offsetParent,
-				marginDeduct = parseInt(element.css("margin-top")) || 0;
-			
-			if (glow.env.ie) {
-				while (offsetParent.currentStyle.position == "static") {
-					offsetParent = offsetParent.offsetParent;
-				}
-			}
-			return element.offset().top - $(offsetParent).offset().top - marginDeduct;
-		}
+
 		/**
 		@name glow.widgets.Sortable
 		@constructor
@@ -157,7 +138,7 @@
 		    var offsets = [], maxBottom = 0, bottom, dropTargets = this.dropTargets;
 			this.containers.each(function (i) {
 				var el = $(this);
-				offsets[i] = offsetTop(el);
+				offsets[i] = el.position().top;
 				bottom = offsets[i] + el[0].offsetHeight;
 				if (glow.env.khtml) bottom -= el.css('margin-top') + el.css('margin-bottom');
 				if (bottom > maxBottom) maxBottom = bottom;
