@@ -213,15 +213,13 @@
 			offsetParentPageTop: function () {
 				var el = this.el[0], pos, top;
 				while (el = el.offsetParent) {
-					pos = $(el).css('position');
-					if (pos == 'absolute' || pos == 'fixed' || pos == 'relative') break;
+					if ( $(el).css('position') != 'static' ) {
+						break;
+					}
 				}
-				if (! el) return 0;
-  				top = el.offsetTop;
-				while (el = el.offsetParent) {
-					top += el.offsetTop;
-				}
-				return top;
+				return el ?
+					$(el).offset().top :
+					0;
 			},
 
 			/*
@@ -507,8 +505,9 @@
 			*/
 
 			outerBounds: function () {
-				var left = this.offsetLeft(),
-					top = this.offsetTop();
+				var position = this.el.position(),
+					left = position.left,
+					top = position.top;
 				return [
 					top,
 					left + this.borderWidth(),
@@ -620,7 +619,11 @@
 			*/
 
 			contains: function (box) {
-				var bounds = this.boundsFor(box), top = box.offsetTop(), left = box.offsetLeft();
+				var bounds = this.boundsFor(box),
+					position = box.el.position(),
+					top = position.top,
+					left = position.left;
+				
 				return top  >= bounds[0]  // top
 					&& left <= bounds[1]  // right
 					&& top  <= bounds[2]  // bottom
@@ -912,11 +915,14 @@
 					pos = el.css('position'),
 					newLeft,
 					newTop;
+				
 				box.resetPosition();
-				var	offset = {
-					x: box.offsetLeft(),
-					y: box.offsetTop()
-				};
+				
+				var position = box.el.position(),
+					offset = {
+						x: position.left,
+						y: position.top
+					};
 
 				if (this._placeholder || this._dropIndicator) {
 					el.remove();
@@ -1009,10 +1015,11 @@
 
 				this._preDragPosition = el.css('position');
 				
-				var startOffset = this._startOffset = {
-					x: box.offsetLeft(),
-					y: box.offsetTop()
-				};
+				var position = box.el.position(), 
+					startOffset = this._startOffset = {
+						x: position.left,
+						y: position.top
+					};
 				
 				if (container) {
 					this._containerBox = new Box(container);
@@ -1390,9 +1397,10 @@
 					leftDestination,
 					topDestination,
 					el = this.element,
+					position = this._box.el.position(),
 					distance = Math.pow(
-						Math.pow(this._startOffset.x - this._box.offsetLeft(), 2)
-						+ Math.pow(this._startOffset.y - this._box.offsetTop(), 2),
+						Math.pow(this._startOffset.x - position.left, 2)
+						+ Math.pow(this._startOffset.y - position.top, 2),
 						0.5
 					),
 					duration = 0.3 + (distance / 1000);
@@ -1687,11 +1695,12 @@
 					box = new Box(dropIndicator);
 				//dropIndicator.after(draggable.element);
 				var marginLeft = parseInt(dropIndicator.css('margin-left')) || 0,
-					marginTop  = parseInt(dropIndicator.css('margin-top')) || 0;
+					marginTop  = parseInt(dropIndicator.css('margin-top')) || 0,
+					position = box.el.position();
 					
 				draggable._startOffset = {
-					x: box.offsetLeft() - marginLeft,
-					y: box.offsetTop() - marginTop
+					x: position.left - marginLeft,
+					y: position.top - marginTop
 				};
 				draggable._dropIndicator = dropIndicator;
 				delete this._dropIndicator;

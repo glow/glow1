@@ -763,20 +763,24 @@
 		}
 		
 		/*
-		 Get the 'real' positioned parent for an element, otherwise return document body
+		 Get the 'real' positioned parent for an element, otherwise return null.
 		*/
 		function getPositionedParent(elm) {
 			var offsetParent = elm.offsetParent;
 			
-			// IE places elements with hasLayout in the offsetParent chain even if they're position:static,
-			// here we work around this
-			if (glow.env.ie) {
-				// get the real offset parent
-				while (offsetParent && offsetParent.currentStyle.position == "static") {
-					offsetParent = offsetParent.offsetParent;
-				}
+			// get the real positioned parent
+			// IE places elements with hasLayout in the offsetParent chain even if they're position:static
+			// Also, <body> and <html> can appear in the offsetParent chain, but we don't want to return them if they're position:static
+			while (offsetParent && r.get(offsetParent).css("position") == "static") {	
+				offsetParent = offsetParent.offsetParent;
 			}
-			return offsetParent || document.body;
+			
+			// sometimes the <html> element doesn't appear in the offsetParent chain, even if it has position:relative
+			if (!offsetParent && r.get(docElm).css("position") != "static") {
+				offsetParent = docElm;
+			}
+			
+			return offsetParent || null;
 		}
 
 		//public
@@ -2469,7 +2473,7 @@
 						}
 
 						//we need the offset parent (before body) later
-						if (elm.nodeName.toLowerCase != "body") {
+						if (elm.nodeName.toLowerCase() != "body") {
 							offsetParentBeforeBody = elm;
 						}
 
@@ -2525,23 +2529,24 @@
 				glow.dom.get("#elm").position().top
 			*/
 			position: function() {
-				var offsetParent = r.get( getPositionedParent(this[0]) ),
-				
+				var positionedParent = r.get( getPositionedParent(this[0]) ),
+					hasPositionedParent = !!positionedParent[0],
+					
 					// element margins to deduct
 					marginLeft = parseInt( this.css("margin-left") ) || 0,
-					marginTop = parseInt( this.css("margin-top") ) || 0,
+					marginTop  = parseInt( this.css("margin-top")  ) || 0,
 					
-					// offset parent borders to deduct
-					parentBorderLeft = parseInt( offsetParent.css("border-left-width") ) || 0,
-					parentBorderTop = parseInt( offsetParent.css("border-top-width") ) || 0,
+					// offset parent borders to deduct, set to zero if there's no positioned parent
+					positionedParentBorderLeft = ( hasPositionedParent && parseInt( positionedParent.css("border-left-width") ) ) || 0,
+					positionedParentBorderTop  = ( hasPositionedParent && parseInt( positionedParent.css("border-top-width")  ) ) || 0,
 					
 					// element offsets
 					elOffset = this.offset(),
-					offsetParentOffset = offsetParent.offset();
+					positionedParentOffset = hasPositionedParent ? positionedParent.offset() : {top: 0, left: 0};
 				
 				return {
-					left: elOffset.left - offsetParentOffset.left - marginLeft - parentBorderLeft,
-					top:  elOffset.top  - offsetParentOffset.top  - marginTop  - parentBorderTop
+					left: elOffset.left - positionedParentOffset.left - marginLeft - positionedParentBorderLeft,
+					top:  elOffset.top  - positionedParentOffset.top  - marginTop  - positionedParentBorderTop
 				}
 			},
 			
