@@ -296,6 +296,8 @@
 				Use 'returnTo' to specify where to send focus when the overlay closes
 			@param {String} [opts.id] Value for the Overlay container's ID attribute
 			@param {String} [opts.className] Values for the Overlay container's class attribute.
+			@param {Boolean} [opts.closeOnEsc=false] Close the overlay when the ESC key is pressed
+				The overlay needs to have focus for the ESC key to close.
 
 		@example
 			var overlay = new glow.widgets.Overlay(
@@ -364,7 +366,8 @@
 				},
 				hideWindowedFlash: true,
 				focusOnShow: false,
-				id: "glowCSSVERSIONOverlay" + (++overlayCount)
+				id: "glowCSSVERSIONOverlay" + (++overlayCount),
+				closeOnEsc: false
 			}, opts);
 			
 			// generate a default mask if needed
@@ -475,6 +478,28 @@
 			//apply aria properties
 			for (i in opts.ariaProperties) {
 				overlayNode.attr("aria-" + i, opts.ariaProperties[i]);
+			}
+
+			//closeOnEsc
+			if (this.opts.closeOnEsc)
+			{
+				// If we are going to close the overlay when the user presses the ESC key, we need
+				// the overlay to be able to gain focus, so it can capture any events on itself.
+				overlayNode.attr("tabIndex", "0");
+
+				// keypress + ESC key not being recognised in webkit, so use keyup instead...
+				// https://bugs.webkit.org/show_bug.cgi?id=25147
+				// http://code.google.com/p/chromium/issues/detail?id=9061#c2
+				var escKeyEvent = (glow.env.webkit) ? "keyup" : "keypress";
+
+				// When the user presses the ESC key hide the overlay.
+				glow.events.addListener(overlayNode, escKeyEvent, function(e){
+					if (e.key == "ESC")
+					{
+						that.hide();
+					}
+				});
+				
 			}
 		}
 
