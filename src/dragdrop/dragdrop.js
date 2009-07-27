@@ -233,15 +233,7 @@
 				An integer number of pixels.
 			*/
 			offsetTop: function () {
-				var offsetParent = this.el[0].offsetParent,
-					marginDeduct = parseInt(this.el.css("margin-top")) || 0;
-				
-				if (glow.env.ie) {
-					while (offsetParent && offsetParent.currentStyle.position == "static") {
-						offsetParent = offsetParent.offsetParent;
-					}
-				}
-				return this.el.offset().top - $(offsetParent || document.body).offset().top - marginDeduct;
+				return this.el.position().top;
 			},
 
 			/*
@@ -253,27 +245,7 @@
 				An integer number of pixels.
 			*/
 			offsetLeft: function () {
-				var offsetParent = this.el[0].offsetParent,
-					r,
-					marginDeduct = parseInt(this.el.css("margin-left")) || 0,
-					//this is for IE6 only, which does absolute positions CACKLY (see below)
-					paddingLeftDeduct = 0;
-				
-				if (glow.env.ie) {
-					while (offsetParent && offsetParent.currentStyle.position == "static") {
-						offsetParent = offsetParent.offsetParent;
-					}
-					offsetParent = $(offsetParent || document.body);
-					
-					//IE6 positions things horizontally within the padding
-					if (glow.env.ie == 6) {
-						paddingLeftDeduct = parseInt(offsetParent.css("padding-left"));
-					}
-				} else {
-					offsetParent = $(offsetParent);
-				}
-				r = this.el.offset().left - offsetParent.offset().left - paddingLeftDeduct - marginDeduct;
-				return r;
+				return this.el.position().left;
 			},
 
 			/*
