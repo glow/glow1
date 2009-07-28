@@ -37,6 +37,7 @@
 			 * @type String
 			 */
 			globalObjectName = "_" + glow.UID + "loadScriptCbs",
+			$ = glow.dom.get,
 			events = glow.events,
 			emptyFunc = function(){};
 
@@ -299,20 +300,19 @@
 				globalObject = window[globalObjectName] || (window[globalObjectName] = {});
 
 			//assign onload
-			if (opts.onLoad) {
+			if (opts.onLoad != emptyFunc) {
 				globalObject[callbackName] = function() {
 					//clear the timeout
 					request._timeout && clearTimeout(request._timeout);
 					//set as completed
 					request.completed = true;
+					// call the user's callback
 					opts.onLoad.apply(this, arguments);
-					// cleanup
-					glow.dom.get(script).destroy();
-					// clean up references to prevent leaks
-					script = scriptElements[newIndex] = globalObject[callbackName] = undefined;
+					// cleanup references to prevent leaks
+					request.destroy();
+					script = globalObject[callbackName] = undefined;
 					delete globalObject[callbackName];
-					delete scriptElements[newIndex];
-				}
+				};
 				url = glow.lang.interpolate(url, {callback: globalObjectName + "." + callbackName});
 			}
 
@@ -549,6 +549,29 @@
 			abort: function() {
 				if (!this.completed && !events.fire(this, "abort").defaultPrevented()) {
 					abortRequest(this);
+				}
+				return this;
+			},
+			/**
+			 @name glow.net.Request#destroy
+			 @function
+			 @description Release memory from a {@link glow.net.loadScript} call.
+				
+				This is called automatically by {@link glow.net.loadScript loadScript}
+				calls that have {callback} in the URL. However, if you are not using
+				{callback}, you can use this method manually to release memory when
+				the request has finished.
+			 
+			 @example
+				var request = glow.net.loadScript('http://www.bbc.co.uk/whatever.js');
+			
+			 @returns this
+			*/
+			destroy: function() {
+				if (this._callbackIndex !== undefined) {
+					$( scriptElements[this._callbackIndex] ).destroy();
+					scriptElements[this._callbackIndex] = undefined;
+					delete scriptElements[this._callbackIndex];
 				}
 				return this;
 			}
