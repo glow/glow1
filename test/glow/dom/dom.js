@@ -790,7 +790,7 @@ t.test("glow.dom.NodeList.val(Object)", function () {
 });
 
 t.test("glow.dom.NodeList#prop", function() {
-	t.expect(20);
+	t.expect(22);
 	
 	var elm = glow.dom.create(
 		'<input type="checkbox" name="ck2" value="val2" checked="checked"/>' +
@@ -805,9 +805,10 @@ t.test("glow.dom.NodeList#prop", function() {
 	// setting
 	
 	elm.prop("_test1", 10);
-	
 	var myObj = {hello:"world"};
-	elm.prop("_test2", myObj);
+	var returnVal = elm.prop("_test2", myObj);
+	
+	t.ok(returnVal === elm, "NodeList returned when setting");
 	
 	// getting what we just set, via api
 	t.ok( elm.slice(0,1).prop("_test1") === 10, "10 set and got via prop() (elm 1)" );
@@ -830,10 +831,12 @@ t.test("glow.dom.NodeList#prop", function() {
 	
 	var myObj2 = {foo:"bar"};
 	
-	elm.prop({
+	returnVal = elm.prop({
 		_test3: 5,
 		_test4: myObj2
 	});
+	
+	t.ok(returnVal === elm, "NodeList returned when setting multiple");
 	
 	// get those values
 	t.ok( elm.slice(0,1).prop("_test3") === 5, "5 set and got via prop() (elm 1)" );
