@@ -790,7 +790,7 @@ t.test("glow.dom.NodeList.val(Object)", function () {
 });
 
 t.test("glow.dom.NodeList#prop", function() {
-	t.expect(14);
+	t.expect(20);
 	
 	var elm = glow.dom.create(
 		'<input type="checkbox" name="ck2" value="val2" checked="checked"/>' +
@@ -825,6 +825,25 @@ t.test("glow.dom.NodeList#prop", function() {
 	t.ok( elm.slice(0,1)[0]._test2 === myObj, "myObj set and got via [0] (elm 1)" );
 	t.ok( elm.slice(1,2)[0]._test2 === myObj, "myObj set and got via [0] (elm 2)" );
 	t.ok( elm.slice(2,3)[0]._test2 === myObj, "myObj set and got via [0] (elm 3)" );
+	
+	// more setting - multiple values
+	
+	var myObj2 = {foo:"bar"};
+	
+	elm.prop({
+		_test3: 5,
+		_test4: myObj2
+	});
+	
+	// get those values
+	t.ok( elm.slice(0,1).prop("_test3") === 5, "5 set and got via prop() (elm 1)" );
+	t.ok( elm.slice(1,2).prop("_test3") === 5, "5 set and got via prop() (elm 2)" );
+	t.ok( elm.slice(2,3).prop("_test3") === 5, "5 set and got via prop() (elm 3)" );
+	
+	t.ok( elm.slice(0,1).prop("_test4") === myObj2, "myObj2 set and got via prop() (elm 1)" );
+	t.ok( elm.slice(1,2).prop("_test4") === myObj2, "myObj2 set and got via prop() (elm 2)" );
+	t.ok( elm.slice(2,3).prop("_test4") === myObj2, "myObj2 set and got via prop() (elm 3)" );
+	
 });
 
 // glow.dom.NodeList.is(CssExpression)

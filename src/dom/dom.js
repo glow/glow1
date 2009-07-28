@@ -1125,16 +1125,19 @@
 				returns the attribute value.
 
 			@example
-				var myNodeList = glow.dom.get("myImgClass");
+				var myNodeList = glow.dom.get(".myImgClass");
 
 				// get an attribute
-				myNodeList.attr("class") == "myImgClass"
+				myNodeList.attr("class");
 
 				// set an attribute
 				myNodeList.attr("class", "anotherImgClass");
 
 				// set multiple attributes
-				myNodeList.attr({ src : "a.png", alt : "a PNG" });
+				myNodeList.attr({
+				  src: "a.png",
+				  alt: "Cat jumping through a field"
+				});
 			*/
 			attr: function (name /* , val */) {
 				var that = this,
@@ -1253,6 +1256,45 @@
 
 				return typeof attributes[attr] != "undefined";
 			},
+			
+			/**
+			@name glow.dom.NodeList#prop
+			@function
+			@description Gets or sets node peropties
+			
+				This function gets / sets node properties, to get attributes,
+				see {@link glow.dom.NodeList#attr NodeList#attr}.
+				
+				When getting a property, it is retrieved from the first
+				node in the NodeList. Setting properties to each element in
+				the NodeList.
+				
+				To set multiple properties in one call, pass in an object of
+				name/value pairs.
+				
+			@param {String | Object} name The name of the property, or an object of name/value pairs
+			@param {String} [value] The value to set the property to.
+
+			@returns {String | glow.dom.NodeList}
+
+				When setting properties it returns the NodeList, otherwise
+				returns the property value.
+
+			@example
+				var myNodeList = glow.dom.get("#formElement");
+
+				// get the node name
+				myNodeList.prop("nodeName");
+
+				// set a property
+				myNodeList.prop("_secretValue", 10);
+
+				// set multiple properties
+				myNodeList.prop({
+					checked: true,
+					_secretValue: 10
+				});
+			*/
 
 			/**
 			@name glow.dom.NodeList#hasClass
