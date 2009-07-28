@@ -11,7 +11,7 @@ t.test("Load DOM", function() {
 
 t.test("Test Embedding", function() {
 
-	t.expect(7);
+	t.expect(6);
 	
 	var $ = glow.dom.get;
 	
@@ -42,9 +42,6 @@ t.test("Test Embedding", function() {
 
 	
 	t.ok($("#flashTest " + embed_tag).length==1,"after call to embed, we have an embedded object");
-	
-	// movies are given a generated ID to fix an IE issue
-	t.ok(movie.movie.id.length, "Movie has been given a generated ID");
 	
 	flashHolder.remove();
 });
@@ -134,39 +131,33 @@ t.test("check that supplied attributes are set correctly", function() {
 	var flashHolder = glow.dom.create('<div id="flashTest"></div>').appendTo("body");
 
 	var embed_tag = glow.env.ie ? "object" : "embed";
-
-	try {
-		new glow.embed.Flash("anyold.swf","#flashTest","6",{
-		  attributes: {
-			id:"testFlash",
-			name:"gwor",
-			blat:"gret"
-		  },
-		  params:{
-			wmode:"transparent",
-			FlashVars: {hello:"world",foo:"bar"}
-		  }
-		}).embed();
-		t.ok($("#testFlash")[0].tagName.toLowerCase() == embed_tag,"set id");
-		t.ok($("#testFlash")[0].getAttribute("name") == "gwor","set name");
-		t.ok($("#testFlash")[0].getAttribute("blat") == "gret","set arbitrary attribute");
-		//wmode test
-		if (glow.env.ie) {
-		  t.ok($("#testFlash").children().filter(function() { return this.name == "wmode" }).attr("value") == "transparent", "transparent wmode set (param)")
-		} else {
-		  t.ok($("#testFlash")[0].getAttribute("wmode") == "transparent", "transparent wmode set (attr)");
-		}
+	
+	new glow.embed.Flash("anyold.swf","#flashTest","6",{
+	  attributes: {
+		id:"testFlash",
+		name:"gwor",
+		blat:"gret"
+	  },
+	  params:{
+		wmode:"transparent",
+		FlashVars: {hello:"world",foo:"bar"}
+	  }
+	}).embed();
+	t.ok($("#testFlash")[0].tagName.toLowerCase() == embed_tag,"set id");
+	t.ok($("#testFlash")[0].getAttribute("name") == "gwor","set name");
+	t.ok($("#testFlash")[0].getAttribute("blat") == "gret","set arbitrary attribute");
+	//wmode test
+	if (glow.env.ie) {
+	  t.ok($("#testFlash").children().filter(function() { return this.name == "wmode" }).attr("value") == "transparent", "transparent wmode set (param)")
+	} else {
+	  t.ok($("#testFlash")[0].getAttribute("wmode") == "transparent", "transparent wmode set (attr)");
+	}
 		//flashvars test
 		if (glow.env.ie) {
 		  t.equals($("#testFlash").children().filter(function() { return this.name == "FlashVars" }).attr("value"), "hello=world&foo=bar", "flashvars (param)")
 		} else {
 		  t.equals($("#testFlash")[0].getAttribute("FlashVars"), "hello=world&foo=bar", "flashvars (attr)");
 		}
-
-	}
-	catch(e){
-		t.ok(false,"id attribute not correctly set - glow didn't find embedded content");
-	}
 	flashHolder.remove();
 
 });
@@ -200,7 +191,7 @@ t.test("check correct defaults for missing parameters", function() {
 	
 	try {
 		//not using getAttribute for the first two as some browsers give empty strings while others give null
-		t.ok(embed.id == "","no id by default");
+		t.ok(embed.id != "","Movie has auto-generated ID");
 		t.ok(embed.name == "","no name by default");
 		if (glow.env.ie) {
 		  t.ok($(embed).children().filter(function() { return this.name == "allowscriptaccess" }).attr("value") == "always", "allowscriptaccess:always");

@@ -353,7 +353,8 @@
 					attributes : {},
 					//expressInstall : false, // TODO add this in a later release
 					message : "This content requires Flash Player version " + minVersion + " (installed version: " + installed_flash_player + ")",
-					id : _getId() // Fix for trac 165
+					// create a default ID one hasn't been created as an attribute
+					id : (opts && opts.attributes && opts.attributes.id) || _getId() // Fix for trac 165
 				}
 			);
 
