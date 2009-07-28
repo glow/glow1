@@ -789,6 +789,44 @@ t.test("glow.dom.NodeList.val(Object)", function () {
 	form.remove();
 });
 
+t.test("glow.dom.NodeList#prop", function() {
+	t.expect(14);
+	
+	var elm = glow.dom.create(
+		'<input type="checkbox" name="ck2" value="val2" checked="checked"/>' +
+		'<div>Hello</div>' +
+		'<span>World</span>' +
+	'');
+	
+	// getting
+	t.ok( elm.prop("checked") === true, "Checked property === true" );
+	t.equals( elm.prop("nodeName").toLowerCase(), "input", "Get the node name" );
+	
+	// setting
+	
+	elm.prop("_test1", 10);
+	
+	var myObj = {hello:"world"};
+	elm.prop("_test2", myObj);
+	
+	// getting what we just set, via api
+	t.ok( elm.slice(0,1).prop("_test1") === 10, "10 set and got via prop() (elm 1)" );
+	t.ok( elm.slice(1,2).prop("_test1") === 10, "10 set and got via prop() (elm 2)" );
+	t.ok( elm.slice(2,3).prop("_test1") === 10, "10 set and got via prop() (elm 3)" );
+	
+	t.ok( elm.slice(0,1).prop("_test2") === myObj, "myObj set and got via prop() (elm 1)" );
+	t.ok( elm.slice(1,2).prop("_test2") === myObj, "myObj set and got via prop() (elm 2)" );
+	t.ok( elm.slice(2,3).prop("_test2") === myObj, "myObj set and got via prop() (elm 3)" );
+	
+	t.ok( elm.slice(0,1)[0]._test1 === 10, "10 set and got via [0] (elm 1)" );
+	t.ok( elm.slice(1,2)[0]._test1 === 10, "10 set and got via [0] (elm 2)" );
+	t.ok( elm.slice(2,3)[0]._test1 === 10, "10 set and got via [0] (elm 3)" );
+	
+	t.ok( elm.slice(0,1)[0]._test2 === myObj, "myObj set and got via [0] (elm 1)" );
+	t.ok( elm.slice(1,2)[0]._test2 === myObj, "myObj set and got via [0] (elm 2)" );
+	t.ok( elm.slice(2,3)[0]._test2 === myObj, "myObj set and got via [0] (elm 3)" );
+});
+
 // glow.dom.NodeList.is(CssExpression)
 //   True if all context nodes match css expression
 
