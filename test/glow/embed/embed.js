@@ -11,7 +11,7 @@ t.test("Load DOM", function() {
 
 t.test("Test Embedding", function() {
 
-	t.expect(6);
+	t.expect(7);
 	
 	var $ = glow.dom.get;
 	
@@ -40,8 +40,12 @@ t.test("Test Embedding", function() {
 	
 	t.ok(movie.movie.nodeName.toLowerCase() == embed_tag, "Movie property references Flash")
 
+	
 	t.ok($("#flashTest " + embed_tag).length==1,"after call to embed, we have an embedded object");
-
+	
+	// movies are given a generated ID to fix an IE issue
+	t.ok(movie.movie.id.length, "Movie has been given a generated ID");
+	
 	flashHolder.remove();
 });
 
