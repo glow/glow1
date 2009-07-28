@@ -789,8 +789,23 @@ t.test("glow.dom.NodeList.val(Object)", function () {
 	form.remove();
 });
 
+t.test("glow.dom.NodeList#prop on empty NodeList", function() {
+	t.expect(1);
+	
+	var myNodeList = new glow.dom.NodeList();
+	
+	// these shouldn't cause an error
+	myNodeList.prop("hello", "world");
+	myNodeList.prop({
+		no: "errors",
+		please: "thankyou"
+	});
+	
+	t.ok(myNodeList.prop("hello") === undefined, "on empty NodeList returns undefined");
+});
+
 t.test("glow.dom.NodeList#prop", function() {
-	t.expect(22);
+	t.expect(23);
 	
 	var elm = glow.dom.create(
 		'<input type="checkbox" name="ck2" value="val2" checked="checked"/>' +
@@ -801,6 +816,7 @@ t.test("glow.dom.NodeList#prop", function() {
 	// getting
 	t.ok( elm.prop("checked") === true, "Checked property === true" );
 	t.equals( elm.prop("nodeName").toLowerCase(), "input", "Get the node name" );
+	t.ok( elm.prop("doesNotExist") === undefined, "Not existant property is undefined" );
 	
 	// setting
 	
@@ -847,6 +863,7 @@ t.test("glow.dom.NodeList#prop", function() {
 	t.ok( elm.slice(1,2).prop("_test4") === myObj2, "myObj2 set and got via prop() (elm 2)" );
 	t.ok( elm.slice(2,3).prop("_test4") === myObj2, "myObj2 set and got via prop() (elm 3)" );
 	
+	elm.destroy();
 });
 
 // glow.dom.NodeList.is(CssExpression)

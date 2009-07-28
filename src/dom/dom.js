@@ -1295,7 +1295,34 @@
 					_secretValue: 10
 				});
 			*/
-
+			prop: function(name, val) {
+				
+				// setting multiple
+				if (typeof name == 'object') {
+					var hash = name,
+						key;
+					
+					// loop through hash
+					for (key in hash) {
+						this.prop(key, hash[key]);
+					}
+					return this;
+				}
+				
+				// setting single (to all in the NodeList)
+				if (val !== undefined) {
+					var i = this.length;
+					while (i--) {
+						this[i][name] = val;
+					}
+					return this;
+				}
+				
+				// getting
+				if (!this[0]) { return undefined; }
+				return this[0][name];
+			},
+			
 			/**
 			@name glow.dom.NodeList#hasClass
 			@function
