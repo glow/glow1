@@ -2121,4 +2121,5 @@ t.test("glow.dom.NodeList#position", function() {
 	t.equals(pos4_1Position.top, (glow.env.ie == 6) ? 0 : 5, "pos4_1 top position");
 	t.equals(pos4_1Position.left, 5, "pos4_1 left position");
 	
+	node.destroy();	
 });
