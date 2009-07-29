@@ -2,15 +2,17 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-	<title>Editor Examples</title>
+	<title>Sortable Examples</title>
 	
 	<style type="text/css" media="screen">
-		#commentEntry
-		{
-			width: 520px;
-			height: 150px;
-			margin: 8px;
-			padding: 0;
+		/* this seems to be required in order to make the dragging look sane */
+		.sandbox {
+			overflow: hidden;
+			position: relative;
+		}
+		
+		.sortable li {
+			cursor: move;
 		}
 	</style>
 	
@@ -27,43 +29,35 @@
 	
 	<script type="text/javascript">
 		gloader.load(
-			['glow', '@VERSION@', 'glow.widgets.Editor']
+			['glow', '@VERSION@', 'glow.widgets.Sortable']
 		);
 	</script>
 </head>
 
 <body>
-	<h1>glow.widgets.Editor examples</h1>
+	<h1>glow.widgets.Sortable examples</h1>
 	
 	<div class="example">	
-		<h2>Basic Editor</h2>
-		<p>no description</p>
+		<h2>Basic Sortable</h2>
+		<p>no description.</p>
 		
 		<script type="text/javascript" class="showSrc">
 		// <![CDATA[
 		glow.ready(function() {
-			window.ed = new glow.widgets.Editor("#commentEntry");
+			var mySortable = new glow.widgets.Sortable('#numbers');
 		});
 		// ]]>
 		</script>
 		
 		<div class="sandbox">
-			<form action="foo" method="get" id="demo-form">
-				<div>
-					<label for="userName">Your Name:</label>
-					<input name="userName" id="userName" type="text" value="" size="28" />
-				</div>
-				
-				<div>
-					<label for="userName">Your Comment:</label>
-					<textarea id="commentEntry" rows="10" cols="100" style="width: 500px"></textarea>
-				</div>
-			
-				<div>
-					<input type="submit" />
-				</div>
-				<div id="domPath"></div>
-			</form>
+			<p>Drag these list items around, change the order:</p>
+			<ol id="numbers" class="sortable">
+				<li>One</li>
+				<li>Two</li>
+				<li>Three</li>
+				<li>Four</li>
+				<li>Five</li>
+			</ol>
 		</div>
 	</div>
 
