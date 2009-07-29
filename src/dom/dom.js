@@ -126,32 +126,36 @@
 			nodePropertiesCloned,
 			// used to convert divs to strings
 			tmpDiv = doc.createElement("div"),
-		/*
-		PrivateVars: tableArray, elmFilter
-			Used in private function stringToNodes to capture any 
-			elements that cannot be a childNode of <div>.
-				Each entry in JSON responds to an element.
-				First array value is how deep the element will be created in a node tree.
-				Second array value is the beginning of the node tree.
-				Third array value is the end of the node tree.
-		*/
+			/*
+			PrivateVars: tableArray, elmFilter
+				Used in private function stringToNodes to capture any 
+				elements that cannot be a childNode of <div>.
+					Each entry in JSON responds to an element.
+					First array value is how deep the element will be created in a node tree.
+					Second array value is the beginning of the node tree.
+					Third array value is the end of the node tree.
+			*/
 			tableArray = [1, '<table>', '</table>'],
-			divArray = [1, 'tn<div>', '</div>'],
+			emptyArray = [0, '', ''],
+			// webkit won't accept <link> elms to be the only child of an element,
+			// it steals them and hides them in the head for some reason. Using
+			// the broken html fixes it for some reason
+			paddingElmArray = env.webkit < 526 ? [0, '', '</div>', true] : [1, 'b<div>', '</div>'],
 			trArray = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
-			elmFilter = {
-					caption: tableArray,
-					thead: tableArray,
-					th: trArray,
-					colgroup: tableArray,
-					tbody: tableArray,
-					tr: [2, '<table><tbody>', '</tbody></table>'],
-					td: trArray,
-					tfoot: tableArray,
-					option: [1, '<select>', '</select>'],
-					legend: [1, '<fieldset>', '</fieldset>'],
-					link: divArray,
-					script: divArray
-				};
+			elmWraps = {
+				caption: tableArray,
+				thead: tableArray,
+				th: trArray,
+				colgroup: tableArray,
+				tbody: tableArray,
+				tr: [2, '<table><tbody>', '</tbody></table>'],
+				td: trArray,
+				tfoot: tableArray,
+				option: [1, '<select>', '</select>'],
+				legend: [1, '<fieldset>', '</fieldset>'],
+				link: paddingElmArray,
+				script: paddingElmArray
+			};
 		
 		// clean up IE's mess
 		if (env.ie) {
@@ -193,71 +197,32 @@
 			Creates an array of nodes from a string
 		*/
 		function stringToNodes(str) {
-			var r = [], 
-				filteredElm = elmFilter[str.substr(1, str.search(/(>|\s)/)-1)], // This matches str content with potential elements that cannot be a child of <div>.  elmFilter declared at top of page.
-				nodeDepth;
-
-			// If the passed in str starts with an element that is caught in the filter, then...
-			if (filteredElm) {
-
-				var newElement = document.createElement('div');
-
-				// Here is some Safari 2/3 trickery...
-				if ((glow.env.webkit < 526) && (str.substr(0,5) == "<link")) {
-					
-					// If Safari 2/3 AND a link node is being added, then forget about everything we're trying to do with elmFilter and just add <b>a</b> onto the front of the <link>.
-					newElement.innerHTML = ('<b>a</b>' + str);
-					// Then delete the <b>a</b> cus we only needed it to get Safari 2/3 to create the <link>
-					newElement.removeChild(newElement.firstChild);
-					
-				}
-				else {
-					
-					// Create the new element using the node tree contents available in filteredElm.
-					newElement.innerHTML = (filteredElm[1] + str + filteredElm[2]);
-					
-					// Strip newElement down to just the required element and its parent
-					nodeDepth = filteredElm[0];
-					while(nodeDepth--) {
-						newElement = newElement.lastChild;
-					}
-				}
-
-				// Set r
-				r = getChildNodes(newElement);
-
-				// Destroy newElement because we're finished with it.
-				glow.dom.get(newElement).destroy();
-
-			}
-			// else...
-			else {
-				
-				//we add a text node to the start of the string here to fix an IE bug
-				//when the string contains a link element
-				// UPDATE: Took this out, as a text node (tn) is added to wrapping HTML in the elmFilter.
-				//tmpDiv.innerHTML = "<b>a</b>" + str;
-
-				tmpDiv.innerHTML = str;
-				r = getChildNodes(tmpDiv);
-				tmpDiv.innerHTML = "";
-				
-			}
-			return r;
-		}
-
-		/*
-			PrivateMethod: getChildNodes
-				returns the childNodes of the passed in element as an array
-				albeit without the first childNode
-		*/
-		function getChildNodes(holdingElm) {
-			var r =[],
+			var r = [],
+				tagName = /^\s*<([^\s>]+)/.exec(str)[1],
+				// This matches str content with potential elements that cannot
+				// be a child of <div>.  elmFilter declared at top of page.
+				elmWrap = elmWraps[tagName] || emptyArray, 
+				nodeDepth,
+				childElm,
 				rLen = 0;
-
-			while (holdingElm.firstChild) {
-				r[rLen++] = holdingElm.removeChild(holdingElm.firstChild);
+			
+			// Create the new element using the node tree contents available in filteredElm.
+			tmpDiv.innerHTML = (elmWrap[1] + str + elmWrap[2]);
+			
+			childElm = tmpDiv;
+			
+			// Strip newElement down to just the required element and its parent
+			nodeDepth = elmWrap[0];
+			while(nodeDepth--) {
+				childElm = childElm.lastChild;
 			}
+
+			// pull nodes out of child
+			while (childElm.firstChild) {
+				r[rLen++] = childElm.removeChild(childElm.firstChild);
+			}
+			
+			childElm = null;
 			
 			return r;
 		}
