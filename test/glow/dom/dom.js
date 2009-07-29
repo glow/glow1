@@ -182,7 +182,7 @@ t.test("glow.dom.NodeList constructor", function () {
 });
 
 t.test("glow.dom.create", function () {
-	t.expect(4);
+	t.expect(15);
 
 	var NodeList = glow.dom.create(' <div id="aNewNode1">test</div> <div id="aNewNode2">test</div> ');
 	
@@ -201,6 +201,54 @@ t.test("glow.dom.create", function () {
 	var myLink = glow.dom.create('<link type="text/css" rel="stylesheet" media="screen" href="/static/users/style/id-panel.css" />')
 	
 	t.ok(myLink[0] && myLink[0].nodeName.toLowerCase() == "link", "Link element created");
+
+	// glow.dom.create needs to work with elements that cannot be a child of a DIV
+	// ***************************************************************************
+
+	// CAPTION NODE
+	var caption = glow.dom.create("<caption></caption>");
+	t.ok(caption[0] && caption[0].nodeName.toLowerCase() == "caption", "Caption element created");
+	
+	// THEAD NODE
+	var thead = glow.dom.create("<thead></thead>");
+	t.ok(thead[0] && thead[0].nodeName.toLowerCase() == "thead", "Thead element created");
+	
+	// TH NODE
+	var th = glow.dom.create("<th></th>");
+	t.ok(th[0] && th[0].nodeName.toLowerCase() == "th", "Th element created");
+	
+	// COLGROUP NODE
+	var colgroup = glow.dom.create("<colgroup />");
+	t.ok(colgroup[0] && colgroup[0].nodeName.toLowerCase() == "colgroup", "Colgroup element created");
+	
+	// TBODY NODE
+	var tbody = glow.dom.create("<tbody></tbody>");
+	t.ok(tbody[0] && tbody[0].nodeName.toLowerCase() == "tbody", "Tbody element created");
+	
+	// TR NODE
+	var tr = glow.dom.create("<tr></tr>");
+	t.ok(tr[0] && tr[0].nodeName.toLowerCase() == "tr", "Tr element created");
+	
+	// TD NODE
+	var td = glow.dom.create("<td></td>");
+	t.ok(td[0] && td[0].nodeName.toLowerCase() == "td", "Td element created");
+	
+	// TFOOT NODE
+	var tfoot = glow.dom.create("<tfoot></tfoot>");
+	t.ok(tfoot[0] && tfoot[0].nodeName.toLowerCase() == "tfoot", "Tfoot element created");
+	
+	// OPTION NODE
+	var option = glow.dom.create("<option></option>");
+	t.ok(option[0] && option[0].nodeName.toLowerCase() == "option", "Option element created");
+	
+	// LEGEND NODE
+	var legend = glow.dom.create("<legend></legend>");
+	t.ok(legend[0] && legend[0].nodeName.toLowerCase() == "legend", "Legend element created");
+	
+	// SCRIPT NODE
+	var script = glow.dom.create("<script></script>");
+	t.ok(script[0] && script[0].nodeName.toLowerCase() == "script", "Script element created");
+
 });
 
 t.test("Load DOM", function() {
