@@ -1078,7 +1078,9 @@
 		};
 		
 		//cleanup to avoid mem leaks in IE
-		r.addListener(window, "unload", clearEvents);
+		if (glow.env.ie < 8 || glow.env.webkit < 500) {
+			r.addListener(window, "unload", clearEvents);
+		}
 
 		glow.events = r;
 		glow.events.listenersByObjId = listenersByObjId;
