@@ -33,12 +33,13 @@
 					.replace("// <![CDATA[", "").replace("// ]]>", "")
 					.replace(/</g, "&lt;").replace(/>/g, "&gt;")
 					.replace(/\t/g, "    ")
-					.replace(/^(\s*[\n\r\f])*/, "").replace(/\s*$/, "");
+					.replace(/^(\s*[\n\r\f])*/, "").replace(/\s*$/, "")
+					.replace(/[\n\r\f]/g, "<br />");
 				code = shiftLeft(code);
 				
 				preElement = document.createElement("pre");
 				preElement.className = "src";
-				preElement.innerHTML = "<code>"+code+"<\/code>";
+				preElement.innerHTML = "<code style='white-space: pre;'>"+code+"<\/code>";
 				scriptElements[i].parentNode.insertBefore(preElement, scriptElements[i]);
 			}
 		}
