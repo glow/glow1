@@ -117,7 +117,7 @@ t.test("glow.data.encodeUrl", function() {
 });
 
 t.test("glow.data.decodeUrl", function() {
-	t.expect(4);
+	t.expect(5);
 
 	var t1 = glow.data.decodeUrl("a=a&b=1");
 	t.equals([t1.a, t1.b].join(":"),
@@ -141,6 +141,17 @@ t.test("glow.data.decodeUrl", function() {
 	} catch(e) {
 		t.ok(true, "URLs must be well formed");
 	}
+	
+	// http://glow-project.lighthouseapp.com/projects/33663-glow/tickets/16
+	// Ensure it works with ; seperators
+	var data = glow.data.decodeUrl("BBC-UID=abc123; foo=Domestic; bar=+acv+ba; helloworld=-99");
+	var obj = {
+		"BBC-UID": "abc123",
+		"foo": "Domestic",
+		"bar": "+acv+ba",
+		"helloworld": "-99"
+	}
+	t.isObj(data, obj, "Correct decoding with ;");
 });
 
 

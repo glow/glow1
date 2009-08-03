@@ -84,7 +84,7 @@
 		}
 
 		/*
-		PrivateMethod: _getType
+		PrivateMethod: _replaceSlashes
 			Callback function for glow.lang.replace to escape appropriate characters
 
 		Arguments:
@@ -214,7 +214,7 @@
 				}
 
 				var result = {};
-				var keyValues = text.split(TEXT.AND);
+				var keyValues = text.split(/[&;]/);
 
 				var thisPair, key, value;
 
@@ -223,8 +223,8 @@
 					if(thisPair.length != 2) {
 						throw new Error("glow.data.decodeUrl: cannot decode item");
 					} else {
-						key = decodeURIComponent(thisPair[0]);
-						value = decodeURIComponent(thisPair[1]);
+						key   = glow.lang.trim( decodeURIComponent(thisPair[0]) );
+						value = glow.lang.trim( decodeURIComponent(thisPair[1]) );
 
 						switch (_getType(result[key])) {
 							case TYPES.ARRAY:
