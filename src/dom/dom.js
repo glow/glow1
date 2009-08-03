@@ -108,12 +108,6 @@
 			append,
 			//unique gets set to a function below
 			unique,
-			trbl = ["Top", "Right", "Bottom", "Left"],
-			trblLen = 4,
-			paddingStr = "padding",
-			marginStr = "margin",
-			borderStr = "border",
-			widthStr = "Width",
 			//we set this up at the end of the module
 			placeholderElm,
 			//getByTagName gets get to a function below
@@ -373,75 +367,49 @@
 			return r;
 		}
 		
+		
+		var horizontalBorderPadding = [
+				'border-left-width',
+				'border-right-width',
+				'padding-left',
+				'padding-right'
+			],
+			verticalBorderPadding = [
+				'border-top-width',
+				'border-bottom-width',
+				'padding-top',
+				'padding-bottom'
+			];
+		
 		/*
-		PrivateMethod: getElmSize
-			Gets the size of an element as {width: x, height:y}
-
-		Returns:
-			Size not including padding or border
+		PrivateMethod: getElmDimention
+			Gets the size of an element as an integer, not including padding or border
 		*/
-		function getElmSize(elm) {
-			var r,
-				i = trblLen,
+		function getElmDimention(elm, cssProp /* (width|height) */) {
+			var r, // val to return
 				docElmOrBody = env.standardsMode ? docElm : docBody,
-				oldVal,
-				// the following are only used for IE7
-				oldPaddingVals = [],
-				oldBorderVals = [],
-				// we use borderTop etc in most browsers, but we need to use borderTopWidth in IE7, else borders start vanishing (grr)
-				borderSuffix = env.ie == 7 ? "Width" : "",
-				borderZeroVal = env.ie == 7 ? "0" : "none";
+				isWidth = (cssProp == "width"),
+				cssPropCaps = isWidth ? "Width" : "Height",
+				cssBorderPadding;
 
-			if (elm.window) {
-				r = (env.webkit < 522.11 && {width: elm.innerWidth, height: elm.innerHeight}) ||
-					(env.webkit && 			{width: docBody.clientWidth, height: elm.innerHeight}) ||
-					(env.opera < 9.5 &&		{width: docBody.clientWidth, height: docBody.clientHeight}) ||
-					/*else*/				{width: docElmOrBody.clientWidth, height: docElmOrBody.clientHeight};
+			if (elm.window) { // is window
+				r = env.webkit < 522.11 ? (isWidth ? elm.innerWidth				: elm.innerHeight) :
+					env.webkit			? (isWidth ? docBody.clientWidth		: elm.innerHeight) :
+					env.opera < 9.5		? (isWidth ? docBody.clientWidth		: docBody.clientHeight) :
+					/* else */			  (isWidth ? docElmOrBody.clientWidth	: docElmOrBody.clientHeight);
 
-			} else if (elm.getElementById) {
-				r = {
-					width: Math.max(
-						docBody.scrollWidth,
-						docBody.offsetWidth,
-						docElm.clientWidth,
-						docElm.scrollWidth,
-						docElm.offsetWidth
-					),
-					height: Math.max(
-						docBody.scrollHeight,
-						docBody.offsetHeight,
-						docElm.clientHeight,
-						docElm.scrollHeight,
-						docElm.offsetHeight
-					)
-				};
+			} else if (elm.getElementById) { // is document
+				r = Math.max(
+					docBody["scroll" + cssPropCaps],
+					docBody["offset" + cssPropCaps],
+					docElm["client" + cssPropCaps],
+					docElm["scroll" + cssPropCaps],
+					docElm["offset" + cssPropCaps]
+				)
 			} else {
-				oldVal = elm.style.cssText;
-				//set border and padding to 0, backing up old vals
-				while (i--) {
-					if (env.ie == 7) {
-						oldPaddingVals[i] = elm.style[paddingStr + trbl[i]];
-						oldBorderVals[i] = elm.style[borderStr + trbl[i]];
-					}
-					elm.style[paddingStr + trbl[i]] = "0";
-					//setting border-bottom(or whatever)-width to 0 doesn't seem to work in opera 9.5
-					elm.style[borderStr + trbl[i] + borderSuffix] = borderZeroVal;
-				}
-
-				//capture values
-				r = {width: elm.offsetWidth, height: elm.offsetHeight};
-
-				//reset old vals
-				if (env.ie != 7) {
-					elm.style.cssText = oldVal;
-				} else {
-					// IE7 doesn't like the above for some unknown reason
-					i = trblLen;
-					while (i--) {
-						elm.style[paddingStr + trbl[i]] = oldPaddingVals[i];
-						elm.style[borderStr + trbl[i] + borderSuffix] = oldBorderVals[i];
-					}
-				}
+				// get an array of css borders & padding
+				cssBorderPadding = isWidth ? horizontalBorderPadding : verticalBorderPadding;
+				r = elm['offset' + cssPropCaps] - parseInt( getCssValue(elm, cssBorderPadding) );
 			}
 			return r;
 		}
@@ -569,25 +537,21 @@
 
 			if (prop.push) { //multiple properties, add them up
 				for (; i < propLen; i++) {
-					total += parseInt(getCssValue(elm, prop[i]), 10) || 0;
+					total += parseInt( getCssValue(elm, prop[i]), 10 ) || 0;
 				}
 				return total + "px";
 			}
-			//had fun with opera including padding in width, this seems safer TODO: retest this assumption
-			if (propTest[1]) { //is 'width' or 'height'
-				if (!isVisible(elm)) { //element may be display: none
-					return tempBlock(elm, function() {
-						return getElmSize(elm)[prop] + "px";
-					});
-				} else {
-					return getElmSize(elm)[prop] + "px";
-				}
-			} else if (propTest[2] //is border-*-width
+			
+			if (propTest[1]) { // is width / height
+				return getElmDimention(elm, propTest[1]) + "px";
+			}
+			else if (propTest[2] //is border-*-width
 				&& glow.env.ie
 				&& getCssValue(elm, "border-" + propTest[3] + "-style") == "none"
 			) {
 				return "0";
-			} else if (compStyle) { //W3 Method
+			}
+			else if (compStyle) { //W3 Method
 				//this returns computed values
 				if (typeof compStyle == "function") {
 					//safari returns null for compStyle
@@ -618,7 +582,7 @@
 				}
 				//this returns cascaded values so needs fixing
 				r = String(elmCurrentStyle[toStyleProp(prop)]);
-				if (/^-?\d+[a-z%]+$/i.test(r) && prop != "font-size") {
+				if (/\d+[a-z%]+$/i.test(r) && prop != "font-size") {
 					r = getPixelValue(elm, r, usesYAxis.test(prop)) + "px";
 				}
 			}
@@ -634,7 +598,7 @@
 		/*
 		PrivateMethod: getPixelValue
 			Converts a relative value into an absolute pixel value. Only works in IE with dimention value (not stuff like relative font-size).
-			Based on some Dean Edward's code
+			Based on some Dean Edwards' code
 
 		Arguments:
 			element - element used to calculate relative values
@@ -645,21 +609,28 @@
 			Number
 		*/
 		function getPixelValue(element, value, useYAxis) {
-			if (/^-?\d+(px)?$/i.test(value)) { return parseInt(value); }
-			var axisSetValue = useYAxis ? "top" : "left",
-				axisGetValue = useYAxis ? "Top" : "Left",
+			if (/^\d(px)?$/i.test(value)) { return parseInt(value); }
+			
+			// Remember the original values
+			var axisPos = useYAxis ? "top" : "left",
+				axisPosUpper = useYAxis ? "Top" : "Left",
 				elmStyle = element.style,
-				origWidth = elmStyle.left,
-				origPos = elmStyle.overflow,
-				origMargin = elmStyle.margin;
-			elmStyle.position = "absolute";
-			elmStyle.margin = "0";
-			elmStyle[axisSetValue] = value || 0;
-			value = element["offset" + axisGetValue];
-			elmStyle.position = origPos;
-			elmStyle[axisSetValue] = origWidth;
-			elmStyle.margin = origMargin;
-			return value;
+				positionVal = elmStyle[axisPos],
+				runtimePositionVal = element.runtimeStyle[axisPos],
+				r;
+			
+			// copy to the runtime type to prevent changes to the display
+			element.runtimeStyle[axisPos] = element.currentStyle[axisPos];
+			// set value to left / top
+			elmStyle[axisPos] = value;
+			// get the pixel value
+			r = elmStyle["pixel" + axisPosUpper];
+			
+			// revert values
+			element[axisPos] = positionVal;
+			element.runtimeStyle[axisPos] = runtimePositionVal;
+			
+			return r;
 		}
 
 		/*
@@ -2243,7 +2214,7 @@
 			*/
 			width: function(width) {
 				if (width == undefined) {
-					return getElmSize(this[0]).width;
+					return getElmDimention(this[0], "width");
 				}
 				setElmsSize(this, width, "width");
 				return this;
@@ -2286,7 +2257,7 @@
 			*/
 			height: function(height) {
 				if (height == undefined) {
-					return getElmSize(this[0]).height;
+					return getElmDimention(this[0], "height");
 				}
 				setElmsSize(this, height, "height");
 				return this;

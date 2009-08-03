@@ -1794,7 +1794,7 @@ t.test("Load DOM", function() {
 });
 
 t.test("glow.dom.NodeList.width", function() {
-	t.expect(8);
+	t.expect(12);
 	var node = glow.dom.create("" +
 		'<div id="cssTests">' +
 			'<div class="width100">Test</div>' +
@@ -1805,6 +1805,12 @@ t.test("glow.dom.NodeList.width", function() {
 		'</div>'
 	)[0];
 	document.body.appendChild(node);
+	
+	t.ok( typeof glow.dom.get(window).width() == 'number', "window width is number" );
+	t.ok( glow.dom.get(window).width() > 0, "window width is greater than zero" );
+	t.ok( typeof glow.dom.get(document).width() == 'number', "document width is number" );
+	t.ok( glow.dom.get(document).width() > 0, "document width is greater than zero" );
+	
 	t.equals(glow.dom.get("#cssTests div.width100").width(), 100, "Width get");
 	t.equals(glow.dom.get("#cssTests div.width100.padding10").width(), 100, "Ignore padding");
 	t.equals(glow.dom.get("#cssTests div.bordered").width(), 100, "Ignore border");
@@ -1818,7 +1824,7 @@ t.test("glow.dom.NodeList.width", function() {
 });
 
 t.test("glow.dom.NodeList.height", function() {
-	t.expect(8);
+	t.expect(12);
 	var node = glow.dom.create("" +
 		'<div id="cssTests">' +
 			'<div class="height100">Test</div>' +
@@ -1829,6 +1835,12 @@ t.test("glow.dom.NodeList.height", function() {
 		'</div>'
 	)[0];
 	document.body.appendChild(node);
+	
+	t.ok( typeof glow.dom.get(window).height() == 'number', "window height is number" );
+	t.ok( glow.dom.get(window).height() > 0, "window height is greater than zero" );
+	t.ok( typeof glow.dom.get(document).height() == 'number', "document height is number" );
+	t.ok( glow.dom.get(document).height() > 0, "document height is greater than zero" );
+	
 	t.equals(glow.dom.get("#cssTests div.height100").height(), 100, "height get");
 	t.equals(glow.dom.get("#cssTests div.height100.padding10").height(), 100, "Ignore padding");
 	t.equals(glow.dom.get("#cssTests div.bordered").height(), 100, "Ignore border");
