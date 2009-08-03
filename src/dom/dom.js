@@ -615,8 +615,9 @@
 					});
 				} else {
 					// assume equal horizontal margins in safari 3
-					// TODO put max version on this when http://bugs.webkit.org/show_bug.cgi?id=13343 is fixed
-					if (glow.env.webkit > 500 && prop == 'margin-right' && compStyle.getPropertyValue('position') != 'absolute') {
+					// http://bugs.webkit.org/show_bug.cgi?id=13343
+					// The above bug doesn't appear to be closed, but it works fine in Safari 4
+					if (env.webkit > 500 && env.webkit < 526 && prop == 'margin-right' && compStyle.getPropertyValue('position') != 'absolute') {
 						prop = 'margin-left';
 					}
 					r = compStyle.getPropertyValue(prop);
