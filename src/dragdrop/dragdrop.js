@@ -599,8 +599,6 @@
 				
 				el.after(placeholder);
 				
-				console.log(el[0].offsetWidth);
-				
 				placeholder.css('width', (el[0].offsetWidth - placeholderBox.surroundWidth()) + 'px')
 					.css('height', (el[0].offsetHeight - placeholderBox.surroundHeight()) + 'px');
 				

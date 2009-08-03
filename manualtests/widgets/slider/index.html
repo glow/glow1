@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>Slider Examples</title>
+	
+	<!-- assumes gloader project folder is next to glow project folder -->
+	<script type="text/javascript" src="../../../../gloader/src/gloader.js">
+		gloader.use(
+			"glow",
+			{
+				$map:  "../../../srcloader/map.js",
+				$base: "../../../src/"
+			}
+		);
+	</script>
+	
+	<script type="text/javascript">
+		gloader.load(
+			['glow', '@VERSION@', 'glow.widgets.Slider']
+		);
+	</script>
+</head>
+
+<body>
+	<h1>glow.widgets.Slider examples</h1>
+	
+	<div class="example">	
+		<h2>Basic Slider</h2>
+		<p>With ticks, snaps and labels.</p>
+		
+		<script type="text/javascript" class="showSrc">
+		// <![CDATA[
+		glow.ready(function() {
+			var mySlider = new glow.widgets.Slider("#slider1",
+				{
+					bindTo: "#slider1input",
+					step: 10,
+					min: 0,
+					max: 100,
+					snapOnDrag: true,
+					tickMajor: 10,
+					labels: 10
+				}
+			);
+		});
+		// ]]>
+		</script>
+		
+		<div class="sandbox">
+			<form action="#">
+				<div id="slider1">
+					<label for="slider1input">Slider Value:</label>
+					<input type="text" id="slider1input" name="sliderValue" />
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div class="example">
+		<h2>Vertical Slider</h2>
+		<p>With dark theme.</p>
+		
+		<script type="text/javascript" class="showSrc">
+		// <![CDATA[
+		glow.ready(function() {
+			var mySlider = new glow.widgets.Slider("#slider2",
+				{
+					bindTo: "#slider2input",
+					step: 10,
+					min: 0,
+					max: 100,
+					snapOnDrag: true,
+					tickMajor: 10,
+					labels: 10,
+					vertical: true,
+					theme: "dark"
+				}
+			);
+		});
+		// ]]>
+		</script>
+		
+		<div class="sandbox">
+			<form action="#" style="background-color: #333; color: #ccc; padding: 8px;">
+				<div id="slider2">
+					<label for="slider2input">Slider Value:</label>
+					<input type="text" id="slider2input" name="sliderValue" />
+				</div>
+			</form>
+		</div>
+	</div>	
+	
+	<script type="text/javascript" src="../../includes/js/showsrc.js"></script>
+</body>
+</html>

@@ -119,7 +119,37 @@
 			// true if properties of a dom node are cloned when the node is cloned (eg, true in IE)
 			nodePropertiesCloned,
 			// used to convert divs to strings
-			tmpDiv = doc.createElement("div");
+			tmpDiv = doc.createElement("div"),
+			/*
+			PrivateVars: tableArray, elmFilter
+				Used in private function stringToNodes to capture any 
+				elements that cannot be a childNode of <div>.
+					Each entry in JSON responds to an element.
+					First array value is how deep the element will be created in a node tree.
+					Second array value is the beginning of the node tree.
+					Third array value is the end of the node tree.
+			*/
+			tableArray = [1, '<table>', '</table>'],
+			emptyArray = [0, '', ''],
+			// webkit won't accept <link> elms to be the only child of an element,
+			// it steals them and hides them in the head for some reason. Using
+			// the broken html fixes it for some reason
+			paddingElmArray = env.webkit < 526 ? [0, '', '</div>', true] : [1, 'b<div>', '</div>'],
+			trArray = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
+			elmWraps = {
+				caption: tableArray,
+				thead: tableArray,
+				th: trArray,
+				colgroup: tableArray,
+				tbody: tableArray,
+				tr: [2, '<table><tbody>', '</tbody></table>'],
+				td: trArray,
+				tfoot: tableArray,
+				option: [1, '<select>', '</select>'],
+				legend: [1, '<fieldset>', '</fieldset>'],
+				link: paddingElmArray,
+				script: paddingElmArray
+			};
 		
 		// clean up IE's mess
 		if (env.ie) {
@@ -161,18 +191,33 @@
 			Creates an array of nodes from a string
 		*/
 		function stringToNodes(str) {
-			// TODO: need to change container for certain elements. Make a lookup table for
-			// {element: container}, for exceptions to div container
-			var r = [], rLen = 0;
-
-			//we add a text node to the start of the string here to fix an IE bug
-			//when the string contains a link element
-			tmpDiv.innerHTML = "<b>a</b>" + str;
-
-			while (tmpDiv.childNodes[1]) {
-				r[rLen++] = tmpDiv.removeChild(tmpDiv.childNodes[1]);
+			var r = [],
+				tagName = /^\s*<([^\s>]+)/.exec(str)[1],
+				// This matches str content with potential elements that cannot
+				// be a child of <div>.  elmFilter declared at top of page.
+				elmWrap = elmWraps[tagName] || emptyArray, 
+				nodeDepth,
+				childElm,
+				rLen = 0;
+			
+			// Create the new element using the node tree contents available in filteredElm.
+			tmpDiv.innerHTML = (elmWrap[1] + str + elmWrap[2]);
+			
+			childElm = tmpDiv;
+			
+			// Strip newElement down to just the required element and its parent
+			nodeDepth = elmWrap[0];
+			while(nodeDepth--) {
+				childElm = childElm.lastChild;
 			}
-			tmpDiv.innerHTML = "";
+
+			// pull nodes out of child
+			while (childElm.firstChild) {
+				r[rLen++] = childElm.removeChild(childElm.firstChild);
+			}
+			
+			childElm = null;
+			
 			return r;
 		}
 
