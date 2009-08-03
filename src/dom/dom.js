@@ -589,6 +589,11 @@
 			}
 			
 			if (propTest[1]) { // is width / height
+				if (!isVisible(elm)) { //element may be display: none
+					return tempBlock(elm, function() {
+						return getElmDimention(elm, propTest[1]) + "px";
+					});
+				}
 				return getElmDimention(elm, propTest[1]) + "px";
 			}
 			else if (propTest[2] //is border-*-width
