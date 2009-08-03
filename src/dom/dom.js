@@ -133,7 +133,7 @@
 			emptyArray = [0, '', ''],
 			// webkit won't accept <link> elms to be the only child of an element,
 			// it steals them and hides them in the head for some reason. Using
-			// the broken html fixes it for some reason
+			// broken html fixes it for some reason
 			paddingElmArray = env.webkit < 526 ? [0, '', '</div>', true] : [1, 'b<div>', '</div>'],
 			trArray = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
 			elmWraps = {
@@ -148,7 +148,8 @@
 				option: [1, '<select>', '</select>'],
 				legend: [1, '<fieldset>', '</fieldset>'],
 				link: paddingElmArray,
-				script: paddingElmArray
+				script: paddingElmArray,
+				style: paddingElmArray
 			};
 		
 		// clean up IE's mess
