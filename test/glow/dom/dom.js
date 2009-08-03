@@ -1077,7 +1077,7 @@ t.test("glow.dom.NodeList.clone()", function () {
 });
 
 t.test("glow.dom.NodeList.html()", function () {
-	t.expect(2);
+	t.expect(4);
 
 	var nodes = glow.dom.create("<div><span>first</span></div><div>second</div>");
 
@@ -1086,6 +1086,17 @@ t.test("glow.dom.NodeList.html()", function () {
 	nodes.html("<div>first</div>");
 	
 	t.equals(nodes.html().toLowerCase(), "<div>first</div>", "html sets inner html for first node");
+	
+	var emptyNodeList = new glow.dom.NodeList();
+	// this shouldn't error
+	emptyNodeList.html("<div></div>");
+	t.equals(emptyNodeList.length, 0, "No error on empty nodelist");
+	
+	// http://glow-project.lighthouseapp.com/projects/33663/tickets/17-empty-nodelists-html-method-causes-error-if-passed-undefined
+	emptyNodeList = new glow.dom.NodeList();
+	// this shouldn't error
+	emptyNodeList.html(undefined);
+	t.equals(emptyNodeList.length, 0, "No error on empty nodelist with undefined param");
 	
 });
 
