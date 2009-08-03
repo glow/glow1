@@ -2220,13 +2220,13 @@
 				var i = 0,
 					length = this.length;
 
-				if (newHtml != undefined) {
+				if (arguments.length) {
 					for (; i < length; i++) {
 						this[i].innerHTML = newHtml;
 					}
 					return this;
 				}
-				return this[0].innerHTML;
+				return this[0] ? this[0].innerHTML : "";
 			},
 
 			/**

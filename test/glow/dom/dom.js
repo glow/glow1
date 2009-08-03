@@ -1077,7 +1077,7 @@ t.test("glow.dom.NodeList.clone()", function () {
 });
 
 t.test("glow.dom.NodeList.html()", function () {
-	t.expect(4);
+	t.expect(5);
 
 	var nodes = glow.dom.create("<div><span>first</span></div><div>second</div>");
 
@@ -1097,6 +1097,8 @@ t.test("glow.dom.NodeList.html()", function () {
 	// this shouldn't error
 	emptyNodeList.html(undefined);
 	t.equals(emptyNodeList.length, 0, "No error on empty nodelist with undefined param");
+	
+	t.equals((new glow.dom.NodeList()).html(), "", "Empty nodelist should return empty string");
 	
 });
 
