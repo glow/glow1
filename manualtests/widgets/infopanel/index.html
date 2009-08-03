@@ -43,7 +43,7 @@
 			});
 			
 			glow.events.addListener(
-				glow.dom.get("#help"),
+				"#help",
 				"click",
 				function(e) { myInfoPanel.show(); }
 			);
@@ -55,7 +55,7 @@
 			<form action="#" method="get">
 				<p>
 					<label id="help" for="searchBox">Search:</label>
-					<input type="text" id="searchBox" onblur="myInfoPanel.hide()" name="searchBox" />
+					<input type="text" id="searchBox" name="searchBox" />
 				</p>
 			</form>
 			
