@@ -203,8 +203,8 @@
 			// we absolutely position the item for a moment so it shrinks to fit
 			var oldPositionVal = this.items[0].style.position;
 			this.items[0].style.position = "absolute";
-			this._itemWidth  = parseInt(this.items[0].offsetWidth) + parseInt($(this.items[0]).css(["margin-left", "margin-right"]));
-			this._itemHeight = parseInt(this.items[0].offsetHeight) + parseInt($(this.items[0]).css(["margin-top", "margin-bottom"]));
+			this._itemWidth  = this.items[0].offsetWidth  + parseInt( $(this.items[0]).css(["margin-left", "margin-right"]) );
+			this._itemHeight = this.items[0].offsetHeight + parseInt( $(this.items[0]).css(["margin-top", "margin-bottom"]) );
 			this.items[0].style.position = oldPositionVal;
 			// Is there a fraction of an item hanging off the end of the carousel?
 			// This can only happen if opts.size is false
@@ -618,40 +618,22 @@
 			});
 
 
-////
-/*
-	Tabbing interaction
-	===================
-	This block of code makes the carousel play nice when tabbing through it.  Everytime 
-	you tab through an item in the carousel, the widget will move to keep the selected 
-	item in view.
-	
-	Event delegation is used on the widget with focus and blur events.  There are issues
-	with doing this which are explained in detail by PPK:
-	http://www.quirksmode.org/blog/archives/2008/04/delegating_the.html
-*/
-
-			if (glow.env.ie) {
-
-				// If IE then we need to use propriety event "focusin":
-				// http://msdn.microsoft.com/en-us/library/ms536935(VS.85).aspx
-
-				glow.events.addListener(this.element, "focusin", function(e) {
-					_focusCallback( glow.dom.get(e.source) );
-				});
-
-			}
-			else {
-
-				// Everything else can use this event (set to use event capturing instead of event bubbling)
-
-				this.element.item(0).addEventListener('focus', function(e) {
-					_focusCallback(glow.dom.get(e.target));
-				}, true);
-
-			}
-
-
+			/*
+				Tabbing interaction
+				===================
+				This block of code makes the carousel play nice when tabbing through it.  Everytime 
+				you tab through an item in the carousel, the widget will move to keep the selected 
+				item in view.
+				
+				Event delegation is used on the widget with focus and blur events.  There are issues
+				with doing this which are explained in detail by PPK:
+				http://www.quirksmode.org/blog/archives/2008/04/delegating_the.html
+			*/
+			
+			glow.events.addListener(this.element, "focus", function(e) {
+				_focusCallback(glow.dom.get(e.target));
+			});
+			
 			/**
 				@name _focusCallback
 				@function
@@ -670,6 +652,11 @@
 
 					// Get the element's index number from it's parent
 					var elmItemNum = _getCarouselItemNum(elm);
+					
+					// return if we got an invalid item num
+					if (elmItemNum === -1) {
+						return;
+					}
 
 					// And Check to see if the index number is in the array of visible indexes...
 					if ( ('|' + that.visibleIndexes().toString() + '|').replace(/,/g, '|').indexOf('|' + elmItemNum + '|') == -1) {
@@ -697,7 +684,11 @@
 			function _getCarouselItemNum(elm) {
 
 				// Recurse back through parents until we find the carousel item
-				while (elm.is('.carousel-item') == false) {
+				while ( !elm.hasClass('.carousel-item') ) {
+					if ( elm.length == 0 ) {
+						// an item doesn't have focus
+						return -1;
+					}
 					elm = elm.parent();
 				}
 				
@@ -721,8 +712,6 @@
 
 			}
 
-//// 
-
 
 		}
 		
@@ -738,11 +727,22 @@
 			if (prev && curMargin == 0) curMargin -= this._sizeReal;
 			var newMargin = curMargin - ((prev? -1 : +1 ) * this._sizeStep);
 			
-			var move = {}; move["margin-" + this._direction] = { from: curMargin + "px", to: newMargin + "px" };
-			this._step = glow.anim.css(this._content, this._animationTime, move, { "tween": this._animationTween });
+			var move = {};
+			move["margin-" + this._direction] = {
+				from: curMargin,
+				to: newMargin
+			};
+			
+			this._step = glow.anim.css(this._content, this._animationTime, move, {
+				"tween": this._animationTween
+			});
+			
 			this._step.start();
 			var that = this;
-			glow.events.addListener(this._step, "complete", function() { afterScroll.apply(that); });
+			
+			glow.events.addListener(this._step, "complete", function() {
+				afterScroll.apply(that);
+			});
 		}
 		
 		/**
