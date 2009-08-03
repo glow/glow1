@@ -303,6 +303,12 @@
 		@param {Boolean} [opts.destroyOnComplete=false] Destroy the animation once it completes?
 			This will free any DOM references the animation may have created. Once
 			the animation completes, you won't be able to start it again.
+			
+		@param {Function} [opts.onStart] Shortcut for adding a "start" event listener
+		@param {Function} [opts.onFrame] Shortcut for adding a "frame" event listener
+		@param {Function} [opts.onStop] Shortcut for adding a "stop" event listener
+		@param {Function} [opts.onComplete] Shortcut for adding a "complete" event listener
+		@param {Function} [opts.onResume] Shortcut for adding a "resume" event listener
 		
 		@example
 		// an example of an spec object
@@ -725,6 +731,12 @@
 		@param {Boolean} [opts.destroyOnComplete=false] Destroy the animation once it completes?
 			This will free any DOM references the animation may have created. Once
 			the animation completes, you won't be able to start it again.
+			
+		@param {Function} [opts.onStart] Shortcut for adding a "start" event listener
+		@param {Function} [opts.onFrame] Shortcut for adding a "frame" event listener
+		@param {Function} [opts.onStop] Shortcut for adding a "stop" event listener
+		@param {Function} [opts.onComplete] Shortcut for adding a "complete" event listener
+		@param {Function} [opts.onResume] Shortcut for adding a "resume" event listener
 
 		@example
 			var myAnim = new glow.anim.Animation(5, {
@@ -800,11 +812,19 @@
 
 		@param {glow.events.Event} event Event Object
 		*/
+		// constructor items that relate to events
+		var animationEventConstructorNames = ["onStart", "onStop", "onComplete", "onResume", "onFrame"];
+		
 		r.Animation = function(duration, opts) {
 			this._opts = opts = glow.lang.apply({
 				useSeconds: true,
 				tween: glow.tweens.linear(),
-				destroyOnComplete: false
+				destroyOnComplete: false,
+				onStart: null,
+				onStop: null,
+				onComplete: null,
+				onResume: null,
+				onFrame: null
 			}, opts);
 
 			/**
@@ -866,7 +886,19 @@
 				in values higher than 1, but will still end at 1.
 			*/
 			this.value = 0;
-
+			
+			// add events from constructor
+			for (var i = 0, len = animationEventConstructorNames.length; i < len; i++) {
+				// does opts.onWhatever exist?
+				if (opts[ animationEventConstructorNames[i] ]) {
+					events.addListener(
+						this,
+						// convert "onWhatever" to "whatever"
+						animationEventConstructorNames[i].slice(2).toLowerCase(),
+						opts[ animationEventConstructorNames[i]
+					]);
+				}
+			}
 		};
 		r.Animation.prototype = {
 
@@ -998,6 +1030,11 @@
 		@param {Boolean} [opts.destroyOnComplete=false] Destroy the animation once it completes?
 			This will free any DOM references the animation may have created. Once
 			the animation completes, you won't be able to start it again.
+			
+		@param {Function} [opts.onStart] Shortcut for adding a "start" event listener
+		@param {Function} [opts.onStop] Shortcut for adding a "stop" event listener
+		@param {Function} [opts.onComplete] Shortcut for adding a "complete" event listener
+		@param {Function} [opts.onResume] Shortcut for adding a "resume" event listener
 
 		@example
 			// in the simplest form, a timeline can be used to
@@ -1072,10 +1109,15 @@
 		
 		@param {glow.events.Event} event Event Object
 		*/
+		var timelineEventConstructorNames = ["onStart", "onStop", "onComplete", "onResume"];
 		r.Timeline = function(channels, opts) {
 			this._opts = opts = glow.lang.apply({
 				loop: false,
-				destroyOnComplete: false
+				destroyOnComplete: false,
+				onStart: null,
+				onStop: null,
+				onComplete: null,
+				onResume: null
 			}, opts);
 			/*
 			PrivateProperty: _channels
@@ -1142,6 +1184,19 @@
 			this._controlAnim = new r.Animation(totalDuration);
 			events.addListener(this._controlAnim, "frame", this._processFrame, this);
 			events.addListener(this._controlAnim, "complete", this._complete, this);
+			
+			// add events from constructor
+			for (var i = 0, len = timelineEventConstructorNames.length; i < len; i++) {
+				// does opts.onWhatever exist?
+				if (opts[ timelineEventConstructorNames[i] ]) {
+					events.addListener(
+						this,
+						// convert "onWhatever" to "whatever"
+						timelineEventConstructorNames[i].slice(2).toLowerCase(),
+						opts[ timelineEventConstructorNames[i]
+					]);
+				}
+			}
 		};
 		r.Timeline.prototype = {
 			/*

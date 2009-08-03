@@ -1,9 +1,29 @@
 t.module("glow.anim");
 
 t.test("glow.anim.Animation events", function() {
-	t.expect(7);
+	t.expect(12);
 	var events = glow.events;
-	var anim = new glow.anim.Animation(1);
+	var constructorFrameFired = false;
+	var anim = new glow.anim.Animation(1, {
+		onStart: function() {
+			t.ok(true, "Start fired from constructor");
+		},
+		onStop: function() {
+			t.ok(true, "Stop fired from constructor");
+		},
+		onResume: function() {
+			t.ok(true, "Resume fired from constructor");
+		},
+		onFrame: function() {
+			if (!constructorFrameFired) {
+				t.ok(true, "Frame fired from constructor");
+			}
+			constructorFrameFired = true;
+		},
+		onComplete: function() {
+			t.ok(true, "Complete fired from constructor");
+		}
+	});
 	var frameCount = 0;
 	var haveStopped = false;
 	
