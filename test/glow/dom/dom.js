@@ -1089,8 +1089,8 @@ t.test("glow.dom.NodeList.html()", function () {
 	
 });
 
-t.test("glow.dom.NodeList.append(String / Node / Array)", function () {
-	t.expect(4);
+t.test("glow.dom.NodeList#append()", function () {
+	t.expect(6);
 
 	var node = glow.dom.create("" + 
 		'<div>' +
@@ -1154,6 +1154,11 @@ t.test("glow.dom.NodeList.append(String / Node / Array)", function () {
 		secondNode.children()[4] != domNode[1],
 		"append NodeList"
 	);
+	
+	node.append("Just some text!");
+	
+	t.equals( node[0].lastChild.nodeValue, "Just some text!", "Added text node" );
+	t.equals( node[1].lastChild.nodeValue, "Just some text!", "Added both text nodes" );
 	
 	t.ok(glow.dom.create("<div></div><div></div>").append("Hello").text() == "Hello", "Adding text");
 });
@@ -1842,7 +1847,7 @@ t.test("Load DOM", function() {
 });
 
 t.test("glow.dom.NodeList.width", function() {
-	t.expect(12);
+	t.expect(13);
 	var node = glow.dom.create("" +
 		'<div id="cssTests">' +
 			'<div class="width100">Test</div>' +
@@ -1850,6 +1855,7 @@ t.test("glow.dom.NodeList.width", function() {
 			'<div class="bordered" style="width:100px;border:10px solid #000">Test</div>' +
 			'<div class="width100 overflowScroll">Test</div>' +
 			'<div class="containsWidth100Div" style="float:left"><div class="width100">Test</div></div>' +
+			'<div style="width:500px; height: 100px"> <div id="autoWidthTest" style="border:5px solid red; padding:10px;"></div> </div>' +
 		'</div>'
 	)[0];
 	document.body.appendChild(node);
@@ -1864,10 +1870,12 @@ t.test("glow.dom.NodeList.width", function() {
 	t.equals(glow.dom.get("#cssTests div.bordered").width(), 100, "Ignore border");
 	t.equals(glow.dom.get("#cssTests div.width100.overflowScroll").width(), 100, "Element with scrollbars");
 	t.equals(glow.dom.get("#cssTests div.containsWidth100Div").width(), 100, "Element floating and containing div");
+	t.equals(glow.dom.get("#autoWidthTest").width(), 470, "Auto width element with border & padding");
 	
 	t.equals(glow.dom.get("#cssTests div.bordered").width(200).width(), 200, "Set width number");
 	t.equals(glow.dom.get("#cssTests div.bordered").width("300").width(), 300, "Set width str, no unit");
 	t.equals(glow.dom.get("#cssTests div.bordered").width("400px").width(), 400, "Set width str, inc unit");
+	
 	node.parentNode.removeChild(node);
 });
 

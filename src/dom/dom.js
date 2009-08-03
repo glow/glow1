@@ -192,7 +192,7 @@
 		*/
 		function stringToNodes(str) {
 			var r = [],
-				tagName = /^\s*<([^\s>]+)/.exec(str)[1],
+				tagName = (/^\s*<([^\s>]+)/.exec(str) || [,'div'])[1],
 				// This matches str content with potential elements that cannot
 				// be a child of <div>.  elmFilter declared at top of page.
 				elmWrap = elmWraps[tagName] || emptyArray, 
