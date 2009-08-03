@@ -1909,8 +1909,8 @@ t.test("glow.dom.NodeList.height", function() {
 	node.parentNode.removeChild(node);
 });
 
-t.todo("glow.dom.NodeList.css getting", function() {
-	t.expect(61);
+t.test("glow.dom.NodeList.css getting", function() {
+	t.expect(62);
 	var node = glow.dom.create("" +
 		'<div id="cssTests">' +
 			'<div class="width100">Test</div>' +
@@ -2029,7 +2029,7 @@ t.todo("glow.dom.NodeList.css getting", function() {
 	t.equals(glow.dom.get("#cssTests div.posTest1").css("left"), "30px", "left (px val)");
 	t.equals(glow.dom.get("#cssTests div.posTest1").css("z-index"), "32", "z-index");
 	t.equals(glow.dom.get("#cssTests div.posTest2").css("right"), "60px", "right (em val)");
-	//t.equals(glow.dom.get("#cssTests div.posTest2").css("bottom"), "30px", "bottom (px val)");
+	t.equals(glow.dom.get("#cssTests div.posTest2").css("bottom"), "30px", "bottom (px val)");
 	t.equals(glow.dom.get("#cssTests div.posTest3").css("position"), "relative", "position");
 	t.equals(glow.dom.get("#cssTests div.posTest3").css("top"), "-60px", "top (reltive negative em)");
 	t.equals(glow.dom.get("#cssTests div.posTest3").css("left"), "-30px", "left (reltive negative em)");
@@ -2045,50 +2045,7 @@ t.todo("glow.dom.NodeList.css getting", function() {
 	t.equals(glow.dom.get("#cssTests div.posTest8").css("height"), "30px", "height (px val display none)");
 	t.equals(glow.dom.get("#cssTests div.displayNone div").css("top"), "60px", "top (em val inside display none)");
 	
-	node.parentNode.removeChild(node);
-});
 	
-t.todo("glow.dom.NodeList.css getting", function() {
-	t.expect(1);
-	var node = glow.dom.create("" +
-		'<div id="cssTests">' +
-			'<div class="width100">Test</div>' +
-			'<div class="height100">Test</div>' +
-			'<div class="containsWidth100Div" style="float:left"><div class="width100">Test</div></div>' +
-			'<div class="padTest">padTest</div>' +
-			'<div class="borderTest">Test</div>' +
-			'<div class="marginTest">Test</div>' +
-			'<div class="marginTest2">Test</div>' +
-			'<ul class="listTest">' +
-				'<li>Test</li>' +
-				'<li>' +
-					'<ul>' +
-						'<li>Test</li>' +
-					'</ul>' +
-				'</li>' +
-			'</ul>' +
-			'<div class="colourTest">Test<div>Test</div></div>' +
-			'<div class="backgroundTest">Test</div>' +
-			'<div class="fontTest">Test</div>' +
-			'<table class="tableTest"><tr><td>Test</td><td>Test</td></tr><tr><td>Test</td><td>Test</td></tr></table>' +
-			'<div class="posTest1">Test</div>' +
-			'<div class="posTest2">postest2</div>' +
-			'<div class="posTest3">Test</div>' +
-			'<div class="posTest4Container"><div class="posTest4">Test</div><div class="posTest5">Test</div></div>' +
-			'<div class="posTest4Container"><div class="padTest2">Test</div></div>' +
-			'<div class="posTest6Container" style="position:relative;zoom:1"><div style="height:100px">Padding!</div><div class="posTest6">Test</div></div>' +
-			'<div class="posTest7Container" style="width:500px;margin-left:20px;"><div class="posTest7">Test</div></div>' +
-			'<div class="posTest8">posTest8</div>' +
-			'<div class="opacityTest">Test</div>' +
-			'<div class="displayTest1">Test</div>' +
-			'<div class="displayTest2">Test</div>' +
-			'<div class="displayNone" style="display:none"><div class="posTest8">Test</div></div>' +
-		'</div>'
-	)[0];
-	document.body.appendChild(node);
-	
-	//strange value from this in firefox 3
-	t.equals(glow.dom.get("#cssTests div.posTest2").css("bottom"), "30px", "bottom (px val)");
 	node.parentNode.removeChild(node);
 });
 

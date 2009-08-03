@@ -600,7 +600,7 @@
 			else if (compStyle) { //W3 Method
 				//this returns computed values
 				if (typeof compStyle == "function") {
-					//safari returns null for compStyle
+					//safari returns null for compStyle when element is display:none
 
 					oldDisplay = elm.style.display;
 					r = tempBlock(elm, function() {
