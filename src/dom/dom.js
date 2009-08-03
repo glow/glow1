@@ -672,7 +672,7 @@
 			r = elmStyle["pixel" + axisPosUpper];
 			
 			// revert values
-			element[axisPos] = positionVal;
+			elmStyle[axisPos] = positionVal;
 			element.runtimeStyle[axisPos] = runtimePositionVal;
 			
 			return r;
