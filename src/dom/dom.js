@@ -2469,7 +2469,15 @@
 					len = that.length,
 					originalProp = prop;
 
-				if (val != undefined) { //setting stuff
+				if(    (typeof prop == "object")
+				    && (typeof prop.length == "undefined")
+				) { // set multiple values
+						for (style in prop) {
+								this.css(style, prop[style]);
+						}
+						return that;
+				}
+				else if (val != undefined) { //set one CSS value
 					prop = toStyleProp(prop);
 					for (; i < len; i++) {
 						thisStyle = that[i].style;
