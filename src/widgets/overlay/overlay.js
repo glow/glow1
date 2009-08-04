@@ -179,7 +179,8 @@
 							setTimeout(function() {
 								container.css("overflow", "hidden").css("display", "block");
 							}, 0);
-						} else {
+						} 
+						else {
 							container.css("overflow", "hidden");
 						}
 					},
@@ -487,7 +488,9 @@
 				// the overlay to be able to gain focus, so it can capture any events on itself.
 				overlayNode.attr("tabIndex", "0");
 
-				// keypress + ESC key not being recognised in webkit, so use keyup instead...
+				// keypress + ESC key not being recognised in webkit, so use keyup instead.
+				// However, keyup + Opera doesn't recognise the ESC key, so use keypress as 
+				// default for all other browsers.
 				// https://bugs.webkit.org/show_bug.cgi?id=25147
 				// http://code.google.com/p/chromium/issues/detail?id=9061#c2
 				var escKeyEvent = (glow.env.webkit) ? "keyup" : "keypress";
@@ -559,11 +562,13 @@
 							} else if (this.opts.modal && $(document).width() < containerWidth) { //does the mask need to extend further?
 								this.opts.mask.maskElement.css("width", containerWidth + "px");
 							}
-						} else {
+						} 
+						else {
 							blockScrollPos.x = false;
 							container.css("left", Math.max(((winWidth - containerWidth) * (xVal/100)) + extraOffset.x, extraOffset.x) + "px");
 						}
-					} else {
+					} 
+					else {
 						container.css("left", xVal + extraOffset.x + "px");
 					}
 
@@ -579,11 +584,13 @@
 							} else if (this.opts.modal && $(document).height() < containerHeight) {
 								this.opts.mask.maskElement.css("height", containerHeight + "px");
 							}
-						} else {
+						} 
+						else {
 							blockScrollPos.y = false;
 							container.css("top", Math.max(((winHeight - containerHeight) * (yVal/100)) + extraOffset.y, extraOffset.y) + "px");
 						}
-					} else {
+					} 
+					else {
 						container.css("top", yVal + extraOffset.y + "px");
 					}
 				}
@@ -651,7 +658,8 @@
 					that._blockActions = true;
 					showAnim.start();
 					that.container.css("visibility", "visible");
-				} else {
+				} 
+				else {
 					that.container.css("visibility", "visible");
 					that.isShown = true;
 					that.container.attr("aria-hidden", "false");
@@ -705,7 +713,8 @@
 					}
 					that._blockActions = true;
 					hideAnim.start();
-				} else {
+				} 
+				else {
 					closeOverlay(that);
 					that.isShown = false;
 					events.fire(that, "afterHide");
@@ -735,16 +744,14 @@
 				// Fix for trac 170 - Overlay: In IE, flash continues to play when overlay is hidden
 				// If flash content detected then reinsert the element into its existing position within the DOM.
 				// This causes IE to stop the flash movie playing without removing it from the DOM (which would leave us open to JS errors)
-				if (glow.env.ie)
-				{
+				if (glow.env.ie) {
 					that.content.get("object").each(function(i) {
 
 						if (
 							(this.getAttribute("type") == "application/x-shockwave-flash" ||
 							flashUrlTest.test(this.getAttribute("data") || this.getAttribute("src") || "") ||
 							(this.getAttribute("classid") || "").toLowerCase() == "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000")
-						)
-						{
+						) {
 							this.parentNode.insertBefore(this, this.nextSibling);
 						}
 
