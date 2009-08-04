@@ -17,6 +17,8 @@ var srcLoader;
 		"glow.tweens",
 		"glow.anim",
 		"glow.dragdrop",
+		"glow.i18n",
+		"glow.i18n.localePacks.cy",
 		"glow.embed",
 		"glow.forms",
 		"glow.widgets",

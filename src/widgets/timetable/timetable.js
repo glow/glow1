@@ -8,7 +8,8 @@
 		'glow.events',
 		'glow.widgets',
 		'glow.widgets.Slider',
-		'glow.dragdrop'
+		'glow.dragdrop',
+		'glow.i18n'
 	]],
 	builder: function(glow) {
 		var $dom = glow.dom,
@@ -19,14 +20,8 @@
 			$fire = $events.fire,
 			$lang = glow.lang,
 			$apply = $lang.apply,
+			$i18n = glow.i18n,
 			idIndex = 0,
- 			locale = {
- 				ACCESSIBILITY_MENU_START : "Start",
- 				ACCESSIBILITY_MENU_END : "End",
- 				ACCESSIBILITY_INTRO : "Use this menu to choose what section of the timetable to view.",
- 				SKIPLINK_TO_TRACK : "skip to track data",
- 				SKIPLINK_BACK_TO_HEADERS : "back to track headers"
- 			},
 			vocabs = [
 				{
 					length: "width",
@@ -50,6 +45,14 @@
 					otherPosOpposite: "right"
 				}
 			];
+
+		$i18n.addLocaleModule("GLOW_WIDGETS_TIMETABLE", "en", {
+			ACCESSIBILITY_MENU_START : "Start",
+			ACCESSIBILITY_MENU_END : "End",
+			ACCESSIBILITY_INTRO : "Use this menu to choose what section of the timetable to view.",
+			SKIPLINK_TO_TRACK : "skip to track data",
+			SKIPLINK_BACK_TO_HEADERS : "back to track headers"
+		});
 
 		function getId() {
 			return glow.UID + "TimetableWidget" + (idIndex++);
@@ -1430,7 +1433,7 @@
 						'<div class="timetable-theme">' +
 							'<div class="timetable-state">' +
 								'<div class="timetable-container">' +
-									'<div class="timetable-accessibility-navigation">' + locale.ACCESSIBILITY_INTRO + '</div>' +
+									'<div class="timetable-accessibility-navigation">{ACCESSIBILITY_INTRO}</div>' +
 									'<div class="timetable-track-headers" role="presentation" id="' + glow.UID + 'TimetableWidgetHeaders"></div>' +
 									'<div class="timetable-scrollView">' +
 										'<div class="timetable-scrollbar1"></div>' +
@@ -1721,7 +1724,7 @@
 					// get and add the content
 					this._headers[id] = $dom.create(headerHolderTemplate).append( content.addClass("timetable-header-content") );
 					this._headerElm.append(this._headers[id])
-						.append('<a class="timetable-accessibility-hidden" href="#' + id + '">' + locale.SKIPLINK_TO_TRACK + '</a>');
+						.append('<a class="timetable-accessibility-hidden" href="#' + id + '">' + this._locale.SKIPLINK_TO_TRACK + '</a>');
 				}
 
 				content = track.getFooter();
@@ -1729,7 +1732,7 @@
 				if (content) {
 					this._footers[id] = $dom.create(footerHolderTemplate).append( content.addClass("timetable-footer-content") );
 					this._footerElm.append(this._footers[id])
-					   .append('<a class="timetable-accessibility-hidden" href="#' + glow.UID + 'TimetableWidgetHeaders">' + locale.SKIPLINK_BACK_TO_HEADERS + '</a>');
+					   .append('<a class="timetable-accessibility-hidden" href="#' + glow.UID + 'TimetableWidgetHeaders">' + this._locale.SKIPLINK_BACK_TO_HEADERS + '</a>');
 				}
 			}
 
@@ -2080,8 +2083,8 @@
 						i = 0,
 						that = this,
 						lastViewStart = timetable.end - timetable._viewWindowSize,
-						startOption = '<option value="' + timetable.start.valueOf() + '">' + locale.ACCESSIBILITY_MENU_START + '</option>',
-						endOption = '<option value="' + lastViewStart.valueOf() + '">' + locale.ACCESSIBILITY_MENU_END + '</option>';
+						startOption = '<option value="' + timetable.start.valueOf() + '">' + this._locale.ACCESSIBILITY_MENU_START + '</option>',
+						endOption = '<option value="' + lastViewStart.valueOf() + '">' + this._locale.ACCESSIBILITY_MENU_END + '</option>';
 						
 					for(; i < len; i++) {
 						itemContext = {
@@ -2146,7 +2149,7 @@
 
 				this._inCurrentView = null;
 
-
+				this._locale = $i18n.getLocaleModule("GLOW_WIDGETS_TIMETABLE");
 
 				/**
 				@name glow.widgets.Timetable.View#tracks
@@ -2185,7 +2188,7 @@
 				@description Outer element
 				*/
 				// init html interface and apply and class names we need
-				this.element = $dom.create(containerTemplate).attr("id", timetable.id);
+				this.element = $dom.create(containerTemplate, {interpolate: this._locale}).attr("id", timetable.id);
 				this.element[0].className = timetable._opts.className;
 
 				this.element.addClass(vocab.rootClass);

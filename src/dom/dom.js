@@ -858,6 +858,7 @@
 			}
 			return r;
 		};
+
 		/**
 		@name glow.dom.create
 		@function
@@ -868,17 +869,31 @@
 			All top-level nodes must be elements (i.e. text content in the
 			HTML must be wrapped in HTML tags).
 
+		@param {Object} [opts] An optional options object
+			@param {Object} [opts.interpolate] Data for a call to glow.lang.interpolate
+				If this option is set, the String html parameter will be passed through glow.lang.interpolate with this as the data and no options
+				If glow.lang.interpolates options are required, an explicit call must be made
+
 		@returns {glow.dom.NodeList}
 
 		@example
 			// NodeList of two elements
 			var myNodeList = glow.dom.create("<div>Hello</div><div>World</div>");
 		*/
-		r.create = function(sHtml) {
-			var toCheck = stringToNodes(sHtml),
-				ret = [],
+		r.create = function(sHtml, opts) {
+			var ret = [],
 				i = 0,
-				rLen = 0;
+				rLen = 0,
+				toCheck;
+			
+			opts = opts || {};
+			
+			if(opts.interpolate != undefined) {
+				sHtml = lang.interpolate(sHtml, opts.interpolate);
+			}
+			
+			toCheck = stringToNodes(sHtml);
+			
 			for (; toCheck[i]; i++) {
 				if (toCheck[i].nodeType == 1 && toCheck[i].nodeName != "!") {
 					ret[rLen++] = toCheck[i];
