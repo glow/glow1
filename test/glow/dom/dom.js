@@ -182,7 +182,7 @@ t.test("glow.dom.NodeList constructor", function () {
 });
 
 t.test("glow.dom.create", function () {
-	t.expect(15);
+	t.expect(16);
 
 	var NodeList = glow.dom.create(' <div id="aNewNode1">test</div> <div id="aNewNode2">test</div> ');
 	
@@ -239,7 +239,7 @@ t.test("glow.dom.create", function () {
 	
 	// OPTION NODE
 	var option = glow.dom.create("<option></option>");
-	t.ok(option[0] && option[0].nodeName.toLowerCase() == "option", "Option element created");
+	t.ok(option[0] && option[0].nodeName.toLowerCase() == "option", "Option element created"); 
 	
 	// LEGEND NODE
 	var legend = glow.dom.create("<legend></legend>");
@@ -248,6 +248,10 @@ t.test("glow.dom.create", function () {
 	// SCRIPT NODE
 	var script = glow.dom.create("<script></script>");
 	t.ok(script[0] && script[0].nodeName.toLowerCase() == "script", "Script element created");
+	
+	// STYLE NODE
+	var style = glow.dom.create('<style type="text/css">#abc1234 { margin:0; }</style>');
+	t.equals(style[0].nodeName.toLowerCase(), "style", "Style element created");
 
 });
 
