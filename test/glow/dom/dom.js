@@ -1922,6 +1922,30 @@ t.test("glow.dom.NodeList.height", function() {
 	node.parentNode.removeChild(node);
 });
 
+t.test("glow.dom.NodeList.css setting with hash of values", function() {
+	t.expect(5);
+	var node = glow.dom.create("" +
+		'<div id="cssTests">' +
+			'<div class="test">Test</div>' +
+		'</div>'
+	)[0];
+	document.body.appendChild(node);
+	// TRY A SINGLE ENTRY
+	t.equals(glow.dom.get("#cssTests div.test").css({width: "100px"}).css("width"), "100px", "Set width to 100px");
+	// TRY MULTIPLE ENTRY
+	glow.dom.get("#cssTests div.test").css({
+		"font-style": "italic",
+		"font-size": "10px",
+		padding: "10px",
+		margin: "10px"
+	});
+	t.equals(glow.dom.get("#cssTests div.test").css("font-style"), "italic", "Set font-style to italic");
+	t.equals(glow.dom.get("#cssTests div.test").css("font-size"), "10px", "Set font-weight to 10px");
+	t.equals(glow.dom.get("#cssTests div.test").css("padding-left"), "10px", "Set font-weight to 10px");
+	t.equals(glow.dom.get("#cssTests div.test").css("margin-left"), "10px", "Set font-weight to 10px");
+	node.parentNode.removeChild(node);
+});
+
 t.test("glow.dom.NodeList.css getting", function() {
 	t.expect(59);
 	var node = glow.dom.create("" +

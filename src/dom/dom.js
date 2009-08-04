@@ -2437,8 +2437,16 @@
 				<dt>font-size</dt><dd>Returns size as pixels except in IE, which will return the value in the same units it was set in ("0.9em")</dd>
 				<dt>font-weight</dt><dd>Returns named values in some browsers ("bold"), returns computed weight in others ("700")</dd>
 				</dl>
+				
+				NOTE: If you use a hash of values to set a CSS property that has a hyphen (-) in its name, then you must wrap the name in speech marks.  For example:
+				
+				glow.dom.get("#myDiv").css({
+						"font-weight": "bold"
+				});
+				
+				This is because JavaScript object property names cannot contain hyphens.
 
-			@param {String | String[]} property The CSS property name or array of names
+			@param {String | String[] | Object} property The CSS property name or array of names
 
 			@param {String} [value] The value to apply
 
@@ -2461,6 +2469,14 @@
 			@example
 				// where appropriate, px is assumed when no unit is passed
 				glow.dom.get("#myDiv").css("height", 300);
+		
+			@example
+				// set CSS using a hash of values
+				glow.dom.get("#myDiv").css({
+						"font-weight": "bold",
+						padding: "10px",
+						color: "#00cc99"
+				})
 			*/
 			css: function(prop, val) {
 				var that = this,
