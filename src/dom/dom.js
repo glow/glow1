@@ -1336,7 +1336,7 @@
 			prop: function(name, val) {
 				
 				// setting multiple
-				if (typeof name == 'object') {
+				if (name.constructor === Object) {
 					var hash = name,
 						key;
 					
