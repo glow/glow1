@@ -3091,7 +3091,7 @@
 									}
 									sSelector = sSelector.slice(aRx[0].length);
 								} else {
-									throw new Error("glow.dom.get('" + originalSelector + "') error: bad selector used.");
+									throw new Error("Invalid Selector " + originalSelector);
 								}
 							} else {
 								matchedCondition = false;
@@ -3102,7 +3102,7 @@
 					}
 
 					if (sSelector !== "") {
-						throw new Error("glow.dom.get('" + originalSelector + "') error: bad selector used.");
+						throw new Error("Invalid Selector " + originalSelector);
 					}
 
 					//add to cache and return
