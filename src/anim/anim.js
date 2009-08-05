@@ -22,7 +22,27 @@
 			usesYAxis = /height|top/,
 			getUnit = /(\D+)$/,
 			testElement = dom.create('<div style="position:absolute;visibility:hidden"></div>');
-
+		
+		/*
+		  Converts event shortcuts in an options object to real events
+		  instance - the object to add events to
+		  opts - the options object containing the listener functions
+		  eventProps - an array of property names of potential listeners, eg ['onFrame', 'onComplete']
+		*/
+		function addEventsFromOpts(instance, opts, eventProps) {
+			for (var i = 0, len = eventProps.length; i < len; i++) {
+				// does opts.onWhatever exist?
+				if (opts[ eventProps[i] ]) {
+					events.addListener(
+						instance,
+						// convert "onWhatever" to "whatever"
+						eventProps[i].slice(2).toLowerCase(),
+						opts[ eventProps[i] ]
+					);
+				}
+			}
+		}
+		
 		(function() {
 			var queue = [], //running animations
 				queueLen = 0,
@@ -887,18 +907,8 @@
 			*/
 			this.value = 0;
 			
-			// add events from constructor
-			for (var i = 0, len = animationEventConstructorNames.length; i < len; i++) {
-				// does opts.onWhatever exist?
-				if (opts[ animationEventConstructorNames[i] ]) {
-					events.addListener(
-						this,
-						// convert "onWhatever" to "whatever"
-						animationEventConstructorNames[i].slice(2).toLowerCase(),
-						opts[ animationEventConstructorNames[i]
-					]);
-				}
-			}
+			// add events from constructor opts
+			addEventsFromOpts(this, opts, animationEventConstructorNames);
 		};
 		r.Animation.prototype = {
 
@@ -1186,17 +1196,7 @@
 			events.addListener(this._controlAnim, "complete", this._complete, this);
 			
 			// add events from constructor
-			for (var i = 0, len = timelineEventConstructorNames.length; i < len; i++) {
-				// does opts.onWhatever exist?
-				if (opts[ timelineEventConstructorNames[i] ]) {
-					events.addListener(
-						this,
-						// convert "onWhatever" to "whatever"
-						timelineEventConstructorNames[i].slice(2).toLowerCase(),
-						opts[ timelineEventConstructorNames[i]
-					]);
-				}
-			}
+			addEventsFromOpts(this, opts, timelineEventConstructorNames);
 		};
 		r.Timeline.prototype = {
 			/*
