@@ -159,39 +159,16 @@ of &lt;body> which have class "glowNoMask" will be left as children of
 
 				function resizeMask() {
 					var bodyHeight = body.height();
-					// we do this twice to catch scrollbars showing & hiding
-					for (var i = 0; i < 2; i++) {
-						// Fix for git bug 60: mask now set to the correct width even when horizontal scrolling is being applied to the page
-						// Work out the required width to set the mask (this is basically the width of the content but without the mask!)
-						that.maskElement.css("width", getScrollWidth() + "px").
-							css("height", ( that.opts.disableScroll ? noScrollContainer.height() : Math.max(bodyHeight, win.height()) ) + "px");
-					}
+					// hide the mask so it's not included in our measurement of width / height
+					that.maskElement.hide(); 
+					// Work out the required width to set the mask (this is basically the width of the content but without the mask)
+					that.maskElement.css("width", doc.width() + "px")
+						.css("height", ( that.opts.disableScroll ? noScrollContainer.height() : Math.max(bodyHeight, win.height()) ) + "px");
+					that.maskElement.show();
 					if (glow.env.ie < 7) {
 						var maskStyle = that.maskElement[0].style;
 						that._iframe.css("width", maskStyle.width).css("height", maskStyle.height);
 					}
-				}
-
-//				function getScrollWidth() {
-//					var width;
-//					if (glow.env.gecko)
-//					{
-//						that.maskElement.hide();
-//						width = document.documentElement.scrollWidth;
-//						that.maskElement.show();
-//					}
-//					else
-//					{
-//						width = (glow.env.webkit || glow.env.ie) ? document.body.scrollWidth : document.documentElement.scrollWidth;
-//					}
-//					return width;
-//				}
-
-				function getScrollWidth() {
-					that.maskElement.hide(); // Hide mask element so it doesn't confuse Firefox (FF treats the width of the mask as the width of the page)
-					var width = (glow.env.webkit || glow.env.ie) ? document.body.scrollWidth : document.documentElement.scrollWidth;
-					that.maskElement.show();
-					return width;
 				}
 
 				this.maskElement.css("visibility", "visible").css("display", "block");
