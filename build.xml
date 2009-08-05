@@ -40,6 +40,7 @@
 		dir="${SRC_DIR}">
 		<file name="glow/glow.js" />
 		<file name="cc-open.js" />
+		<file name="i18n/i18n.js" />
 		<file name="dom/dom.js" />
 		<file name="events/events.js" />
 		<file name="data/data.js" />
