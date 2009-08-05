@@ -858,6 +858,7 @@
 			}
 			return r;
 		};
+
 		/**
 		@name glow.dom.create
 		@function
@@ -868,17 +869,31 @@
 			All top-level nodes must be elements (i.e. text content in the
 			HTML must be wrapped in HTML tags).
 
+		@param {Object} [opts] An optional options object
+			@param {Object} [opts.interpolate] Data for a call to glow.lang.interpolate
+				If this option is set, the String html parameter will be passed through glow.lang.interpolate with this as the data and no options
+				If glow.lang.interpolates options are required, an explicit call must be made
+
 		@returns {glow.dom.NodeList}
 
 		@example
 			// NodeList of two elements
 			var myNodeList = glow.dom.create("<div>Hello</div><div>World</div>");
 		*/
-		r.create = function(sHtml) {
-			var toCheck = stringToNodes(sHtml),
-				ret = [],
+		r.create = function(sHtml, opts) {
+			var ret = [],
 				i = 0,
-				rLen = 0;
+				rLen = 0,
+				toCheck;
+			
+			opts = opts || {};
+			
+			if(opts.interpolate != undefined) {
+				sHtml = lang.interpolate(sHtml, opts.interpolate);
+			}
+			
+			toCheck = stringToNodes(sHtml);
+			
 			for (; toCheck[i]; i++) {
 				if (toCheck[i].nodeType == 1 && toCheck[i].nodeName != "!") {
 					ret[rLen++] = toCheck[i];
@@ -2437,16 +2452,8 @@
 				<dt>font-size</dt><dd>Returns size as pixels except in IE, which will return the value in the same units it was set in ("0.9em")</dd>
 				<dt>font-weight</dt><dd>Returns named values in some browsers ("bold"), returns computed weight in others ("700")</dd>
 				</dl>
-				
-				NOTE: If you use a hash of values to set a CSS property that has a hyphen (-) in its name, then you must wrap the name in speech marks.  For example:
-				
-				glow.dom.get("#myDiv").css({
-						"font-weight": "bold"
-				});
-				
-				This is because JavaScript object property names cannot contain hyphens.
 
-			@param {String | String[] | Object} property The CSS property name or array of names
+			@param {String | String[] | Object} property The CSS property name, array of names to sum, or object of key-value pairs
 
 			@param {String} [value] The value to apply
 
@@ -2471,7 +2478,8 @@
 				glow.dom.get("#myDiv").css("height", 300);
 		
 			@example
-				// set CSS using a hash of values
+				// set multiple CSS values at once
+				// NOTE: Property names containing a hyphen such as font-weight must be quoted
 				glow.dom.get("#myDiv").css({
 						"font-weight": "bold",
 						padding: "10px",
@@ -2485,13 +2493,11 @@
 					len = that.length,
 					originalProp = prop;
 
-				if(    (typeof prop == "object")
-				    && (typeof prop.length == "undefined")
-				) { // set multiple values
-						for (style in prop) {
-								this.css(style, prop[style]);
-						}
-						return that;
+				if (prop.constructor === Object) { // set multiple values
+					for (style in prop) {
+						this.css(style, prop[style]);
+					}
+					return that;
 				}
 				else if (val != undefined) { //set one CSS value
 					prop = toStyleProp(prop);
@@ -3076,7 +3082,7 @@
 									}
 									sSelector = sSelector.slice(aRx[0].length);
 								} else {
-									throw new Error("glow.dom.get('" + originalSelector + "') error: bad selector used.");
+									throw new Error("Invalid Selector " + originalSelector);
 								}
 							} else {
 								matchedCondition = false;
@@ -3087,7 +3093,7 @@
 					}
 
 					if (sSelector !== "") {
-						throw new Error("glow.dom.get('" + originalSelector + "') error: bad selector used.");
+						throw new Error("Invalid Selector " + originalSelector);
 					}
 
 					//add to cache and return

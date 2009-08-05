@@ -182,7 +182,7 @@ t.test("glow.dom.NodeList constructor", function () {
 });
 
 t.test("glow.dom.create", function () {
-	t.expect(16);
+	t.expect(17);
 
 	var NodeList = glow.dom.create(' <div id="aNewNode1">test</div> <div id="aNewNode2">test</div> ');
 	
@@ -252,6 +252,11 @@ t.test("glow.dom.create", function () {
 	// STYLE NODE
 	var style = glow.dom.create('<style type="text/css">#abc1234 { margin:0; }</style>');
 	t.equals(style[0].nodeName.toLowerCase(), "style", "Style element created");
+
+	// interpolate test
+	var iNodes = glow.dom.create("<div>{foo}</div>", {interpolate: {foo: "FOO"}});
+	t.equals(iNodes.text(), "FOO", "Create works with interpolation");
+
 
 });
 

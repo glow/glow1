@@ -10,9 +10,30 @@
 (window.gloader || glow).module({
 	name: "glow.forms",
 	library: ["glow", "@VERSION@"],
-	depends: [["glow", "@VERSION@", 'glow.dom', 'glow.events', 'glow.anim', 'glow.net']],
+	depends: [["glow", "@VERSION@", 'glow.dom', 'glow.events', 'glow.anim', 'glow.net', 'glow.i18n']],
 	builder: function(glow) {
 
+	var $i18n = glow.i18n,
+		$interpolate = glow.lang.interpolate;
+
+	$i18n.addLocaleModule("GLOW_FORMS", "en", {
+		TEST_MESSAGE_REQUIRED  : "Value is required",
+		TEST_MESSAGE_IS_NUMBER : "Must be a number.",
+		TEST_MESSAGE_MIN       : "The value must be at least {arg}.",
+		TEST_MESSAGE_MAX       : "The value must be less than {arg}.",
+		TEST_MESSAGE_RANGE     : "The value must be {min} or greater, and less than {max}.",
+		TEST_MESSAGE_MIN_COUNT : "Must be have at least {arg} values.",
+		TEST_MESSAGE_MAX_COUNT : "Must be have at most {arg} values.",
+		TEST_MESSAGE_COUNT     : "Must have {arg} values.",
+		TEST_MESSAGE_REGEX     : "Must be in the correct format.",
+		TEST_MESSAGE_MIN_LEN   : "Must be at least {arg} characters.",
+		TEST_MESSAGE_MAX_LEN   : "Must be at most {arg} characters.",
+		TEST_MESSAGE_IS_EMAIL  : "Must be a valid email address.",
+		TEST_MESSAGE_SAME_AS   : "Must be the same as: {arg}",
+		TEST_MESSAGE_AJAX      : "server responded",
+		TEST_MESSAGE_IS        : "Must be {arg}",
+		TEST_MESSAGE_IS_NOT    : "Must not be {arg}"
+	});
 
 glow.forms = {};
 
@@ -49,6 +70,8 @@ glow.forms.Form = function(formNode, opts) { /*debug*///console.log("glow.forms.
 	glow.events.addListener(this, "validate", this.opts.onValidate || feedback.defaultFeedback);
 
 	this._idleTimer = null;
+	
+	this._localeModule = $i18n.getLocaleModule("GLOW_FORMS");
 
 	// add event listener to form
 	var thisForm = this;
@@ -132,6 +155,8 @@ glow.forms.Form.prototype._nextTest = function() { /*debug*///console.log("glow.
 		if (typeof glow.forms.tests[currentTest.type] != "function") {
 			throw "Unimplemented test: no test exists of type '"+currentTest.type+"'.";
 		}
+		
+		currentTest.opts._localeModule = this._localeModule;
 		glow.forms.tests[currentTest.type](fieldValue, currentTest.opts, callback, this.formNode.val());
 	}
 	else {
@@ -372,7 +397,7 @@ glow.forms.tests = {
 		);
 	 */
 	required: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.required()");
-		var message = opts.message || "Value is required";
+		var message = opts.message || opts._localeModule.TEST_MESSAGE_REQUIRED;
 
 		for (var i = 0, len = values.length; i < len; i++) {
 			if (/^\s*$/.test(values[i])) {
@@ -394,7 +419,7 @@ glow.forms.tests = {
 		);
 	 */
 	isNumber: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.isNumber()");
-		var message = opts.message || "Must be a number.";
+		var message = opts.message || opts._localeModule.TEST_MESSAGE_IS_NUMBER;
 
 		for (var i = 0, len = values.length; i < len; i++) {
 			if (values[i] == "" || isNaN(values[i])) {
@@ -418,7 +443,7 @@ glow.forms.tests = {
 		);
 	 */
 	min: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.min()");
-		var message = opts.message || "The value must be at least "+opts.arg+".";
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_MIN, {arg: opts.arg});
 		for (var i = 0, len = values.length; i < len; i++) {
 			if (Number(values[i]) < Number(opts.arg)) {
 				callback(glow.forms.FAIL, message);
@@ -441,7 +466,7 @@ glow.forms.tests = {
 		);
 	 */
 	max: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.max()");
-		var message = opts.message || "The value must be less than "+opts.arg+".";
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_MAX, {arg: opts.arg});
 		for (var i = 0, len = values.length; i < len; i++) {
 			if (Number(values[i]) > Number(opts.arg)) {
 				callback(glow.forms.FAIL, message);
@@ -468,7 +493,7 @@ glow.forms.tests = {
 		if (typeof minmax[0] == "undefined" || typeof minmax[1] == "undefined") {
 			throw "Range test requires a parameter like 0..10."
 		}
-		var message = opts.message || "The value must be "+minmax[0]+" or greater, and less than "+minmax[1]+".";
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_RANGE, {min: minmax[0], max : minmax[1]});
 
 		// cast to numbers to avoid stringy comparisons
 		minmax[0] *= 1;
@@ -504,7 +529,7 @@ glow.forms.tests = {
 		);
 	 */
 	minCount: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.minCount()");
-		var message = opts.message || "Must be have at least "+opts.arg+" values.";
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_MIN_COUNT, {arg: opts.arg});
 
 		var count = 0;
 
@@ -533,7 +558,7 @@ glow.forms.tests = {
 		);
 	 */
 	maxCount: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.maxCount()");
-		var message = opts.message || "Must be have at most "+opts.arg+" values.";
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_MAX_COUNT, {arg: opts.arg});
 
 		var count = 0;
 
@@ -562,7 +587,7 @@ glow.forms.tests = {
 		);
 	 */
 	count: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.count()");
-		var message = opts.message || "Must have "+opts.arg+" values.";
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_COUNT, {arg: opts.arg});
 
 		var count = 0;
 
@@ -590,7 +615,7 @@ glow.forms.tests = {
 		);
 	 */
 	regex: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.regex()");
-		var message = opts.message || "Must be in the correct format.";
+		var message = opts.message || opts._localeModule.TEST_MESSAGE_REGEX;
 
 		var regex = (typeof opts.arg == "string")? new RegExp(opts.arg) : opts.arg; // if its not a string assume its a regex literal
 		for (var i = 0, len = values.length; i < len; i++) {
@@ -615,7 +640,7 @@ glow.forms.tests = {
 		);
 	 */
 	minLen: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.minLen()");
-		var message = opts.message || "Must be at least "+opts.arg+" characters.";
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_MIN_LEN, {arg: opts.arg});
 
 		for (var i = 0, len = values.length; i < len; i++) {
 			if (values[i].length < opts.arg) {
@@ -639,7 +664,7 @@ glow.forms.tests = {
 		);
 	 */
 	maxLen: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.maxLen()");
-		var message = opts.message || "Must be at most "+opts.arg+" characters.";
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_MAX_LEN, {arg: opts.arg});
 
 		for (var i = 0, len = values.length; i < len; i++) {
 			if (values[i].length > opts.arg) {
@@ -663,7 +688,7 @@ glow.forms.tests = {
 		);
 	 */
 	isEmail: function(values, opts, callback) { /*debug*///console.log("glow.forms.tests.isEmail()");
-		var message = opts.message || "Must be a valid email address.";
+		var message = opts.message || opts._localeModule.TEST_MESSAGE_IS_EMAIL;
 
 		for (var i = 0, len = values.length; i < len; i++) {
 			if (!/^[A-Za-z0-9](([_\.\-]*[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$/.test(values[i])) {
@@ -687,7 +712,7 @@ glow.forms.tests = {
 		);
 	 */
 	sameAs: function(values, opts, callback, formValues) { /*debug*///console.log("glow.forms.tests.sameAs()");
-		var message = opts.message || "Must be the same as: "+opts.arg;
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_SAME_AS, {arg: opts.arg});
 		var compareTo = formValues[opts.arg];
 
 		for (var i = 0, len = values.length; i < len; i++) {
@@ -732,7 +757,7 @@ glow.forms.tests = {
 	 */
 	ajax: function(values, opts, callback, formValues) { /*debug*///console.log("glow.forms.tests.ajax() - "+opts.url);
 		var queryValues = {},
-		    message = (opts.message || "server responded");
+		    message = (opts.message || opts._localeModule.TEST_MESSAGE_AJAX);
 		    
 		for (var p in formValues) {
 			if (typeof formValues[p] == "string") {
@@ -824,7 +849,7 @@ glow.forms.tests = {
 		);
 	 */
 	"is": function(values, opts, callback) {
-		var message = opts.message || "Must be " + opts.arg;
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_IS, {arg: opts.arg});
 
 		for (var i = 0, len = values.length; i < len; i++) {
 			if (values[i] != opts.arg) {
@@ -849,7 +874,7 @@ glow.forms.tests = {
 		);
 	 */
 	"isNot": function(values, opts, callback) {
-		var message = opts.message || "Must not be " + opts.arg;
+		var message = opts.message || $interpolate(opts._localeModule.TEST_MESSAGE_IS_NOT, {arg: opts.arg});
 
 		for (var i = 0, len = values.length; i < len; i++) {
 			if (values[i] == opts.arg) {

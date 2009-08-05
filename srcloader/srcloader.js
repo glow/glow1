@@ -17,6 +17,7 @@ var srcLoader;
 		"glow.tweens",
 		"glow.anim",
 		"glow.dragdrop",
+		"glow.i18n",
 		"glow.embed",
 		"glow.forms",
 		"glow.widgets",

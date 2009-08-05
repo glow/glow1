@@ -5,12 +5,42 @@
 		'glow', '@VERSION@',
 		'glow.dom',
 		'glow.events',
-		'glow.widgets'
+		'glow.widgets',
+		'glow.i18n'
 	]],
 	
 	builder: function(glow) {
 		var $      = glow.dom.get, // shortcuts
-			events = glow.events;
+			events = glow.events,
+			$i18n  = glow.i18n;
+			
+		$i18n.addLocaleModule("GLOW_WIDGETS_EDITOR", "en", {
+			ENTER_MESSAGE  : "You are about to enter a Rich Text Editor",
+			SKIP_LINK_TEXT : "Skip past",
+			LEAVE_MESSAGE  : "You have left the Rich Text Editor",
+
+			BOLD_TITLE : "Bold",
+			BOLD_LABEL : "B",
+
+			ITALICS_TITLE : "Italics",
+			ITALICS_LABEL : "I",
+
+			STRIKE_TITLE : "Strikethrough",
+			STRIKE_LABEL : "Strike"
+			
+		/*
+			BLOCK_TITLE : "Blockquote",
+			BLOCK_LABEL : "blockquote",
+
+			HEADING1_TITLE : "Heading1",
+			HEADING1_LABEL : "Heading1",
+
+			TOGGLE_TITLE : "toggle",
+			TOGGLE_LABEL : "toggle",
+			
+			** DONT FORGET THE OTHER LOCAL PACKS (eg CY)
+		*/
+		});
 		
 		/**
 			@name glow.widgets.Editor
@@ -44,18 +74,18 @@
 		glow.widgets.Editor = function(textarea, opts) {
 			textarea = $(textarea);
 			
-			// we need to create our toolset for the first use
-			if (!TOOLS) {
-				TOOLS = createTools();
-			}
+			var editorLocaleModule = $i18n.getLocaleModule("GLOW_WIDGETS_EDITOR");
 			
+			this._tools = createTools(editorLocaleModule);
+
 			opts = this._opts = glow.lang.apply(
 				{
 					toolset: "basic"
 				},
 				opts
 			);
-			this.element = glow.dom.create('<div class="glowCSSVERSION-editor"><p class="glowCSSVERSION-hidden">You are about to enter a Rich Text Editor, <a href="#endOfEditor' + endOfEditorCounter() + '" tabindex="0">Skip past</a></p><div class="editor-' + (opts.theme || "light") + '"><div class="editor-state"></div></div><p id="endOfEditor' + endOfEditorCounter() + '" class="glowCSSVERSION-hidden endOfEditorCounter" tabindex="0">You have left the Rich Text Editor</p></div>');
+// interpolate context
+			this.element = glow.dom.create('<div class="glowCSSVERSION-editor"><p class="glowCSSVERSION-hidden">{ENTER_MESSAGE}, <a href="#endOfEditor' + endOfEditorCounter() + '" tabindex="0">{SKIP_LINK_TEXT}</a></p><div class="editor-' + (opts.theme || "light") + '"><div class="editor-state"></div></div><p id="endOfEditor' + endOfEditorCounter() + '" class="glowCSSVERSION-hidden endOfEditorCounter" tabindex="0">{LEAVE_MESSAGE}</p></div>', {interpolate : editorLocaleModule});
 			this.textarea = textarea;
 			this.toolbar = new glow.widgets.Editor.Toolbar(this);
 			
@@ -480,7 +510,7 @@ Idler.prototype._stop = function() {
 		 glow.widgets.Editor.Toolbar.prototype._addToolset = function() {
 		 	var toolToAdd;
 		 	for (var i = 0, l = arguments.length; i < l; i++) {
-		 		if ( (toolToAdd = TOOLS[arguments[i]]) ) {
+		 		if ( (toolToAdd = this.editor._tools[arguments[i]]) ) {
 					var newTool = new glow.widgets.Editor.Toolbar.Button(toolToAdd.name, toolToAdd.opts);
 					addTool.call(this, newTool);
 				}
@@ -857,74 +887,73 @@ Idler.prototype._stop = function() {
 		}
 
 		/* built-in tools here. */		 
-		var TOOLS;
-		// this is called when the first instance of editor is created
-		function createTools() {
+		// this is now called on each instance of editor
+		function createTools(localeModule) {
 			return {
-				bold: new glow.widgets.Editor.Toolbar.Button(
-					"bold",
-					{
-						title:      "Bold",
-						label:      "B",
+				bold: {
+					name : "bold",
+					opts : {
+						title:      localeModule.BOLD_TITLE,
+						label:      localeModule.BOLD_LABEL,
 						tag:		"strong",
 						command:    "bold",
 						shortcut:   "b",
 						action:     function() { tag.call(this.editor.editArea, this.command); return false; }
 					}
-				),
-				italics: new glow.widgets.Editor.Toolbar.Button(
-					"italics",
-					{
-						title:      "Italics",
-						label:      "I",
+				},
+				italics: {
+					name : "italics",
+					opts : {
+						title:      localeModule.ITALICS_TITLE,
+						label:      localeModule.ITALICS_LABEL,
 						tag:		"em",
 						command:    "italic",
 						shortcut:   "i",
 						action:     function() { tag.call(this.editor.editArea, this.command); return false; }
 					}
-				),
-				strike: new glow.widgets.Editor.Toolbar.Button(
-					"strike", 
-					{
-						title:      "Strikethrough",
-						label:      "Strike",
+				},
+				strike: {
+					name : "strike", 
+					opts : {
+						title:      localeModule.STRIKE_TITLE,
+						label:      localeModule.STRIKE_LABEL,
 						tag:		"strike",
 						command:    "strikethrough",
 						action:     function() { tag.call(this.editor.editArea, this.command); return false; }
 					}
-				)
+				}
 				/* tag.call(this.editor.editArea, this.command)
 				,
-				blockquote: new glow.widgets.Editor.Toolbar.Button(
-					"blockquote", 
-					{
-						title:      "Blockquote",
-						label:      "blockquote",
+				blockquote: {
+					name : "blockquote", 
+					opts : {
+						title:      localeModule.BLOCK_TITLE,
+						label:      localeModule.BLOCK_LABEL,
 						tag:		"blockquote",
 						command:    "formatblock",
 						action:     function() { tag.call(this.editor.editArea, this.command, 'blockquote'); return false; }
 					}
-				),
-				heading1: new glow.widgets.Editor.Toolbar.Button(
-					"heading1", 
-					{
-						title:      "Heading1",
-						label:      "Heading1",
+				},
+				heading1:{
+					name : "heading1", 
+					opts : {
+						title:      localeModule.HEADING1_TITLE,
+						label:      localeModule.HEADING1_LABEL,
 						tag:		"Heading1",
 						command:    "formatblock",
 						action:     function() { tag.call(this.editor.editArea, this.command, 'h1'); return false; }
 					}
-				),
-				toggle: new glow.widgets.Editor.Toolbar.Button(
-					"toggle", 
-					{
-						title:      "toggle",
-						label:      "toggle",
+				},
+				toggle: {
+					name : "toggle", 
+					opts : {
+						title:      localeModule.TOGGLE_TITLE,
+						label:      localeModule.TOGGLE_LABEL,
 						tag:		"toggle",
 						command:    "toggle",
 						action:     function() { this.editor.editArea.toggle_designMode(); return false; }
 					}
-				) */
+				} */
 			};
 		}
 

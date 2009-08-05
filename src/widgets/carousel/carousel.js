@@ -6,12 +6,19 @@
 		"glow.dom",
 		"glow.events",
 		"glow.anim",
-		"glow.widgets"
+		"glow.widgets",
+		'glow.i18n'
 	]],
 	builder: function(glow) {
 		var $      = glow.dom.get,
 		    events = glow.events,
-		       dom = glow.dom;
+		       dom = glow.dom,
+   			$i18n  = glow.i18n;
+		
+		$i18n.addLocaleModule("GLOW_WIDGETS_CAROUSEL", "en", {
+			PREVIOUS : "previous",
+			NEXT : "next"
+		});
 		
 		/**
 			@name glow.widgets.Carousel
@@ -124,7 +131,8 @@
 				});
 		*/
 		function Carousel(container, opts) {
-			
+			var localeModule = $i18n.getLocaleModule("GLOW_WIDGETS_CAROUSEL");
+						
 			opts = opts || {}; // prevent errors when trying to read properties of undefined opts
 			
 			// create carousel content
@@ -185,8 +193,8 @@
 			
 			// create the navigational buttons
 			if (!this._opts.pageNav) {
-				this._navPrev = dom.create("<a class=\"carousel-nav carousel-prev\" href=\"#\"><span class=\"carousel-label\">Previous</span><span class=\"carousel-background\"></span><span class=\"carousel-top\"></span><span class=\"carousel-bottom\"></span><span class=\"carousel-arrow\"></span></a>").insertBefore(this._viewWindow);
-				this._navNext = dom.create("<a class=\"carousel-nav carousel-next\" href=\"#\"><span class=\"carousel-label\">Next</span><span class=\"carousel-background\"></span><span class=\"carousel-top\"></span><span class=\"carousel-bottom\"></span><span class=\"carousel-arrow\"></span></a>").insertAfter(this._viewWindow);
+				this._navPrev = dom.create("<a class=\"carousel-nav carousel-prev\" href=\"#\"><span class=\"carousel-label\">{PREVIOUS}</span><span class=\"carousel-background\"></span><span class=\"carousel-top\"></span><span class=\"carousel-bottom\"></span><span class=\"carousel-arrow\"></span></a>", {interpolate: localeModule}).insertBefore(this._viewWindow);
+				this._navNext = dom.create("<a class=\"carousel-nav carousel-next\" href=\"#\"><span class=\"carousel-label\">{NEXT}</span><span class=\"carousel-background\"></span><span class=\"carousel-top\"></span><span class=\"carousel-bottom\"></span><span class=\"carousel-arrow\"></span></a>", {interpolate: localeModule}).insertAfter(this._viewWindow);
 			}
 			
 			init.apply(this, [container, opts]);
@@ -1130,8 +1138,10 @@
 			@description Display the currently visible step.
 		 */
 		function PageNav(pagecount, onClick) {
-			this.leftarrow = dom.create("<li class='arrow' id='leftarrow'><a href='#' class='dotLabel'>previous</a></li>");
-			this.rightarrow = dom.create("<li class='arrow' id='rightarrow'><a href='#' class='dotLabel'>next</a></li>");
+			var localeModule = $i18n.getLocaleModule("GLOW_WIDGETS_CAROUSEL");
+			
+			this.leftarrow = dom.create("<li class='arrow' id='leftarrow'><a href='#' class='dotLabel'>{PREVIOUS}</a></li>", {interpolate: localeModule});
+			this.rightarrow = dom.create("<li class='arrow' id='rightarrow'><a href='#' class='dotLabel'>{NEXT}</a></li>", {interpolate: localeModule});
 
 			var pageNavHtml = "";
 	
