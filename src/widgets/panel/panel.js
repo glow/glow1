@@ -5,11 +5,13 @@
 		"glow", "@VERSION@",
 		'glow.dom',
 		'glow.events',
-		'glow.widgets.Overlay'
+		'glow.widgets.Overlay',
+		'glow.i18n'
 	]],
 	builder: function(glow) {
 		var dom = glow.dom,
 			$ = dom.get,
+			$i18n = glow.i18n,
 			events = glow.events,
 			widgets = glow.widgets,
 			Overlay = widgets.Overlay,
@@ -18,7 +20,13 @@
 			defaultTemplate,
 			//a hash of themes, true if their images have been preloaded
 			themesPreloaded = {},
-			accessAddition = dom.create('<div class="panelAccess">End of panel. <a href="#">Close Panel</a></div>');
+			accessAddition = '<div class="panelAccess">{END_LABEL}. <a href="#">{CLOSE_LINK}</a></div>';
+
+		$i18n.addLocaleModule("GLOW_WIDGETS_PANEL", "en", {
+			END_LABEL : "End of panel",
+			CLOSE_LINK : "Close Panel"
+		});
+	
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 		 This block outputs CSS rules for IE only directly to the page.
@@ -136,6 +144,7 @@
 			r[rLen++] = '</div>';
 			return r.join("");
 		}();
+		
 		/**
 		@name glow.widgets.Panel
 		@class
@@ -197,7 +206,8 @@
 				that = this,
 				fullContentClone,
 				i,
-				accessLinks = accessAddition.clone();
+				localePanelModule = glow.i18n.getLocaleModule("GLOW_WIDGETS_PANEL"),
+				accessLinks = dom.create(accessAddition, {interpolate: localePanelModule});
 
 			if (!customTemplate) {
 				fullContent.addClass("panel-" + opts.theme);

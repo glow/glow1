@@ -7,9 +7,15 @@
 (window.gloader || glow).module({
 	name: "glow.embed",
 	library: ["glow", "@VERSION@"],
-	depends: [["glow", "@VERSION@", "glow.dom", "glow.data"]],
+	depends: [["glow", "@VERSION@", "glow.dom", "glow.data", "glow.i18n"]],
 	builder: function(glow) {
 
+		var $i18n = glow.i18n;
+		
+		$i18n.addLocaleModule("GLOW_EMBED", "en", {
+			FLASH_MESSAGE : "This content requires Flash Player version {min} (installed version: {installed})",
+			NO_PLAYER_MESSAGE : "No Flash Flayer installed, or version is pre 6.0.0"
+		});
 
 		/**
 		@name to_attributes
@@ -186,7 +192,7 @@
 				}
 			}
 
-			result.toString = function(){return this.major ? [this.major,this.minor,this.release].join(".") : "No flash player installed, or version is pre 6.0.0"};
+			result.toString = function(){return this.major ? [this.major,this.minor,this.release].join(".") : $i18n.getLocaleModule("GLOW_EMBED").NO_PLAYER_MESSAGE};
 
 			return result;
 
@@ -352,7 +358,7 @@
 					},
 					attributes : {},
 					//expressInstall : false, // TODO add this in a later release
-					message : "This content requires Flash Player version " + minVersion + " (installed version: " + installed_flash_player + ")",
+					message : glow.lang.interpolate($i18n.getLocaleModule("GLOW_EMBED").FLASH_MESSAGE, {min: minVersion, installed: installed_flash_player}),
 					// create a default ID one hasn't been created as an attribute
 					id : (opts && opts.attributes && opts.attributes.id) || _getId() // Fix for trac 165
 				}
