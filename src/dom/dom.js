@@ -1336,7 +1336,7 @@
 			prop: function(name, val) {
 				
 				// setting multiple
-				if (typeof name == 'object') {
+				if (name.constructor === Object) {
 					var hash = name,
 						key;
 					
@@ -2481,9 +2481,9 @@
 				// set multiple CSS values at once
 				// NOTE: Property names containing a hyphen such as font-weight must be quoted
 				glow.dom.get("#myDiv").css({
-						"font-weight": "bold",
-						padding: "10px",
-						color: "#00cc99"
+					"font-weight": "bold",
+					padding: "10px",
+					color: "#00cc99"
 				})
 			*/
 			css: function(prop, val) {
