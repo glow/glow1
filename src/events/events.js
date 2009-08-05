@@ -150,8 +150,10 @@
 			attachTo - the browser object to attach the event to.
 			name - the generic name of the event (inc. mousewheel)
 		*/
-		function addDomListener (attachTo, name) {
+		function addDomListener (attachTo, name, capturingMode) {
 			var wheelEventName;
+
+			capturingMode = capturingMode || false;
 			
 			if (glow.env.opera) {
 				if (name.toLowerCase() == 'resize' && !operaResizeListener && attachTo == window) {
@@ -236,14 +238,6 @@
 					}
 				}
 
-				// If IE then change focus/blur events to focusin/focusout events.
-				// This allows input elements to bubble, so form elements work with event delegation.
-				if (glow.env.ie)
-				{
-					if (name == 'focus') name = 'focusin';
-					if (name == 'blur') name = 'focusout';
-				}
-
 				r.fire(this, name, event);
 				if (event.defaultPrevented()) {
 					return false;
@@ -253,31 +247,25 @@
 
 			if (attachTo.addEventListener && (!glow.env.webkit || glow.env.webkit > 418)) {
 
-				// Convert focus/blur events to use capturing.
-				// This allows form elements to be used with event delegation.
-				var capturingMode = false;
+				// This is to fix an issue between Opera and everything else.
+				// Opera needs to have an empty eventListener attached to the parent
+				// in order to fire a captured event (in our case we are using capture if
+				// the event is focus/blur) on an element when the element is the eventTarget.
+				//
+				// It is only happening in Opera 9, Opera 10 doesn't show this behaviour.
+				// It looks like Opera has a bug, but according to the W3C Opera is correct...
+				//
+				// "A capturing EventListener will not be triggered by events dispatched 
+				// directly to the EventTarget upon which it is registered."
+				// http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-flow-capture
 				if (
-					   (name == 'focus')
-					|| (name == 'blur')
+					   (
+							(name == 'focus')
+							|| (name == 'blur')
+						)
+					&& (glow.env.opera)
 				) {
-					capturingMode = true;
-
-					// This is to fix an issue between Opera and everything else.
-					// Opera needs to have an empty eventListener attached to the parent
-					// in order to fire a captured event (in our case we are using capture if
-					// the event is focus/blur) on an element when the element is the eventTarget.
-					//
-					// It is only happening in Opera 9, Opera 10 doesn't show this behaviour.
-					// It looks like Opera has a bug, but according to the W3C Opera is correct...
-					//
-					// "A capturing EventListener will not be triggered by events dispatched 
-					// directly to the EventTarget upon which it is registered."
-					// http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-flow-capture
-					if (glow.env.opera)
-					{
-						glow.dom.get(attachTo).parent()[0].addEventListener(name, function(){},true);
-					}
-
+					glow.dom.get(attachTo).parent()[0].addEventListener(name, function(){},true);
 				}
 
 				attachTo.addEventListener(name.toLowerCase() == 'mousewheel' && glow.env.gecko ? 'DOMMouseScroll' : name, callback, capturingMode);
@@ -425,6 +413,7 @@
 			glow.events.addListener(myLightBox, 'close', this.showSurvey, this);
 		*/
 		r.addListener = function (attachTo, name, callback, context) {
+			var capturingMode = false;
 			if (! attachTo) { throw 'no attachTo paramter passed to addListener'; }
 
 			if (typeof attachTo == 'string') {
@@ -442,14 +431,6 @@
 				}
 				
 				return listenerIds;
-			}
-	
-			// If IE then change focus/blur events to focusin/focusout events.
-			// This allows input elements to bubble, so form elements work with event delegation.
-			if (glow.env.ie)
-			{
-				if (name == 'focus') name = 'focusin';
-				if (name == 'blur') name = 'focusout';
 			}
 	
 			var objIdent;
@@ -477,9 +458,44 @@
 					case "mouseleave":
 						addMouseEnterLeaveEvent(attachTo, true);
 						return ident;
+
+					// Focus and blur events:
+					// Convert focus/blur events to use capturing.
+					// This allows form elements to be used with event delegation.
+
+					case "focus":
+						// IE
+						// If IE then change focus/blur events to focusin/focusout events.
+						// This allows input elements to bubble, so form elements work with event delegation.
+						if (glow.env.ie) {
+							r.addListener($(attachTo), "focusin", function(e) {
+								return !r.fire($(attachTo), "focus", e).defaultPrevented();
+							});
+							return ident;
+						}
+						// Everything else
+						else {
+							capturingMode = true
+						}
+
+					case "blur":
+						// IE
+						// If IE then change focus/blur events to focusin/focusout events.
+						// This allows input elements to bubble, so form elements work with event delegation.
+						if (glow.env.ie) {
+							r.addListener($(attachTo), "focusout", function(e) {
+								return !r.fire($(attachTo), "blur", e).defaultPrevented();
+							});
+							return ident;
+						}
+						// Everything else
+						else {
+							capturingMode = true
+						}
+
 				}
 				
-				addDomListener(attachTo, name);
+				addDomListener(attachTo, name, capturingMode);
 				domListeners[objIdent + ':' + name] = true;
 			}
 			return ident;
@@ -646,56 +662,42 @@
 				attachedTo = $(attachedTo);
 			}
 
-			// If IE then change focus/blur events to focusin/focusout events.
-			// This allows input elements to bubble, so form elements work with event delegation.
-			if (glow.env.ie)
-			{
-				if (name == 'focus') name = 'focusin';
-				if (name == 'blur') name = 'focusout';
-			}
-	
 			e.type = name;
 			e.attachedTo = attachedTo;
 			if (! e.source) { e.source = attachedTo; }
 
-			var objIdent,
-				objListeners,
-				objEventListeners = objListeners && objListeners[name];
-
-			if (typeof attachedTo.addClass == 'function') {
+			if (attachedTo instanceof glow.dom.NodeList) {
 
 				attachedTo.each(function(i){
 
-					// 3 assignments, but stop assigning if any of them are false
-					(objIdent = attachedTo[i][psuedoPrivateEventKey]) &&
-					(objListeners = listenersByObjId[objIdent]) &&
-					(objEventListeners = objListeners[name]);
-		
-					if (! objEventListeners) { return e; }
-
-					checkListeners(attachedTo[i], objEventListeners.slice(0), e);
+					callListeners(attachedTo[i], e);
 
 				});
 
 			} else {
 
-				// 3 assignments, but stop assigning if any of them are false
-				(objIdent = attachedTo[psuedoPrivateEventKey]) &&
-				(objListeners = listenersByObjId[objIdent]) &&
-				(objEventListeners = objListeners[name]);
-			
-				if (! objEventListeners) { return e; }
-
-				checkListeners(attachedTo, objEventListeners.slice(0), e);
+				callListeners(attachedTo, e);
 
 			}
 
 			return e;
 		};
 
-		function checkListeners(attachedTo, listeners, e) {
+		function callListeners(attachedTo, e) {
 			
+			var objIdent,
+				objListeners,
+				objEventListeners = objListeners && objListeners[e.type];
+
+			// 3 assignments, but stop assigning if any of them are false
+			(objIdent = attachedTo[psuedoPrivateEventKey]) &&
+			(objListeners = listenersByObjId[objIdent]) &&
+			(objEventListeners = objListeners[e.type]);
+
+			if (! objEventListeners) { return e; }
+
 			var listener;
+			var listeners = objEventListeners.slice(0);
 
 			// we make a copy of the listeners before calling them, as the event handlers may
 			// remove themselves (took me a while to track this one down)
