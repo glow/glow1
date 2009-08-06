@@ -3,7 +3,6 @@
 @namespace
 @description Internationalisation Module.
 @requires glow
-@see <a href="#">placeholer</a>
 */
 (window.gloader || glow).module({
 	name: "glow.i18n",
