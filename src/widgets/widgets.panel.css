@@ -47,10 +47,14 @@
 	  position: absolute;
 	  width: 100%;
 	  padding-left: 10px;
-	  height: 2000px;
+	  height: 100%;
 	  background: #fff;
 	  opacity: 0.5;
 	  margin-left: -10px;
+	  /* the following rule hits IE6 only */
+	  _height: 2000px;
+	  /* the following rule hits IE6 & IE7 */
+	  *padding-left: 0;
   }
   /*
 	annoying firefox bug - it sometimes doesn't obey the overflow by one px if
@@ -157,8 +161,9 @@
   .glowCSSVERSION-ie .glowCSSVERSION-panel .tb div,
   .glowCSSVERSION-ie .glowCSSVERSION-panel .bb div {
 	  opacity: 1;
-	  filter: alpha(opacity=50);
+	  filter: alpha(opacity=50);	  
   }
+  
   .glowCSSVERSION-ie .glowCSSVERSION-panel .tb,
   .glowCSSVERSION-ie .glowCSSVERSION-panel .bb {
 	  zoom: 1;
