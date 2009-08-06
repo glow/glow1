@@ -468,9 +468,7 @@
 						// If IE then change focus/blur events to focusin/focusout events.
 						// This allows input elements to bubble, so form elements work with event delegation.
 						if (glow.env.ie) {
-							r.addListener($(attachTo), "focusin", function(e) {
-								return !r.fire($(attachTo), "focus", e).defaultPrevented();
-							});
+							addFocusInOutEvent(attachTo, true);
 							return ident;
 						}
 						// Everything else
@@ -483,9 +481,7 @@
 						// If IE then change focus/blur events to focusin/focusout events.
 						// This allows input elements to bubble, so form elements work with event delegation.
 						if (glow.env.ie) {
-							r.addListener($(attachTo), "focusout", function(e) {
-								return !r.fire($(attachTo), "blur", e).defaultPrevented();
-							});
+							addFocusInOutEvent(attachTo, false);
 							return ident;
 						}
 						// Everything else
@@ -500,6 +496,20 @@
 			}
 			return ident;
 		};
+
+		/**
+		Add focusIn or focusOut 'event' to an element
+		@private
+		@param {HTMLElement} attachTo Element to create focusIn / focusOut for
+		@param {Boolean} event Create focusIn or focusOut?
+		*/
+		function addFocusInOutEvent(attachTo, event) {
+			var listenFor = event ? 'focusin' : 'focusout',
+				toFire    = event ? 'focus'   : 'blur';
+			r.addListener($(attachTo), listenFor, function(e) {
+				return !r.fire($(attachTo), toFire, e).defaultPrevented();
+			});
+		}
 
 		/**
 		@name glow.events.removeListener 
