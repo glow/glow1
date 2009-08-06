@@ -430,7 +430,7 @@
 		/*
 		PrivateMethod: getElmDimention
 			Gets the size of an element as an integer, not including padding or border
-		*/
+		*/		
 		function getElmDimention(elm, cssProp /* (width|height) */) {
 			var r, // val to return
 				docElmOrBody = env.standardsMode ? docElm : docBody,
@@ -444,15 +444,23 @@
 					env.opera < 9.5		? (isWidth ? docBody.clientWidth		: docBody.clientHeight) :
 					/* else */			  (isWidth ? docElmOrBody.clientWidth	: docElmOrBody.clientHeight);
 
-			} else if (elm.getElementById) { // is document
+			}
+			else if (elm.getElementById) { // is document
 				r = Math.max(
 					docBody["scroll" + cssPropCaps],
-					docBody["offset" + cssPropCaps],
-					docElm["client" + cssPropCaps],
-					docElm["scroll" + cssPropCaps],
-					docElm["offset" + cssPropCaps]
+					docBody["offset" + cssPropCaps]
 				)
-			} else {
+				// values from the documentElement can be incorrect in IE (6, 7, 8), can return values that are too large
+				if ( !(glow.env.ie) ) {
+					r = Math.max(
+						r,
+						docElm["client" + cssPropCaps],
+						docElm["scroll" + cssPropCaps],
+						docElm["offset" + cssPropCaps]
+					)
+				}
+			}
+			else {
 				// get an array of css borders & padding
 				cssBorderPadding = isWidth ? horizontalBorderPadding : verticalBorderPadding;
 				r = elm['offset' + cssPropCaps] - parseInt( getCssValue(elm, cssBorderPadding) );

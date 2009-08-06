@@ -162,8 +162,7 @@ of &lt;body> which have class "glowNoMask" will be left as children of
 					that.maskElement.hide();
 					
 					var newHeight = that.opts.disableScroll ? noScrollContainer.height() : Math.max( body.height(), win.height() ),
-						// doc.width() doesn't work here, that value includes the maskElement in IE7 (and below), even though it's hidden
-						newWidth  = that.opts.disableScroll ? noScrollContainer.width()  : Math.max( win.width(), doc[0].documentElement.scrollWidth, body[0].scrollWidth );
+						newWidth  = that.opts.disableScroll ? noScrollContainer.width()  : Math.max( win.width(), doc.width() );
 						
 					// Work out the required width to set the mask (this is basically the width of the content but without the mask)
 					that.maskElement.width(newWidth).height(newHeight);
