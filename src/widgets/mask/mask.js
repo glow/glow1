@@ -158,21 +158,27 @@ of &lt;body> which have class "glowNoMask" will be left as children of
 				}
 
 				function resizeMask() {
-					var bodyHeight = body.height();
-					// hide the mask so it's not included in our measurement of width / height
-					that.maskElement.hide(); 
+					// hide the mask so our measurement doesn't include the mask
+					that.maskElement.hide();
+					
+					var newHeight = that.opts.disableScroll ? noScrollContainer.height() : Math.max( body.height(), win.height() ),
+						// doc.width() doesn't work here, that value includes the maskElement in IE7 (and below), even though it's hidden
+						newWidth  = that.opts.disableScroll ? noScrollContainer.width()  : Math.max( win.width(), doc[0].documentElement.scrollWidth, body[0].scrollWidth );
+						
 					// Work out the required width to set the mask (this is basically the width of the content but without the mask)
-					that.maskElement.css("width", doc.width() + "px")
-						.css("height", ( that.opts.disableScroll ? noScrollContainer.height() : Math.max(bodyHeight, win.height()) ) + "px");
-					that.maskElement.show();
-					if (glow.env.ie < 7) {
-						var maskStyle = that.maskElement[0].style;
-						that._iframe.css("width", maskStyle.width).css("height", maskStyle.height);
+					that.maskElement.width(newWidth).height(newHeight);
+					
+					// resize the iframe if we're using it
+					if (that._iframe) {
+						that._iframe.width(newWidth).height(newHeight);
 					}
+					
+					// show the mask again
+					that.maskElement.show();
 				}
 
 				this.maskElement.css("visibility", "visible").css("display", "block");
-				if (glow.env.ie < 7) {
+				if (this._iframe) {
 					this._iframe.css("display", "block");
 				}
 				resizeMask();
@@ -195,7 +201,7 @@ of &lt;body> which have class "glowNoMask" will be left as children of
 			*/
 			remove : function () {
 				this.maskElement.css("visibility", "hidden").css("display", "none");
-				if (glow.env.ie < 7) {
+				if (this._iframe) {
 					this._iframe.css("display", "none");
 				}
 				events.removeListener(this._resizeListener);
