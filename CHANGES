@@ -2,6 +2,29 @@ Glow Changelog
 
 1.6.0-rc1
 
+* glow.widgets.Timetable - Fixing bug that may result in item sizes less than 0
+* glow.forms - Allow more control over ajax tests
+* glow.widgets - Improving CSS load detection for widgets.css
+* glow.anim - Improved memory usage for animation shortcuts
+* glow.events - Added 'mouseenter' and 'mouseleave' events which don't bubble
+* glow.net.Response#xml - Works in IE for application/(whatever)-xml content-type
+* glow.widgets.Sortable - Better position & margin handling
+* glow.dom.NodeList#position - For getting the position relative to the positioned parent
+* glow.dragdrop - Improved position detection and margin handling
+* glow.dom.NodeList#prop - Similar to attr, but for getting/setting node properties
+* glow.embed.Flash - Generating IDs for <object> to fix a string bug in IE
+* glow.net.Request#destroy - For cleaning up loadScript calls that don't have an onLoad callback
+* glow.events - No longer adds a cleanup unload listener for browsers that don't need it, allows quick back & forward switching in those browsers
+* glow.widgets.Carousel - Fixed issue where events would double-fire after items were added
+* glow.dom.NodeList#css - Returns correct value for margin-right in modern Webkit versions
+* glow.dom.NodeList - width & height methods more reliable for elements with width:auto
+* glow.dom.create - Fixed elements that couldn't appear within a div (eg, <option />)
+* glow.data.decodeUrl - Now supports ; as a separator
+* glow.dom.NodeList#css - Can now provide an object (property:value) to set many values
+* glow.dom.create - Can now provide interpolation params as an option
+* glow.i18n - New module for managing multiple languages for JavaScript applications
+* glow.widgets.Panel - Fixed IE8 rendering issue (standards & compat mode)
+* glow.anim - Can now add events in the options object of glow.anim.css, glow.anim.Animtion and glow.anim.Timeline
 * glow.events - Focus/blur events allow bubbling on all elements.
 * glow.widgets.Overlay - closeToEsc param added to constructor option.  Enabling this allows user to close overlay with ESC button.
 * glow.events.fire - Allow attachTo parameter to be DOM node, glow.dom.nodeList or string.
