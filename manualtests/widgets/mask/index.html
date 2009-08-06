@@ -26,8 +26,29 @@
 	<h1>glow.widgets.Mask examples</h1>
 	
 	<div class="example">	
-		<h2>Basic Mask</h2>
-		<p>no description</p>
+		<h2>Mask</h2>
+		
+		<p>Things to test for:</p>
+		
+		<ul>
+			<li>
+				Ensure the mask covers the entire view
+			</li>
+			<li>
+				No elements should appear on top of the mask. The select element
+				should disappear in IE6 to avoid it appearing on top
+			</li>
+			<li>
+				Resize the width of the browser so there is no horizontal scrollbar,
+				ensure the scrollbar does not reappear when reducing the width until
+				the window is narrower than the red box
+			</li>
+			<li>
+				Resize the window so it is narrower than the red box. Horizontally
+				scroll, ensure the mask is covering the area previously off-screen.
+			</li>
+		</ul>
+		
 		
 		<script type="text/javascript" class="showSrc">
 		// <![CDATA[
@@ -41,24 +62,23 @@
 				"click",
 				function() {
 					myMask.add();
+					return false;
 				}
 			);
 		});
 		// ]]>
 		</script>
 		
-		<div class="sandbox">
+		<div class="sandbox">			
 			<p>
-			Lorem ipsum clee chea saeff a. Enfreep gleepi whop heeth zogh, kucka thee shoogh ne gead ca. Hegh en, vee, fu dreati whim breest taeth ste faeck blea blea dro, plan, rae ha su koo, jooff wreap ho I gla trag ir slae ripi enmaev logher moo pog queeth I slaeing whooth bean draem, ir paers. Gu perki, ghee plae kae. Za beeing hews, bae posting ri blorling ceack wrirl, unjaeh musher fri. A, sla frashe hi; Rae bla ro I whad. Stushe I dust whea droo lae, I infrap truroer bloos troshen pi, troo cae tis, lurth gleth, precuth sea so, wu queaing see quu wha cli pla jockal cresh se la. Doopi, ches shoorl grae vaell hi jeah, op gle prega cloo, quath ke inlockall dreaw. Rea wreela, de, op, droo frae vi, furd stae du drist purth ne draing pij quoo.
+				Make the <a href="#" id="mask-appear">mask appear</a>.
 			</p>
-			
-			<p>
-			Make the <a href="#" id="mask-appear" onclick="return false;">mask appear</a>.
-			</p>
-			
-			<p>
-			Tord hea op, wra en, zash treeb; The perbrala cheath quee taed quaen, ghor sod; Blea bu a preree, glurl unseashew neeti chee fri bree la, bagh! Gi, concroshegher cuh unsheerd bloing, stohus, ju zem. Ruv faert, ungrupi, tesum. En degleed po ir stea. Conplerth a brogs, do.
-			</p>
+			<div style="background:red; width: 900px">
+				This element is really long
+			</div>
+			<select>
+				<option>This should appear beneath the mask</option>
+			</select>
 		</div>
 	</div>
 
