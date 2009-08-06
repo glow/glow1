@@ -1,6 +1,6 @@
 Glow Changelog
 
-1.6.0
+1.6.0-rc1
 
 * glow.events - Focus/blur events allow bubbling on all elements.
 * glow.widgets.Overlay - closeToEsc param added to constructor option.  Enabling this allows user to close overlay with ESC button.
