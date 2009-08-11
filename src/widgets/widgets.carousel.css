@@ -83,8 +83,15 @@
 	overflow:hidden;
 }
 
-.glowCSSVERSION-carousel .carousel-nav span {
+.glowCSSVERSION-carousel .carousel-nav span,
+.glowCSSVERSION-vCarousel .carousel-nav span {
 	background-repeat:no-repeat;
+	text-indent: -5000px; /* move text away when images are enabled */
+}
+
+.glowCSSVERSION-basic .glowCSSVERSION-carousel .carousel-nav span,
+.glowCSSVERSION-basic .glowCSSVERSION-vCarousel .carousel-nav span {
+	text-indent: 0px; /* move text back when images are not enabled */
 }
 
 .glowCSSVERSION-carousel .carousel-nav .carousel-background {
@@ -242,7 +249,7 @@
 }
 
 .glowCSSVERSION-basic .glowCSSVERSION-carousel .dot .dotLabel,
-.glowCSSVERSION-basic .glowCSSVERSION-vCarousel .dot .dotLabel, {
+.glowCSSVERSION-basic .glowCSSVERSION-vCarousel .dot .dotLabel {
 	overflow: visible;
 	text-indent: 0; /* images are disabled, so move text back, but not for arrows */
 }
