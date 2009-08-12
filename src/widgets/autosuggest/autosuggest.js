@@ -154,6 +154,10 @@
 					deactivateItem(that, currItem);
 					activateItem(that, nextItem);
 				}
+				else { // move selection down off of suggestion list, back into the input element
+					that.val(that._original);
+					deactivateItem(that, currItem);
+				}
 			}
 		}
 		
@@ -174,6 +178,10 @@
 				if (prevItem && !prevItem.is('ul')) {
 					deactivateItem(that, currItem);
 					activateItem(that, prevItem);
+				}
+				else { // move selection up off of suggestion list, back into the input element
+					that.val(that._original);
+					deactivateItem(that, currItem);
 				}
 			}
 		}
@@ -406,8 +414,9 @@
 					}
 				}
 				else if (e.key == 'ESC') { // bail
-					// user accepts the hilited text
-					that._value = that.inputElement.val();
+					// return to the value originally entered by the user
+					that.inputElement.val(that._original);
+					that._value = that._original;
 					valueChanged(that, true);
 					that.hide();
 					return false;
@@ -1065,6 +1074,7 @@
 			@description Make the overlay visible.
 		 */
 		glow.widgets.AutoSuggest.prototype.show = function() { /*debug*///console.log("show()")
+			this._original = this.val();
 			place(this);
 			this.overlay.show();
 		}

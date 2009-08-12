@@ -160,9 +160,109 @@ t.test("filter", function() {
 	myAutoSuggest.find(""); // to hide the results
 });
 
+t.test("keyboard navigation", function() {
+	t.expect(5);
+	
+	// discard any event handlers that may have been applied to the form in previous tests
+	window.tempContainer.empty();
+	window.tempContainer.html('<div><input type="text" id="example"/></div>');
+	
+	var myForm = glow.dom.get("#example");
+	var recipes = [
+	   {name:"Green-bean Chilli", type:"Vegetarian"},
+	   {name:"Green Seaweed Soup", type:"Seafood"},
+	   {name:"Green Oysters on Ice", type:"Seafood"},
+	   {name:"Green Apple Flan", type:"Pastry"}
+	];
+		
+	myAutoSuggest = new glow.widgets.AutoSuggest(
+		myForm,
+		recipes,
+		{
+			complete: true
+		}
+	);
+	
+	// simulate a search
+	myAutoSuggest.val("green");
+	myAutoSuggest.find(); // should find all recipes
+	/*1*/ t.ok(myAutoSuggest._found.length, "A new input element can be created and used.");
+	
+	// simulate an arrow down
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "DOWN" }
+		)
+	);
+	
+	/*2*/ t.equals(myAutoSuggest.inputElement[0].value, "Green Seaweed Soup", "Using arrow down with complete changes the value in the input element.");
+	
+	
+	// simulate two arrow ups
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "UP" }
+		)
+	);
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "UP" }
+		)
+	);
+	
+	/*3*/ t.equals(myAutoSuggest.inputElement[0].value, "green", "Using arrow up restores the original value in the input element.");
+	
+	// simulate ups and down arrow
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "UP" }
+		)
+	);
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "DOWN" }
+		)
+	);
+	
+	/*4*/ t.equals(myAutoSuggest.inputElement[0].value, "green", "Using arrow down restores the original value in the input element.");
+	
+	// simulate down arrow and then esc
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "DOWN" }
+		)
+	);
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "ESC" }
+		)
+	);
+	
+	/*5*/ t.equals(myAutoSuggest.inputElement[0].value, "green", "Using arrow down restores the original value in the input element.");
+
+});
+
+
 
 t.test("cleanup", function() {
 	t.expect(1);
-	tempContainer.css("height", 0).css("overflow", "hidden").css("visibility", "hidden");
+	
+	//tempContainer.css("height", 0).css("overflow", "hidden").css("visibility", "hidden");
+	delete window.tempContainer;
+	
 	t.ok(true, "Cleaned");
 });
