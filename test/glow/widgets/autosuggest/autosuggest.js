@@ -117,9 +117,152 @@ t.test("val", function() {
 
 });
 
+t.test("filter", function() {
+	t.expect(3);
+	
+	var myForm = glow.dom.get("#example");
+	var recipes = [
+	   {name:"Green-bean Chilli", type:"Vegetarian"},
+	   {name:"Green Seaweed Soup", type:"Seafood"},
+	   {name:"Green Oysters on Ice", type:"Seafood"},
+	   {name:"Green Apple Flan", type:"Pastry"}
+	];
+		
+	myAutoSuggest = new glow.widgets.AutoSuggest(
+		myForm,
+		recipes,
+		{
+			filter: function(results) {
+				return results.slice(0, 2); // limit results to first 2
+			}
+		}
+	);
+	
+	myAutoSuggest.find("green"); // should find all recipes
+	/*1*/ t.equals(myAutoSuggest._found.length, 2, "A filter can be applied to limit the results to a given length.");
+	
+	myAutoSuggest._filter = function(results) {
+		var filtered = [];
+		
+		for (var i = results.length; i--;) {
+			if (results[i].type == "Vegetarian") {
+				filtered.push(results[i]);
+			}
+		}
+		
+		return filtered;
+	};
+	
+	myAutoSuggest.find("green"); // should find all recipes
+	/*2*/ t.equals(myAutoSuggest._found.length, 1, "A filter can be applied to limit the results to those with a certain property.");
+	/*3*/ t.equals(myAutoSuggest._found[0].name, "Green-bean Chilli", "A filter can be applied and the expected result is returned.");
+
+	myAutoSuggest.find(""); // to hide the results
+});
+
+t.test("keyboard navigation", function() {
+	t.expect(5);
+	
+	// discard any event handlers that may have been applied to the form in previous tests
+	window.tempContainer.empty();
+	window.tempContainer.html('<div><input type="text" id="example"/></div>');
+	
+	var myForm = glow.dom.get("#example");
+	var recipes = [
+	   {name:"Green-bean Chilli", type:"Vegetarian"},
+	   {name:"Green Seaweed Soup", type:"Seafood"},
+	   {name:"Green Oysters on Ice", type:"Seafood"},
+	   {name:"Green Apple Flan", type:"Pastry"}
+	];
+		
+	myAutoSuggest = new glow.widgets.AutoSuggest(
+		myForm,
+		recipes,
+		{
+			complete: true
+		}
+	);
+	
+	// simulate a search
+	myAutoSuggest.val("green");
+	myAutoSuggest.find(); // should find all recipes
+	/*1*/ t.ok(myAutoSuggest._found.length, "A new input element can be created and used.");
+	
+	// simulate an arrow down
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "DOWN" }
+		)
+	);
+	
+	/*2*/ t.equals(myAutoSuggest.inputElement[0].value, "Green Seaweed Soup", "Using arrow down with complete changes the value in the input element.");
+	
+	
+	// simulate two arrow ups
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "UP" }
+		)
+	);
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "UP" }
+		)
+	);
+	
+	/*3*/ t.equals(myAutoSuggest.inputElement[0].value, "green", "Using arrow up restores the original value in the input element.");
+	
+	// simulate ups and down arrow
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "UP" }
+		)
+	);
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "DOWN" }
+		)
+	);
+	
+	/*4*/ t.equals(myAutoSuggest.inputElement[0].value, "green", "Using arrow down restores the original value in the input element.");
+	
+	// simulate down arrow and then esc
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "DOWN" }
+		)
+	);
+	glow.events.fire(
+		myAutoSuggest.inputElement[0],
+		"keydown",
+		new glow.events.Event(
+			{ key: "ESC" }
+		)
+	);
+	
+	/*5*/ t.equals(myAutoSuggest.inputElement[0].value, "green", "Using arrow down restores the original value in the input element.");
+
+});
+
+
 
 t.test("cleanup", function() {
 	t.expect(1);
-	tempContainer.css("height", 0).css("overflow", "hidden").css("visibility", "hidden");
+	
+	window.tempContainer.empty();
+	window.tempContainer = null;
+	
 	t.ok(true, "Cleaned");
 });

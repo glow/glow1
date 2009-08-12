@@ -154,6 +154,10 @@
 					deactivateItem(that, currItem);
 					activateItem(that, nextItem);
 				}
+				else { // move selection down off of suggestion list, back into the input element
+					that.val(that._original);
+					deactivateItem(that, currItem);
+				}
 			}
 		}
 		
@@ -174,6 +178,10 @@
 				if (prevItem && !prevItem.is('ul')) {
 					deactivateItem(that, currItem);
 					activateItem(that, prevItem);
+				}
+				else { // move selection up off of suggestion list, back into the input element
+					that.val(that._original);
+					deactivateItem(that, currItem);
 				}
 			}
 		}
@@ -406,8 +414,9 @@
 					}
 				}
 				else if (e.key == 'ESC') { // bail
-					// user accepts the hilited text
-					that._value = that.inputElement.val();
+					// return to the value originally entered by the user
+					that.inputElement.val(that._original);
+					that._value = that._original;
 					valueChanged(that, true);
 					that.hide();
 					return false;
@@ -763,6 +772,7 @@
 			this._isMatch =  this.opts.isMatch || function(word, lookFor) { return (word.indexOf(lookFor) == 0); } // default
 			this._formatItem = this.opts.formatItem || function(o) { return (o.name)? o.name : o.toString(); }; // default
 			this._matchItem = this.opts.formatItem || function(o) { return o.name; }; // default
+			this._filter = this.opts.filter || function(results) { return results; }; // do nothing
 		}
 		
 		/**
@@ -1029,6 +1039,9 @@
 				}
 			}
 			
+			// apply any optional filtyering to the results
+			found = this._filter(found);
+			
 			this._found = found; // used to get the selected object in event handlers
 			if (found.length) {
 				if (this.opts.maxListLength) found.length = Math.min(found.length, this.opts.maxListLength);
@@ -1061,6 +1074,7 @@
 			@description Make the overlay visible.
 		 */
 		glow.widgets.AutoSuggest.prototype.show = function() { /*debug*///console.log("show()")
+			this._original = this.val();
 			place(this);
 			this.overlay.show();
 		}
