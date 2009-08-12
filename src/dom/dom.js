@@ -2554,7 +2554,8 @@
 					docScrollPos = scrollPos();
 
 				//this is simple(r) if we can use 'getBoundingClientRect'
-				if (elm.getBoundingClientRect) {
+				// Sorry but the sooper dooper simple(r) way is not accurate in Safari 4
+				if (!glow.env.webkit && elm.getBoundingClientRect) {
 					var rect = elm.getBoundingClientRect();
 					return {
 						top: rect.top
