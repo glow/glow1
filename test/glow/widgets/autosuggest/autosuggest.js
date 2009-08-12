@@ -261,8 +261,8 @@ t.test("keyboard navigation", function() {
 t.test("cleanup", function() {
 	t.expect(1);
 	
-	//tempContainer.css("height", 0).css("overflow", "hidden").css("visibility", "hidden");
-	delete window.tempContainer;
+	window.tempContainer.empty();
+	window.tempContainer = null;
 	
 	t.ok(true, "Cleaned");
 });
