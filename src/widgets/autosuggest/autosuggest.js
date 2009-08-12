@@ -763,6 +763,7 @@
 			this._isMatch =  this.opts.isMatch || function(word, lookFor) { return (word.indexOf(lookFor) == 0); } // default
 			this._formatItem = this.opts.formatItem || function(o) { return (o.name)? o.name : o.toString(); }; // default
 			this._matchItem = this.opts.formatItem || function(o) { return o.name; }; // default
+			this._filter = this.opts.filter || function(results) { return results; }; // do nothing
 		}
 		
 		/**
@@ -1028,6 +1029,9 @@
 					}
 				}
 			}
+			
+			// apply any optional filtyering to the results
+			found = this._filter(found);
 			
 			this._found = found; // used to get the selected object in event handlers
 			if (found.length) {

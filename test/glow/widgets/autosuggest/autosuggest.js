@@ -117,6 +117,49 @@ t.test("val", function() {
 
 });
 
+t.test("filter", function() {
+	t.expect(3);
+	
+	var myForm = glow.dom.get("#example");
+	var recipes = [
+	   {name:"Green-bean Chilli", type:"Vegetarian"},
+	   {name:"Green Seaweed Soup", type:"Seafood"},
+	   {name:"Green Oysters on Ice", type:"Seafood"},
+	   {name:"Green Apple Flan", type:"Pastry"}
+	];
+		
+	myAutoSuggest = new glow.widgets.AutoSuggest(
+		myForm,
+		recipes,
+		{
+			filter: function(results) {
+				return results.slice(0, 2); // limit results to first 2
+			}
+		}
+	);
+	
+	myAutoSuggest.find("green"); // should find all recipes
+	/*1*/ t.equals(myAutoSuggest._found.length, 2, "A filter can be applied to limit the results to a given length.");
+	
+	myAutoSuggest._filter = function(results) {
+		var filtered = [];
+		
+		for (var i = results.length; i--;) {
+			if (results[i].type == "Vegetarian") {
+				filtered.push(results[i]);
+			}
+		}
+		
+		return filtered;
+	};
+	
+	myAutoSuggest.find("green"); // should find all recipes
+	/*2*/ t.equals(myAutoSuggest._found.length, 1, "A filter can be applied to limit the results to those with a certain property.");
+	/*3*/ t.equals(myAutoSuggest._found[0].name, "Green-bean Chilli", "A filter can be applied and the expected result is returned.");
+
+	myAutoSuggest.find(""); // to hide the results
+});
+
 
 t.test("cleanup", function() {
 	t.expect(1);
