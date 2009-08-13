@@ -1,3 +1,13 @@
+/**
+@name manualTest
+@namespace
+@description Manages the files and interface for manual tests
+*/
+// global namespace for manualTest
+var manualTest = (function() {
+
+})();
+
 (function() {
 	/**
 		@name showSrc
