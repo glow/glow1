@@ -705,7 +705,7 @@
 		},
 		env = glow.env,
 		d = document;
-
+	
 	//dom ready stuff
 	//run queued ready functions when DOM is ready
 	
@@ -783,7 +783,9 @@
 				runDomReadyQueue();
 				glow._removeReadyBlock("glow_domReady");
 			};
-			d.addEventListener("DOMContentLoaded", callback, false);
+			if (d.addEventListener) {
+				d.addEventListener("DOMContentLoaded", callback, false);
+			}
 			var oldOnload = window.onload;
 			window.onload = function () {
 				if (oldOnload) { oldOnload(); }

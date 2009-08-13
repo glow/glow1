@@ -55,7 +55,8 @@ gloader.map.add(
 		"glow.widgets.AutoComplete": ["{$base}/widgets/autocomplete/autocomplete.js"],
 		"glow.widgets.Carousel":     ["{$base}/widgets/carousel/carousel.js"],
 		"glow.widgets.Timetable":    ["{$base}/widgets/timetable/timetable.js"],
-		"glow.widgets.Editor":       ["{$base}/widgets/editor/editor.js"]
+		"glow.widgets.Editor":       ["{$base}/widgets/editor/editor.js"],
+		"glow.i18n":                 ["{$base}/i18n/i18n.js"]
 	}
 )
 		

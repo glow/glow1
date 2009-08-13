@@ -153,7 +153,7 @@
 		function addDomListener (attachTo, name, capturingMode) {
 			var wheelEventName;
 
-			capturingMode = capturingMode || false;
+			capturingMode = !!capturingMode;
 			
 			if (glow.env.opera) {
 				if (name.toLowerCase() == 'resize' && !operaResizeListener && attachTo == window) {
@@ -446,9 +446,8 @@
 			var objEventListeners = objListeners[name];
 			if (! objEventListeners) { objEventListeners = objListeners[name] = []; }
 			objEventListeners[objEventListeners.length] = listener;
-
+			
 			if ((attachTo.addEventListener || attachTo.attachEvent) && ! domListeners[objIdent + ':' + name]) {
-				
 				// handle 'special' dom events (ie, ones that aren't directly mapped to real dom events)
 				// we don't actually add a dom listener for these event names
 				switch (name) {
@@ -475,6 +474,7 @@
 						else {
 							capturingMode = true
 						}
+						break;
 
 					case "blur":
 						// IE
@@ -488,6 +488,7 @@
 						else {
 							capturingMode = true
 						}
+						break;
 
 				}
 				
