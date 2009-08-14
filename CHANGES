@@ -3,6 +3,7 @@ Glow Changelog
 NEW BUGFIXES
 * glow.widgets.Carousel - Fixed bug that caused Next and Previous text to be visible in Opera when images were on
 * glow.widgets.AutoSuggest - Fixed bug that caused position of suggestion list to be wrong when text was zoomed in recent webkit browsers
+* glow core - Fix bug in domReady code that prevented ready / onDomReady working in some browsers (eg, PS3 NetFront)
 
 1.6.0-rc1
 
