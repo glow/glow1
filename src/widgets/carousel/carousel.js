@@ -299,7 +299,8 @@
 
 			rebuild.apply(this);
 			
-			// apply delegated events
+			// apply events
+			addMouseNavEvents.call(this);
 			addKeyboardNavEvents.call(this);
 			addItemClickEvent.call(this);
 			
@@ -326,6 +327,34 @@
 						break;
 					}
 				}
+			});
+		}
+		
+		// add events for mouse navigation
+		function addMouseNavEvents() {
+			var that = this,
+				bothNavElms = glow.dom.get(this._navPrev).push(this._navNext);
+				
+			// add navigational events
+			events.addListener(bothNavElms, "click", function(e) {
+				return false;
+			});
+			events.addListener(bothNavElms, "mouseup", function(e) {
+				stopRepeatOrSlide.call(that);
+				return false;
+			});
+			events.addListener(bothNavElms, "mouseleave",  function(e){
+				stopRepeatOrSlide.call(that);
+			});
+			events.addListener(this._navPrev, "mousedown", function(e) {
+				that.prev();
+				startRepeatOrSlide.call(that, true);
+				return false;
+			});
+			events.addListener(this._navNext, "mousedown", function(e){
+				that.next();
+				startRepeatOrSlide.call(that);
+				return false;
 			});
 		}
 		
@@ -401,6 +430,67 @@
 						}
 				}
 			});
+			
+			// capture focus on the element to catch tabbing
+			glow.events.addListener(this.element, "focus", function(e) {
+				_focusCallback.call( that, glow.dom.get(e.source) );
+			});
+		}
+		
+		// called when the carousel gets focus
+		// elm - NodeList of the element which got focus (event source)
+		function _focusCallback(elm) {
+			var that = this;
+			// If the element is not one of the nav buttons (and is not in the pageNav) ...
+			if (
+				   (elm[0] != this._navNext[0])
+				&& (elm[0] != this._navPrev[0])
+				&& (elm.parent().parent().hasClass('pageNav') == false)
+			) {
+				// Get the element's index number from it's parent
+				var elmItemNum = _getCarouselItemNum.call(this, elm);
+				// return if we got an invalid item num
+				if (elmItemNum === -1 || this.items.slice(elmItemNum, elmItemNum+1).hasClass('carousel-added')) {
+					return;
+				}
+				// And Check to see if the index number is in the array of visible indexes...
+				if ( (' ' + this.visibleIndexes().join(' ') + ' ').indexOf(' ' + elmItemNum + ' ') == -1 ) {
+					// If so, then move the carousel to that index
+					this.moveTo(elmItemNum);
+					setTimeout(function() {
+						that._content[0].parentNode.scrollLeft = 0;
+					}, 0);
+				}
+			}
+		}
+		
+		// Work out the index number of the element within the carousel
+		// elm - NodeList of element in carousel. can be the containing item, or decendant of the containing item
+		function _getCarouselItemNum(elm) {
+			// Recurse back through parents until we find the carousel item
+			while ( !elm.hasClass('carousel-item') ) {
+				if ( elm.length == 0 ) {
+					// an item doesn't have focus
+					return -1;
+				}
+				elm = elm.parent();
+			}
+			
+			// Create nodeList of passed in element's siblings
+			var elmSiblings = elm.parent().children();
+
+			// Default return value is -1, we'll update this if we find a match (we should always find a match so this value is redundant)
+			var x = -1;
+
+			// Loop through sibling nodes until we find a match with the original element
+			elmSiblings.each(function(i){
+				// When we get a match set the value of x to match the index value
+				if (elmSiblings[i] == elm[0]) {
+					x = i;
+				}
+			});
+
+			return x;
 		}
 		
 		/**
@@ -601,125 +691,6 @@
 				if (!canGo.apply(this, ["prev"])) this._navPrev.addClass("carousel-prev-disabled");
 				else if (!canGo.apply(this, [])) this._navNext.addClass("carousel-next-disabled");
 			}
-			
-			// add navigational events
-			events.addListener(this._navPrev, "click", function(e){ return false; });
-			events.addListener(this._navPrev, "mousedown", function(e){  that.prev(); startRepeatOrSlide.call(that, true); return false; });
-			events.addListener(this._navPrev, "mouseup",   function(e){ stopRepeatOrSlide.call(that); return false; });
-			events.addListener(this._navPrev, "mouseout",  function(e){
-				// in some browsers (firefox 2), relatedTarget can be null if pointer leaves viewport quick enough
-				if (e.relatedTarget && (e.relatedTarget == that._navPrev[0] || $(e.relatedTarget).isWithin(that._navPrev))) {
-					return;
-				}
-				stopRepeatOrSlide.call(that);
-			});
-			
-			events.addListener(this._navNext, "click", function(e){ return false; });
-			events.addListener(this._navNext, "mousedown", function(e){ that.next(); startRepeatOrSlide.call(that); return false; });
-			events.addListener(this._navNext, "mouseup",   function(e){ stopRepeatOrSlide.call(that); return false; });
-			events.addListener(this._navNext, "mouseout",  function(e){
-				// in some browsers (firefox 2), relatedTarget can be null if pointer leaves viewport quick enough
-				if (e.relatedTarget && (e.relatedTarget == that._navNext[0] || $(e.relatedTarget).isWithin(that._navNext))) {
-					return;
-				}
-				stopRepeatOrSlide.call(that);
-			});
-
-
-			/*
-				Tabbing interaction
-				===================
-				This block of code makes the carousel play nice when tabbing through it.  Everytime 
-				you tab through an item in the carousel, the widget will move to keep the selected 
-				item in view.
-				
-				Event delegation is used on the widget with focus and blur events.  There are issues
-				with doing this which are explained in detail by PPK:
-				http://www.quirksmode.org/blog/archives/2008/04/delegating_the.html
-			*/
-			
-			glow.events.addListener(this.element, "focus", function(e) {
-				_focusCallback(glow.dom.get(e.target));
-			});
-			
-			/**
-				@name _focusCallback
-				@function
-				@private
-				@param {glow.dom.nodeList} Element where the focus event came from
-				@description If the focused element isn't one of the next/previous buttons then move the carousel to that element
-			*/
-			function _focusCallback(elm) {
-
-				// If the element is not one of the nav buttons (and is not in the pageNav) ...
-				if (
-					   (elm.item(0) != that._navNext[0])
-					&& (elm.item(0) != that._navPrev[0])
-					&& (elm.parent().parent().hasClass('pageNav') == false)
-				) {
-
-					// Get the element's index number from it's parent
-					var elmItemNum = _getCarouselItemNum(elm);
-					
-					// return if we got an invalid item num
-					if (elmItemNum === -1) {
-						return;
-					}
-
-					// And Check to see if the index number is in the array of visible indexes...
-					if ( ('|' + that.visibleIndexes().toString() + '|').replace(/,/g, '|').indexOf('|' + elmItemNum + '|') == -1) {
-
-						// If so, then move the carousel to that index
-						that.moveTo(elmItemNum);
-						setTimeout(function() {
-							glow.dom.get(that._content).parent().item(0).scrollLeft = 0;
-						}, 0);		
-						
-					}
-
-				}
-
-			}
-
-
-			/**
-			@name_getCarouselItemNum
-			@function
-			@private
-			@param {glow.dom.nodeList} Element where the focus event came from
-			@description Work out the index number of the element within the carousel
-			*/
-			function _getCarouselItemNum(elm) {
-
-				// Recurse back through parents until we find the carousel item
-				while ( !elm.hasClass('.carousel-item') ) {
-					if ( elm.length == 0 ) {
-						// an item doesn't have focus
-						return -1;
-					}
-					elm = elm.parent();
-				}
-				
-				// Create nodeList of passed in element's siblings
-				var elmSiblings = elm.parent().children();
-
-				// Default return value is -1, we'll update this if we find a match (we should always find a match so this value is redundant)
-				var x = -1;
-
-				// Loop through sibling nodes until we find a match with the original element
-				elmSiblings.each(function(i){
-
-					// When we get a match set the value of x to match the index value
-					if (elmSiblings[i] == elm.item(0)) {
-						x = i;
-					}
-
-				});
-
-				return x;
-
-			}
-
 
 		}
 		
@@ -872,13 +843,18 @@
 			}
 		}
 		
-		/**
-			Stop any running slides.
-			@private
-		 */
+		// triggered when scrolling ends
 		function endScroll() { /*debug*///console.log("Carousel-endScroll()");
+			var visibleIndexFirst = this._visibleIndexFirst();
+			
+			// stop any currently playing animations
 			this._slideNext.stop();
 			this._slidePrev.stop();
+			
+			// if the first visible item is a clone, move back to the start
+			if ( this.items.slice(visibleIndexFirst, visibleIndexFirst + 1).hasClass('carousel-added') ) {
+				this.moveTo(0, false);
+			}
 		}
 		
 		/**

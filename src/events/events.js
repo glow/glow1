@@ -259,13 +259,10 @@
 				// directly to the EventTarget upon which it is registered."
 				// http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-flow-capture
 				if (
-					   (
-							(name == 'focus')
-							|| (name == 'blur')
-						)
+					( name == 'focus' || name == 'blur' )
 					&& (glow.env.opera)
 				) {
-					glow.dom.get(attachTo).parent()[0].addEventListener(name, function(){},true);
+					attachTo.parentNode.addEventListener(name, function(){}, true);
 				}
 
 				attachTo.addEventListener(name.toLowerCase() == 'mousewheel' && glow.env.gecko ? 'DOMMouseScroll' : name, callback, capturingMode);
@@ -507,8 +504,8 @@
 		function addFocusInOutEvent(attachTo, event) {
 			var listenFor = event ? 'focusin' : 'focusout',
 				toFire    = event ? 'focus'   : 'blur';
-			r.addListener($(attachTo), listenFor, function(e) {
-				return !r.fire($(attachTo), toFire, e).defaultPrevented();
+			r.addListener(attachTo, listenFor, function(e) {
+				return !r.fire(attachTo, toFire, e).defaultPrevented();
 			});
 		}
 
