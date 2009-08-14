@@ -167,41 +167,16 @@
 				},
 				formatItem: function(item) {
 					var pat = new RegExp(glow.lang.trim(this.getValue()), 'i');
-					return item.name.replace(pat, "<u>$&<"+"/u>");
+					// safari 2.0.4 doesn't support "$&" so using RegExp.$1
+					return item.name.replace(pat, "<u>"+RegExp.$1+"<"+"/u>");
 				},
 				delim: ","
 				// complete: this option makes no sense here!
 			}
 		).loadData();
-		
-		<script type="text/javascript" class="showSrc">
-		// <![CDATA[
-		glow.ready(function() {
-			new glow.widgets.AutoSuggest(
-				"#colornames3",
-				"colornames.js",
-				{
-					onItemSelect: function(e){
-						this.setValue(e.selectedItem.name);
-					},
-					isMatch: function(indexedWord, inputWord) {
-						return (
-							inputWord.length > 1 && indexedWord.indexOf(inputWord) > -1
-						);
-					},
-					formatItem: function(item) {
-						var pat = new RegExp(glow.lang.trim(this.getValue()), 'i');
-						// safari 2.0.4 doesn't support "$&" so using RegExp.$1
-						return item.name.replace(pat, "<u>"+RegExp.$1+"<"+"/u>");
-					},
-					delim: ","
-					// complete: this option makes no sense here!
-				}
-			).loadData();
-			glow.events.addListener('#testForm3', 'submit', function() {
-				alert('submit: ' + this.colornames3.value);
-				return false;
-			});
+		glow.events.addListener('#testForm3', 'submit', function() {
+			alert('submit: ' + this.colornames3.value);
+			return false;
 		});
 	});
 	// ]]>
