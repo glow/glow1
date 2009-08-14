@@ -246,6 +246,19 @@
 			);
 		}
 		
+		
+		/**
+			@name glow.widgets.AutoSuggest#event:show
+			@event
+			@description Fired when the suggestion list is about to open.
+			@param {glow.events.Event} event Event Object
+		*/
+		/**
+			@name glow.widgets.AutoSuggest#event:hide
+			@event
+			@description Fired when the suggestion list is about to close.
+			@param {glow.events.Event} event Event Object
+		*/
 		/**
 			@private
 			@description Used internally to add all necessary events.

@@ -2,6 +2,7 @@ Glow Changelog
 
 1.6.0-rc2
 
+* glow.widgets.AutoSuggest - Added support for 'show' and 'hide' event listeners on the AutoSuggest instance
 * glow.widgets.AutoSuggest - Added autoPosition option to allow user to manually place the suggestion list
 * glow.widgets.AutoSuggest - Improved interface when using keys to navigate suggestions, esc now restores the original value
 * glow.widgets.AutoSuggest - Added new 'filter' option to allow user to modify results before they are displayed
