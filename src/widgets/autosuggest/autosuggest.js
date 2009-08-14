@@ -92,6 +92,8 @@
 			@description Position the overlay under the input element.
 		 */
 		function place(that) {
+			if (!that.opts.autoPosition) return;
+			
 			var inputOffset = that.inputElement.offset();
 
 			that.overlay.container
@@ -167,6 +169,7 @@
 		 */
 		function prevItem(that) {
 			var currItem = $(that.overlay.container).get('.active');
+			
 			if (currItem.length == 0) { // no item is active so return the last item
 				var allItems = $(that.overlay.container).get('li');
 				var lastItem = allItems[allItems.length-1];
@@ -248,6 +251,10 @@
 			@description Used internally to add all necessary events.
 		 */
 		function addEvents(that) { /*debug*///console.log('addEvents()');
+			// make show or hide events from the overlay bubble up to AutoSuggest
+			var bubble = function(e) { glow.events.fire(that, e.type, e); };
+			events.addListener(that.overlay, 'show', bubble);
+			events.addListener(that.overlay, 'hide', bubble);
 			
 			events.addListener( // a result item has become active
 				that,
@@ -559,6 +566,7 @@
 				Your function will be passed a {@link glow.net.Response} object from the server.
 				
 			@param {Function} [opts.formatItem] Given the matched data item, return HTML or NodeList.
+			@param {Boolean} [opts.autoPosition=true] Automatically position the suggestion list under the input element.
 			@param {Boolean} [opts.activeOnShow=true] Should the first suggestion automatically be active when the suggestion list appears?
 			@param {Number} [opts.maxListLength] Limit the size of the result list to this.
 			@param {Boolean} [opts.caseSensitive=false] Whether case is important when matching suggestions.
@@ -755,6 +763,7 @@
 		glow.widgets.AutoSuggest.prototype.configure = function(opts) {
 			this.opts = opts || {};
 			
+			if (typeof this.opts.autoPosition == "undefined") this.opts.autoPosition = true;
 			if (this.opts.height) {
 				var listContainer = $(this.overlay.container.get('.glowCSSVERSION-autoSuggest').get('ul')[0]);
 				listContainer.css('overflow-x', 'hidden');
@@ -1060,12 +1069,12 @@
 				$(this.overlay.container.get('ul')[0]).html(list.join(''));
 				
 				this.show();
+				
+				if (this.opts.activeOnShow !== false) nextItem(this);
 			}
 			else {
 				this.hide();
 			}
-			
-			if (this.opts.activeOnShow !== false) nextItem(this);
 		}
 		
 		/**

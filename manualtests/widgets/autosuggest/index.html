@@ -127,7 +127,8 @@
 					},
 					formatItem: function(item) {
 						var pat = new RegExp(glow.lang.trim(this.getValue()), 'i');
-						return item.name.replace(pat, "<u>$&<"+"/u>");
+						// safari 2.0.4 doesn't support "$&" so using RegExp.$1
+						return item.name.replace(pat, "<u>"+RegExp.$1+"<"+"/u>");
 					},
 					delim: ","
 					// complete: this option makes no sense here!
@@ -204,8 +205,48 @@
 			<p>Try it: <input type="text" id="colornames5" /> (type the name of a web-safe colour)</p>
 			</form>
 		</div>
-	</div>	
+	</div>
 
+	<div class="example">
+		<h2>Position Suggestion Manually</h2>
+		<p>The list of suggestions should appear <em>above</em> the input element.</p>
+		
+		<script type="text/javascript" class="showSrc">
+		// <![CDATA[
+		glow.ready(function() {
+			var myAutoSuggest = new glow.widgets.AutoSuggest(
+				"#colornames6",
+				"colornames.js",
+				{
+					onItemSelect: function(e){
+						this.setValue(e.selectedItem.name);
+					},
+					autoPosition: false
+				}
+			);
+			myAutoSuggest.loadData();
+			
+			glow.events.addListener(myAutoSuggest, "show", function(event) {
+				var inputOffset = myAutoSuggest.inputElement.offset();
+	
+				myAutoSuggest.overlay.container
+				.css('left', parseInt(inputOffset.left + myAutoSuggest.inputElement[0].offsetWidth) + 'px')
+				.css('top', parseInt(inputOffset.top) + 'px')
+				.css('width', ((myAutoSuggest.opts.width)? myAutoSuggest.opts.width : myAutoSuggest.inputElement[0].offsetWidth + 'px'));
+			});
+		});
+		
+		
+		// ]]>
+		</script>
+		
+		<div class="sandbox">
+			<form action="#" onsubmit="alert('submit: '+this.colornames6.value); return false;">
+			<p>Try it: <input type="text" id="colornames6" /> (type the name of a web-safe colour)</p>
+			</form>
+		</div>
+	</div>
+	
 	<h1>glow.widgets.AutoComplete examples</h1>
 	
 	<div class="example">	
