@@ -146,6 +146,9 @@ gloader.map.add(
 	{
 		$version: "1.6.0-rc1",
 		"glow.i18n": core_150_js
+	},
+	{
+		$version: "1.6.0-rc2"
 	}
 );
 
