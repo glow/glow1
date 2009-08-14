@@ -433,7 +433,6 @@
 			
 			// capture focus on the element to catch tabbing
 			glow.events.addListener(this.element, "focus", function(e) {
-				//console.log('focus');
 				_focusCallback.call( that, glow.dom.get(e.source) );
 			});
 		}
@@ -450,7 +449,6 @@
 			) {
 				// Get the element's index number from it's parent
 				var elmItemNum = _getCarouselItemNum.call(this, elm);
-				//console.log(elmItemNum);
 				// return if we got an invalid item num
 				if (elmItemNum === -1 || this.items.slice(elmItemNum, elmItemNum+1).hasClass('carousel-added')) {
 					return;
