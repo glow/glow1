@@ -572,6 +572,13 @@
 			@param {string} [opts.theme="light"] Either "light" or "dark".
 			@param {String|Function} [opts.anim] Passed into the Overlay constructor for show and hide transitions.
 			@param {Function} [opts.onInputChange] Your own handler for the inputChange event.
+			@param {Function} [opts.filter] Filter matches found before they're displayed.
+				
+				Provide a callback function that can be used to modify an array of
+				matching results before they are displayed. The callback receives a
+				single argument, an array of objects corresponding to the objects in
+				your data that are considered to match; expects you to return an array
+				of objects modified as you wish.
 			@param {Function} [opts.onItemSelect] Your own handler for the itemSelect event.
 			@param {Function} [opts.onDataLoad] Your own handler for the dataLoad event.
 			@param {Function} [opts.onDataError] Your own handler for the dataError event.

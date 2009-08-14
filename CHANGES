@@ -1,5 +1,9 @@
 Glow Changelog
 
+NEW FEATURES
+* glow.widgets.AutoSuggest - Improved interface when using keys to navigate suggestions, esc now restores the original value
+* glow.widgets.AutoSuggest - Added new 'filter' option to allow user to modify results before they are displayed
+
 NEW BUGFIXES
 * glow.widgets.Carousel - Fixed bug that caused Next and Previous text to be visible in Opera when images were on
 * glow.widgets.AutoSuggest - Fixed bug that caused position of suggestion list to be wrong when text was zoomed in recent webkit browsers
