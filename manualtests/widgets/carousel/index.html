@@ -2,128 +2,96 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-	<title>Carousel Examples</title>
+	<title>glow.widgets.Carousel</title>
+
+	<script type="text/javascript" src="../../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
+		);
+	// ]]></script>
+	
+	<script type="text/javascript">gloader.load(["glow", "@VERSION@", 'glow.widgets.Carousel'])</script>
 	
 	<style type="text/css">
-		
-		ol#carousel1 li {
+		#carousel1 li {
 		    background: #fff;
-			width: 100px;
-			height: 73px;
+			width: 120px;
+			height: 90px;
 			margin: 4px;
 		}
-		
-		
-		ol#carousel2 li {
+		#carousel2 li {
 		    background: #fff;
 		    width: 100px;
 			height: 73px;
 			margin: 4px;
 		}
-		
-		
-		ol#carousel3 li {
+		#carousel3 li {
 		    background: #fff;
 		    width: 100px;
 			height: 73px;
 			margin: 20px 10px;
 		}
-		
 		img {
 			display: block;
 		}
+		a img {
+			border: none;
+		}
 	</style>
-	
-	<!-- assumes gloader project folder is next to glow project folder -->
-	<script type="text/javascript" src="../../../../gloader/src/gloader.js">
-		gloader.use(
-			"glow",
-			{
-				$map:  "../../../srcloader/map.js",
-				$base: "../../../src/"
-			}
-		);
-	</script>
-	
-	<script type="text/javascript">
-		gloader.load(
-			['glow', '@VERSION@', 'glow.widgets.Carousel']
-		);
-	</script>
-	
-	<!-- all possible options?
-	size: 5,
-	step: 5,
-	loop: true,
-	className: "myownclass",
-	id: "myownid",
-	theme: "dark",
-	animDuration: .5,
-	pageNav: 1,
-	vertical: 0,
-	scrollOnHold: 0,
-	onAfterScroll: function(e) {
-		if (typeof console != "undefined") console.log("after scroll: "+e.position);
-	},
-	onScroll: function(e) {
-		if (typeof console != "undefined") console.log("before scroll: "+e.currentPosition);
-	},
-	onItemClick: function(e) {
-		 if (typeof console != "undefined") console.log("clicked item is "+e.itemIndex);
-	},
-	onAddItem: function(e) {
-		if (typeof console != "undefined") console.log("onAddItem handler fired");
-	},
-	onRemoveItem: function(e) {
-		if (typeof console != "undefined") console.log("onRemoveItem handler fired");
-	}
-	-->
 </head>
 
 <body>
-	<h1>glow.widgets.Carousel examples</h1>
+	<h1>glow.widgets.Carousel</h1>
 	
-	<div class="example">	
-		<h2>Carousel with looping, size and step</h2>
-		<p>no description</p>
-		
-		<script type="text/javascript" class="showSrc">
-		// <![CDATA[
-		glow.ready(function() {
-			window.carousel1 = new glow.widgets.Carousel(
-				"#carousel1",
-				{
-					size: 5,
-					step: 3,
-					loop: true
-				}
-			);
-		});
-		// ]]>
-		</script>
-		
-		<div class="sandbox">
-			<ol id="carousel1">
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_one.gif" alt="BBC One" width="100" height="73" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_two.gif" alt="BBC Two" width="100" height="73" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_three.gif" alt="BBC Three" width="100" height="73" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_four.gif" alt="BBC Four" width="100" height="73" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_hd.gif" alt="BBC HD" width="100" height="32" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/cbbc.gif" alt="CBBC" width="100" height="62" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/cbeebies.gif" alt="CBeebies" width="100" height="73" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/news.gif" alt="BBC News" width="100" height="73" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/parliament.gif" alt="BBC Parliament" width="100" height="73" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_1.gif" alt="Radio 1" width="100" height="56" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_2.gif" alt="Radio 2" width="100" height="56" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_3.gif" alt="Radio 3" width="100" height="56" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/radio_4.gif" alt="Radio 4" width="100" height="56" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/five_live.gif" alt="Five Live" width="100" height="56" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/6_music.gif" alt="6Music" width="100" height="56" /></li>
-				<li><img src="http://www.bbc.co.uk/ui/ide/1/images/brand/100/bbc_7.gif" alt="BBC 7" width="100" height="56" /></li>
-			</ol>
-		</div>
+	<h2>Carousel with looping, size and step</h2>
+	
+	<ul>
+		<li>Clicking the left &amp; right arrows should move the carousel in the expected direction by 2 items</li>
+		<li>Holding the mouse down on one of the buttons should repeatedly move the carousel, repeating the animation</li>
+		<li>While the left / right arrow has focus, the enter key should work like a click</li>
+		<li>While the carousel (or an item within) has focus, the left and right arrow keys should move the carousel</li>
+		<li>You should be able to loop through items (as in, clicking repeatedly / holding left will bring you back round to the start)</li>
+		<li>When tabbing through items in the carousel, the carousel should animate to keep the focused item in view</li>
+		<li>The next tabbed item after "8" should be the right arrow</li>
+		<li>Navigate so "one" is the rightmost item. Click it, animation should not occur</li>
+	</ul>
+	
+	<div class="sandbox">
+		<ol id="carousel1">
+			<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>
+		</ol>
 	</div>
 	
+	<script type="text/javascript" class="showSrc">
+	// <![CDATA[
+	glow.ready(function() {
+		window.carousel1 = new glow.widgets.Carousel(
+			"#carousel1",
+			{
+				size: 5,
+				step: 2,
+				loop: true
+			}
+		);
+	});
+	// ]]>
+	</script>
+	
+	<!--
 	<div class="example">
 		<h2>Carousel with vertical, looping, sliding and dark theme</h2>
 		<p>no description</p>
@@ -202,7 +170,7 @@
 			</ol>
 		</div>
 	</div>
-
-	<script type="text/javascript" src="../../includes/js/showsrc.js"></script>
+	-->
+	<script type="text/javascript">manualTests.showSrc()</script>
 </body>
 </html>

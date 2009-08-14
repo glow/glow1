@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>Module Name</title>
+	<script type="text/javascript" src="../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
+		);
+	// ]]></script>
+	
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@'])</script>
+</head>
+
+<body>
+	<h1>Module Name</h1>
+	
+	<h2>Test Title</h2>
+	
+	<p>Brief description</p>
+	
+	<ul>
+		<li>List of things to test</li>
+	</ul>
+	
+	<!-- output visual / interactive parts of your test here -->
+	
+	<script type="text/javascript" class="showSrc">
+		// this is my script
+		if (false) {
+			doSomeStuff();
+		}
+	</script>
+	
+	
+	<script type="text/javascript">manualTests.showSrc()</script>
+	
+</body>
+</html>
