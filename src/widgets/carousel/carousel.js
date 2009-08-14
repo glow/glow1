@@ -639,7 +639,7 @@
 			*/
 			
 			glow.events.addListener(this.element, "focus", function(e) {
-				_focusCallback(glow.dom.get(e.target));
+				_focusCallback( glow.dom.get(e.source) );
 			});
 			
 			/**
@@ -650,25 +650,21 @@
 				@description If the focused element isn't one of the next/previous buttons then move the carousel to that element
 			*/
 			function _focusCallback(elm) {
-
 				// If the element is not one of the nav buttons (and is not in the pageNav) ...
 				if (
 					   (elm.item(0) != that._navNext[0])
 					&& (elm.item(0) != that._navPrev[0])
 					&& (elm.parent().parent().hasClass('pageNav') == false)
 				) {
-
 					// Get the element's index number from it's parent
 					var elmItemNum = _getCarouselItemNum(elm);
-					
+					console.log(elmItemNum);
 					// return if we got an invalid item num
 					if (elmItemNum === -1) {
 						return;
 					}
-
 					// And Check to see if the index number is in the array of visible indexes...
 					if ( ('|' + that.visibleIndexes().toString() + '|').replace(/,/g, '|').indexOf('|' + elmItemNum + '|') == -1) {
-
 						// If so, then move the carousel to that index
 						that.moveTo(elmItemNum);
 						setTimeout(function() {
@@ -692,7 +688,7 @@
 			function _getCarouselItemNum(elm) {
 
 				// Recurse back through parents until we find the carousel item
-				while ( !elm.hasClass('.carousel-item') ) {
+				while ( !elm.hasClass('carousel-item') ) {
 					if ( elm.length == 0 ) {
 						// an item doesn't have focus
 						return -1;
