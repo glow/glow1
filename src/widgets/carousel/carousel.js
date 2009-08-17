@@ -316,13 +316,17 @@
 			var that = this;
 			
 			glow.events.addListener(that._content, "click", function(e) { /*debug*///console.log("item clicked "+e.source);
-				for (var el = $(e.source); el[0] != that.element[0]; el = el.parent()) { // climb up the dom tree
+				var el = $(e.source),
+					event;
+				
+				for (; el[0] != that.element[0]; el = el.parent()) { // climb up the dom tree
 					if (el.hasClass("carousel-item")) {
 						if (!el.hasClass("carousel-pad")) {
-							glow.events.fire(that, "itemClick", {
+							event = glow.events.fire(that, "itemClick", {
 								item: el[0],
 								itemIndex: el[0]["_index"+glow.UID] % that._countReal
 							});
+							return !event.defaultPrevented;
 						}
 						break;
 					}
