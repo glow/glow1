@@ -97,5 +97,62 @@ var manualTests = (function() {
 			}
 		}
 	}
+	
+	// the element to log to, will be undefined before onload
+	var logElm,
+		// log messages will be placed here before the dom is ready
+		logQueue = [];
+	
+	// creates an element to send log messages to
+	function createLog() {
+		// wait for the dom to be ready
+		var prev = window.onload;
+		window.onload = function() {
+			// call any previous onload functions
+			prev && prev();
+			
+			// create & add logging element
+			// todo: move this to stylesheet
+			logElm = document.createElement("div");
+			logElm.style.position = 'fixed';
+			logElm.style.width = '200px';
+			logElm.style.height = '200px';
+			logElm.style.border = '1px solid #ccc';
+			logElm.style.padding = '10px';
+			logElm.style.margin = '0';
+			logElm.style.overflow = 'auto';
+			logElm.style.top = '0';
+			logElm.style.right = '0';
+			logElm.style.background = '#eee';
+			document.body.appendChild(logElm);
+			
+			// add any queued logs
+			for (var i = 0, len = logQueue.length; i < len; i++) {
+				manualTests.log(logQueue[i]);
+			}
+		}
+	}
+	
+	/**
+	@name manualTests.log
+	@function
+	@description Logs a string
+	
+	@param {String} [className=showSrc] Only show scripts with this classname
+	*/
+	manualTests.log = function(msg) {
+		// if logElm isn't ready, push it onto the queue
+		if (logElm) {
+			var text = document.createTextNode(msg);
+			logElm.appendChild(text);
+			logElm.appendChild( document.createElement('br') );
+			// scroll the element to the bottom
+			logElm.scrollTop = logElm.scrollHeight;
+		} else {
+			logQueue.push(msg);
+		}
+	}
+	
+	createLog();
 	return manualTests;
 })();
