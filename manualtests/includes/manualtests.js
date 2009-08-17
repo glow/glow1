@@ -138,7 +138,7 @@ var manualTests = (function() {
 	@function
 	@description Logs a string
 	
-	@param {String} [className=showSrc] Only show scripts with this classname
+	@param {String} msg String to log
 	*/
 	manualTests.log = function(msg) {
 		// if logElm isn't ready, push it onto the queue
@@ -150,6 +150,19 @@ var manualTests = (function() {
 			logElm.scrollTop = logElm.scrollHeight;
 		} else {
 			logQueue.push(msg);
+		}
+	}
+	
+	/**
+	@name manualTests.clearLog
+	@function
+	@description Clears the log
+	*/
+	manualTests.clearLog = function() {
+		if (logElm) {
+			logElm.innerHTML = '';
+		} else {
+			logQueue = [];
 		}
 	}
 	

@@ -2,7 +2,21 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-	<title>Editor Examples</title>
+	<title>Module Name</title>
+	<script type="text/javascript" src="../../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
+		);
+	// ]]></script>
+	
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.widgets.Editor'])</script>
 	
 	<style type="text/css" media="screen">
 		#commentEntry
@@ -12,61 +26,90 @@
 			margin: 8px;
 			padding: 0;
 		}
+		label {
+			display: block;
+			margin-top: 10px;
+		}
 	</style>
-	
-	<!-- assumes gloader project folder is next to glow project folder -->
-	<script type="text/javascript" src="../../../../gloader/src/gloader.js">
-		gloader.use(
-			"glow",
-			{
-				$map:  "../../../srcloader/map.js",
-				$base: "../../../src/"
-			}
-		);
-	</script>
-	
-	<script type="text/javascript">
-		gloader.load(
-			['glow', '@VERSION@', 'glow.widgets.Editor']
-		);
-	</script>
 </head>
 
 <body>
-	<h1>glow.widgets.Editor examples</h1>
+	<h1>glow.widgets.Editor</h1>
 	
-	<div class="example">	
-		<h2>Basic Editor</h2>
-		<p>no description</p>
-		
-		<script type="text/javascript" class="showSrc">
-		// <![CDATA[
-		glow.ready(function() {
-			window.ed = new glow.widgets.Editor("#commentEntry");
-		});
-		// ]]>
-		</script>
-		
-		<div class="sandbox">
-			<form action="foo" method="get" id="demo-form">
-				<div>
-					<label for="userName">Your Name:</label>
-					<input name="userName" id="userName" type="text" value="" size="28" />
-				</div>
-				
-				<div>
-					<label for="userName">Your Comment:</label>
-					<textarea id="commentEntry" rows="10" cols="100" style="width: 500px"></textarea>
-				</div>
-			
-				<div>
-					<input type="submit" />
-				</div>
-				<div id="domPath"></div>
-			</form>
+	<h2>Basic Editor</h2>
+	
+	<ul>
+		<li>Write text into the editor</li>
+		<li>Does the cut|copy|paste functionality work in the editor?</li>
+		<li>Can you select text in the first editor and change the styling using the tools in the toolbar?</li>
+		<li>Can you use familiar keyboard shortcuts to make text bold / italic</li>
+	</ul>
+	
+	<form action="foo" method="get" id="editor1Form">
+		<div>
+			<label for="editor1Field">Your Comment:</label>
+			<textarea id="editor1Field" name="editor1Field" rows="10" cols="100" style="width: 500px"></textarea>
 		</div>
-	</div>
-
-	<script type="text/javascript" src="../../includes/js/showsrc.js"></script>
+	</form>
+	
+	<p>
+		<a href="#" id="getFormVals1">Get form value</a>
+	</p>
+	
+	<script type="text/javascript" class="showSrc">
+	// <![CDATA[
+	glow.ready(function() {
+		window.editor1 = new glow.widgets.Editor("#editor1Field");
+		
+		glow.events.addListener(editor1, 'commit', function() {
+			manualTests.log('editor1: commit');
+		});
+		glow.events.addListener('#getFormVals1', 'click', function() {
+			manualTests.log( 'editor1 val: ' + glow.dom.get('#editor1Field').val() );
+			return false;
+		});
+	});
+	// ]]>
+	</script>
+	
+	
+	<h2>Dark theme</h2>
+	
+	<ul>
+		<li>As above but with dark theme</li>
+	</ul>
+	
+	<form action="foo" method="get" id="editor2Form">
+		<div>
+			<label for="editor2Field">Your Comment:</label>
+			<textarea id="editor2Field" name="editor2Field" rows="10" cols="100" style="width: 500px"></textarea>
+		</div>
+	</form>
+	
+	<p>
+		<a href="#" id="getFormVals2">Get form value</a>
+	</p>
+	
+	<script type="text/javascript">
+	// <![CDATA[
+	glow.ready(function() {
+		window.editor2 = new glow.widgets.Editor("#editor2Field", {
+			theme: 'dark'
+		});
+		
+		glow.events.addListener(editor2, 'commit', function() {
+			manualTests.log('editor2: commit');
+		});
+		glow.events.addListener('#getFormVals2', 'click', function() {
+			manualTests.log( 'editor2 val: ' + glow.dom.get('#editor2Field').val() );
+			return false;
+		});
+	});
+	// ]]>
+	</script>
+	
+	
+	<script type="text/javascript">manualTests.showSrc();</script>
+	<script type="text/javascript">manualTests.log('Logging enabled');</script>
 </body>
 </html>
