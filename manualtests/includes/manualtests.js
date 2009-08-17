@@ -141,10 +141,13 @@ var manualTests = (function() {
 	@param {String} [className=showSrc] Only show scripts with this classname
 	*/
 	manualTests.log = function(msg) {
+		// if logElm isn't ready, push it onto the queue
 		if (logElm) {
 			var text = document.createTextNode(msg);
 			logElm.appendChild(text);
 			logElm.appendChild( document.createElement('br') );
+			// scroll the element to the bottom
+			logElm.scrollTop = logElm.scrollHeight;
 		} else {
 			logQueue.push(msg);
 		}

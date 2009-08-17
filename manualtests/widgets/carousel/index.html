@@ -20,8 +20,7 @@
 	<script type="text/javascript">gloader.load(["glow", "@VERSION@", 'glow.widgets.Carousel'])</script>
 	
 	<style type="text/css">
-		#carousel1 li {
-		    background: #fff;
+		#carousel1 li, #carousel2 li {
 			margin: 4px;
 		}
 		img {
@@ -47,6 +46,7 @@
 		<li>When tabbing through items in the carousel, the carousel should animate to keep the focused item in view</li>
 		<li>The next tabbed item after "8" should be the right arrow</li>
 		<li>Navigate so "one" is the rightmost item. Click it, animation should not occur</li>
+		<li>Clicking on the items should log the zero-based index of the item</li>
 	</ul>
 	
 	<div class="sandbox">
@@ -87,7 +87,52 @@
 	// ]]>
 	</script>
 	
-	<h2>Non-looping slidering carousel</h2>
+	<h2>Vertical version of the above</h2>
+	
+	<ul>
+		<li>See previous example for tests</li>
+	</ul>
+	
+	<div class="sandbox">
+		<ol id="carousel2">
+			<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>
+		</ol>
+	</div>
+	
+	<script type="text/javascript">
+	// <![CDATA[
+	glow.ready(function() {
+		window.carousel2 = new glow.widgets.Carousel(
+			"#carousel2",
+			{
+				size: 5,
+				step: 2,
+				loop: true,
+				vertical: true
+			}
+		);
+		glow.events.addListener(carousel2, "itemClick", function(e) {
+			manualTests.log('carousel2: itemClick, item ' + e.itemIndex + '');
+			return false;
+		});
+		glow.events.addListener(carousel2, "scroll", function(e) {
+			manualTests.log('carousel2: scroll');
+		});
+		glow.events.addListener(carousel2, "afterScroll", function(e) {
+			manualTests.log('carousel2: afterScroll');
+		});
+	});
+	// ]]>
+	</script>
+	
+	<h2>Non-looping sliding carousel</h2>
 	
 	<p>
 		This carousel features a continuous sliding animation when the mouse is
@@ -101,7 +146,7 @@
 		<li>Holding down the next / prev buttons should move the carousel forward 1 step, then smoothly move until the mouse is released</li>
 	</ul>
 	
-	<ol id="carousel2">
+	<ol id="carousel3">
 		<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
 		<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
 		<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
@@ -122,29 +167,172 @@
 	<script type="text/javascript" class="showSrc">
 	// <![CDATA[
 	glow.ready(function() {
-		window.carousel2 = new glow.widgets.Carousel(
-			"#carousel2",
+		window.carousel3 = new glow.widgets.Carousel(
+			"#carousel3",
 			{
 				size: 3,
 				step: 1,
 				slideOnScroll: true
 			}
 		);
-		glow.events.addListener(carousel2, "itemClick", function(e) {
-			manualTests.log('carousel2: itemClick, item ' + e.itemIndex);
+		glow.events.addListener(carousel3, "itemClick", function(e) {
+			manualTests.log('carousel3: itemClick, item ' + e.itemIndex);
 			return false;
 		});
-		glow.events.addListener(carousel2, "scroll", function(e) {
-			manualTests.log('carousel2: scroll');
+		glow.events.addListener(carousel3, "scroll", function(e) {
+			manualTests.log('carousel3: scroll');
 		});
-		glow.events.addListener(carousel2, "afterScroll", function(e) {
-			manualTests.log('carousel2: afterScroll');
+		glow.events.addListener(carousel3, "afterScroll", function(e) {
+			manualTests.log('carousel3: afterScroll');
+		});
+	});
+	// ]]>
+	</script>
+	
+	<h2>Vertical version of above</h2>
+	
+	<ul>
+		<li>Should behave as above, but y'know, vertical</li>
+	</ul>
+	
+	<ol id="carousel4">
+		<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
+	</ol>
+	
+	<script type="text/javascript">
+	// <![CDATA[
+	glow.ready(function() {
+		window.carousel4 = new glow.widgets.Carousel(
+			"#carousel4",
+			{
+				size: 3,
+				step: 1,
+				slideOnScroll: true,
+				vertical: true
+			}
+		);
+		glow.events.addListener(carousel4, "itemClick", function(e) {
+			manualTests.log('carousel4: itemClick, item ' + e.itemIndex);
+			return false;
+		});
+		glow.events.addListener(carousel4, "scroll", function(e) {
+			manualTests.log('carousel4: scroll');
+		});
+		glow.events.addListener(carousel4, "afterScroll", function(e) {
+			manualTests.log('carousel4: afterScroll');
+		});
+	});
+	// ]]>
+	</script>
+	
+	<h2>Paged Carousel</h2>
+	
+	<p>
+		Using 'dots' nav rather than left &amp; right buttons
+	</p>
+	
+	<ul>
+		<li>Ensure the carousel can be navigated by the paged naviagation</li>
+		<li>The last item in the carousel should be empty (padding)</li>
+	</ul>
+	
+	<ol id="carousel5">
+		<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>
+	</ol>
+	
+	<script type="text/javascript" class="showSrc">
+	// <![CDATA[
+	glow.ready(function() {
+		window.carousel5 = new glow.widgets.Carousel(
+			"#carousel5",
+			{
+				size: 3,
+				step: 3,
+				slideOnScroll: true,
+				pageNav: true
+			}
+		);
+		glow.events.addListener(carousel5, "itemClick", function(e) {
+			manualTests.log('carousel5: itemClick, item ' + e.itemIndex);
+			return false;
+		});
+		glow.events.addListener(carousel5, "scroll", function(e) {
+			manualTests.log('carousel5: scroll');
+		});
+		glow.events.addListener(carousel5, "afterScroll", function(e) {
+			manualTests.log('carousel5: afterScroll');
+		});
+	});
+	// ]]>
+	</script>
+	
+	<h2>Vertical version of above</h2>
+	
+	<ul>
+		<li>Like above, but vertical</li>
+	</ul>
+	
+	<ol id="carousel6">
+		<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
+		<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>
+	</ol>
+	
+	<script type="text/javascript" class="showSrc">
+	// <![CDATA[
+	glow.ready(function() {
+		window.carousel6 = new glow.widgets.Carousel(
+			"#carousel6",
+			{
+				size: 3,
+				step: 3,
+				slideOnScroll: true,
+				pageNav: true,
+				vertical: true
+			}
+		);
+		glow.events.addListener(carousel6, "itemClick", function(e) {
+			manualTests.log('carousel6: itemClick, item ' + e.itemIndex);
+			return false;
+		});
+		glow.events.addListener(carousel6, "scroll", function(e) {
+			manualTests.log('carousel6: scroll');
+		});
+		glow.events.addListener(carousel6, "afterScroll", function(e) {
+			manualTests.log('carousel6: afterScroll');
 		});
 	});
 	// ]]>
 	</script>
 	
 	
-	<script type="text/javascript">manualTests.showSrc()</script>
+	<script type="text/javascript">manualTests.showSrc();</script>
+	<script type="text/javascript">manualTests.log('Logging enabled');</script>
 </body>
 </html>
