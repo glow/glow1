@@ -16,11 +16,24 @@
 		);
 	// ]]></script>
 	
-	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.widgets.InfoPanel'])</script>
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.widgets.InfoPanel', 'glow.embed'])</script>
 	
 	<style type="text/css">
 		#infoPanelField1 {
 			margin-left: 400px;
+		}
+		#infoPanel2TargetContainer {
+			height: 300px;
+			position: relative;
+			border: 1px solid #000;
+		}
+		#infoPanel2Target {
+			height: 5px;
+			width: 5px;
+			background: green;
+			top: 50%;
+			left: 100px;
+			position: absolute;
 		}
 	</style>
 </head>
@@ -34,18 +47,44 @@
 		<li>Click into the form field to show the infopanel</li>
 		<li>Panel should point at the form field</li>
 		<li>Panel should appear above the select element (there's a hack to make this work for IE6)</li>
+		<li>Panel should appear above both smiley faces, faces may hide when panel is open but must return once panel is closed</li>
 		<li>Panel should move as the window's resized to stay in the area of the window with most space</li>
+		<li>Panel should receive focus once it appears, pressing tab after it opens should focus the close button</li>
+		<li>'InfoPanel heading' must appear next to the close button above a grey line</li>
+		<li>The panel should contain a smiley face</li>
 		<li>Clicking the close button should close the panel</li>
 	</ul>
 	
 	<input type="text" value="Click to show" id="infoPanelField1" />
+	<span id="flash1"></span>
+	<span id="flash2"></span>
 	<select>
 		<option>Should show beneath InfoPanel</option>
 	</select>
 	
+	<script type="text/javascript">
+		glow.ready(function() {
+			new glow.embed.Flash("smile.swf", "#flash1", "6", {
+				width: 32,
+				height: 32,
+				params: {
+					wmode: 'transparent'
+				}
+			}).embed();
+			new glow.embed.Flash("smile.swf", "#flash2", "6", {
+				width: 32,
+				height: 32
+			}).embed();
+			new glow.embed.Flash("smile.swf", "#flash3", "6", {
+				width: 32,
+				height: 32
+			}).embed();
+		});
+	</script>
+	
 	<div id="infoPanel1">
 		<h3 class="hd">InfoPanel heading</h3>
-		<p>InfoPanel content</p>
+		<p>InfoPanel content <span id="flash3"></span></p>
 	</div>
 	
 	<script type="text/javascript" class="showSrc">
@@ -67,6 +106,52 @@
 			});
 			glow.events.addListener(infoPanel1, 'afterHide', function() {
 				manualTests.log('infoPanel1: afterHide');
+			});
+		});
+	</script>
+	
+	
+	<h2>Custom positioning</h2>
+	
+	<ul>
+		<li>Click in the white box below to make the infopanel appear</li>
+		<li>The panel should point at the top corner of the green box below</li>
+		<li>The pointer should remain on the left-hand side of the panel</li>
+		<li>The panel should fade in / out as it appears / disappears</li>
+		<li>The show / hide events should fire before animation, afterShow / afterHide should fire after animation</li>
+	</ul>
+	
+	<div id="infoPanel2TargetContainer">
+		<div id="infoPanel2Target"></div>
+	</div>
+	
+	<div id="infoPanel2">
+		<h3 class="hd">InfoPanel heading</h3>
+		<p>InfoPanel content</p>
+	</div>
+	
+	<script type="text/javascript" class="showSrc">
+		glow.ready(function() {
+			window.infoPanel2 = new glow.widgets.InfoPanel('#infoPanel2', {
+				context: '#infoPanel2TargetContainer',
+				offsetInContext: {x: 100, y: '50%'},
+				pointerPosition: 'l',
+				anim: 'fade'
+			});
+			glow.events.addListener('#infoPanel2TargetContainer', 'click', function() {
+				infoPanel2.show();
+			});
+			glow.events.addListener(infoPanel2, 'show', function() {
+				manualTests.log('infoPanel2: show');
+			});
+			glow.events.addListener(infoPanel2, 'hide', function() {
+				manualTests.log('infoPanel2: hide');
+			});
+			glow.events.addListener(infoPanel2, 'afterShow', function() {
+				manualTests.log('infoPanel2: afterShow');
+			});
+			glow.events.addListener(infoPanel2, 'afterHide', function() {
+				manualTests.log('infoPanel2: afterHide');
 			});
 		});
 	</script>
