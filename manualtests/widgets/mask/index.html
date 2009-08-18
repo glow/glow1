@@ -2,86 +2,83 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-	<title>Mask Examples</title>
-	
-	<!-- assumes gloader project folder is next to glow project folder -->
-	<script type="text/javascript" src="../../../../gloader/src/gloader.js">
-		gloader.use(
-			"glow",
-			{
-				$map:  "../../../srcloader/map.js",
-				$base: "../../../src/"
-			}
+	<title>glow.widgets.Mask</title>
+	<script type="text/javascript" src="../../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
 		);
-	</script>
+	// ]]></script>
 	
-	<script type="text/javascript">
-		gloader.load(
-			['glow', '@VERSION@', 'glow.widgets.Mask']
-		);
-	</script>
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.widgets.Mask'])</script>
 </head>
 
 <body>
-	<h1>glow.widgets.Mask examples</h1>
+	<h1>glow.widgets.Mask</h1>
 	
-	<div class="example">	
-		<h2>Mask</h2>
+	<h2>Simple Mask</h2>
 		
-		<p>Things to test for:</p>
-		
-		<ul>
-			<li>
-				Ensure the mask covers the entire view
-			</li>
-			<li>
-				No elements should appear on top of the mask. The select element
-				should disappear in IE6 to avoid it appearing on top
-			</li>
-			<li>
-				Resize the width of the browser so there is no horizontal scrollbar,
-				ensure the scrollbar does not reappear when reducing the width until
-				the window is narrower than the red box
-			</li>
-			<li>
-				Resize the window so it is narrower than the red box. Horizontally
-				scroll, ensure the mask is covering the area previously off-screen.
-			</li>
-		</ul>
-		
-		
-		<script type="text/javascript" class="showSrc">
-		// <![CDATA[
-		glow.ready(function() {
-			var myMask = new glow.widgets.Mask({
-				onClick: function() { this.remove(); }
-			});
-			
-			glow.events.addListener(
-				glow.dom.get("#mask-appear"),
-				"click",
-				function() {
-					myMask.add();
-					return false;
-				}
-			);
-		});
-		// ]]>
-		</script>
-		
-		<div class="sandbox">			
-			<p>
-				Make the <a href="#" id="mask-appear">mask appear</a>.
-			</p>
-			<div style="background:red; width: 900px">
-				This element is really long
-			</div>
-			<select>
-				<option>This should appear beneath the mask</option>
-			</select>
-		</div>
+	<p>Things to test for:</p>
+	
+	<ul>
+		<li>
+			Ensure the mask covers the entire view
+		</li>
+		<li>
+			No elements should appear on top of the mask. The select element
+			should disappear in IE6 to avoid it appearing on top
+		</li>
+		<li>
+			Resize the width of the browser so there is no horizontal scrollbar,
+			ensure the scrollbar does not reappear when reducing the width until
+			the window is narrower than the red box
+		</li>
+		<li>
+			Resize the window so it is narrower than the red box. Horizontally
+			scroll, ensure the mask is covering the area previously off-screen.
+		</li>
+		<li>
+			Closing the mask should make it disappear
+		</li>
+	</ul>
+	
+	<p>
+		Make the <a href="#" id="mask-appear">mask appear</a>.
+	</p>
+	<div style="background:red; width: 900px">
+		This element is really long
 	</div>
-
-	<script type="text/javascript" src="../../includes/js/showsrc.js"></script>
+	<select>
+		<option>This should appear beneath the mask</option>
+	</select>
+	
+	<script type="text/javascript" class="showSrc">
+	// <![CDATA[
+	glow.ready(function() {
+		var myMask = new glow.widgets.Mask({
+			onClick: function() { this.remove(); }
+		});
+		
+		glow.events.addListener(
+			glow.dom.get("#mask-appear"),
+			"click",
+			function() {
+				myMask.add();
+				return false;
+			}
+		);
+	});
+	// ]]>
+	</script>
+	
+	
+	<script type="text/javascript">manualTests.showSrc();</script>
+	<script type="text/javascript">manualTests.log('Logging enabled');</script>
 </body>
 </html>
