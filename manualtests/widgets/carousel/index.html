@@ -17,7 +17,7 @@
 		);
 	// ]]></script>
 	
-	<script type="text/javascript">gloader.load(["glow", "@VERSION@", 'glow.widgets.Carousel'])</script>
+	<script type="text/javascript">gloader.load(["glow", "@VERSION@", 'glow.data', 'glow.widgets.Carousel'])</script>
 	
 	<style type="text/css">
 		#carousel1 li, #carousel2 li {
@@ -34,6 +34,36 @@
 
 <body>
 	<h1>glow.widgets.Carousel</h1>
+	
+	<h2>Settings</h2>
+	
+	<form action="?" id="urlOpts">
+		<p>
+			<label>
+				Orientation:
+				<select name="vertical">
+					<option value="">Horizontal</option>
+					<option value="1">Vertical</option>
+				</select>
+			</label>
+			<label>
+				Theme:
+				<select name="theme">
+					<option value="dark">Dark</option>
+					<option value="light">Light</option>
+				</select>
+			</label>
+			<input type="submit" value="Go" />
+		</p>
+	</form>
+	
+	<script type="text/javascript">
+		var urlOpts = glow.data.decodeUrl( window.location.search.slice(1) );
+		// set defaults here, eg...
+		urlOpts.theme = urlOpts.theme || "light";
+		urlOpts.vertical = urlOpts.vertical || '';
+		glow.dom.get('#urlOpts').val(urlOpts);		
+	</script>
 	
 	<h2>Carousel with looping, size and step</h2>
 	
@@ -70,7 +100,9 @@
 			{
 				size: 5,
 				step: 2,
-				loop: true
+				loop: true,
+				vertical: urlOpts.vertical,
+				theme: urlOpts.theme
 			}
 		);
 		glow.events.addListener(carousel1, "itemClick", function(e) {
@@ -82,51 +114,6 @@
 		});
 		glow.events.addListener(carousel1, "afterScroll", function(e) {
 			manualTests.log('carousel1: afterScroll');
-		});
-	});
-	// ]]>
-	</script>
-	
-	<h2>Vertical version of the above</h2>
-	
-	<ul>
-		<li>See previous example for tests</li>
-	</ul>
-	
-	<div class="sandbox">
-		<ol id="carousel2">
-			<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
-			<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
-			<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
-			<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
-			<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
-			<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
-			<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
-			<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>
-		</ol>
-	</div>
-	
-	<script type="text/javascript">
-	// <![CDATA[
-	glow.ready(function() {
-		window.carousel2 = new glow.widgets.Carousel(
-			"#carousel2",
-			{
-				size: 5,
-				step: 2,
-				loop: true,
-				vertical: true
-			}
-		);
-		glow.events.addListener(carousel2, "itemClick", function(e) {
-			manualTests.log('carousel2: itemClick, item ' + e.itemIndex + '');
-			return false;
-		});
-		glow.events.addListener(carousel2, "scroll", function(e) {
-			manualTests.log('carousel2: scroll');
-		});
-		glow.events.addListener(carousel2, "afterScroll", function(e) {
-			manualTests.log('carousel2: afterScroll');
 		});
 	});
 	// ]]>
@@ -172,7 +159,9 @@
 			{
 				size: 3,
 				step: 1,
-				slideOnScroll: true
+				slideOnScroll: true,
+				vertical: urlOpts.vertical,
+				theme: urlOpts.theme
 			}
 		);
 		glow.events.addListener(carousel3, "itemClick", function(e) {
@@ -184,56 +173,6 @@
 		});
 		glow.events.addListener(carousel3, "afterScroll", function(e) {
 			manualTests.log('carousel3: afterScroll');
-		});
-	});
-	// ]]>
-	</script>
-	
-	<h2>Vertical version of above</h2>
-	
-	<ul>
-		<li>Should behave as above, but y'know, vertical</li>
-	</ul>
-	
-	<ol id="carousel4">
-		<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
-	</ol>
-	
-	<script type="text/javascript">
-	// <![CDATA[
-	glow.ready(function() {
-		window.carousel4 = new glow.widgets.Carousel(
-			"#carousel4",
-			{
-				size: 3,
-				step: 1,
-				slideOnScroll: true,
-				vertical: true
-			}
-		);
-		glow.events.addListener(carousel4, "itemClick", function(e) {
-			manualTests.log('carousel4: itemClick, item ' + e.itemIndex);
-			return false;
-		});
-		glow.events.addListener(carousel4, "scroll", function(e) {
-			manualTests.log('carousel4: scroll');
-		});
-		glow.events.addListener(carousel4, "afterScroll", function(e) {
-			manualTests.log('carousel4: afterScroll');
 		});
 	});
 	// ]]>
@@ -270,7 +209,9 @@
 				size: 3,
 				step: 3,
 				slideOnScroll: true,
-				pageNav: true
+				pageNav: true,
+				vertical: urlOpts.vertical,
+				theme: urlOpts.theme
 			}
 		);
 		glow.events.addListener(carousel5, "itemClick", function(e) {
@@ -282,50 +223,6 @@
 		});
 		glow.events.addListener(carousel5, "afterScroll", function(e) {
 			manualTests.log('carousel5: afterScroll');
-		});
-	});
-	// ]]>
-	</script>
-	
-	<h2>Vertical version of above</h2>
-	
-	<ul>
-		<li>Like above, but vertical</li>
-	</ul>
-	
-	<ol id="carousel6">
-		<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
-		<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>
-	</ol>
-	
-	<script type="text/javascript" class="showSrc">
-	// <![CDATA[
-	glow.ready(function() {
-		window.carousel6 = new glow.widgets.Carousel(
-			"#carousel6",
-			{
-				size: 3,
-				step: 3,
-				slideOnScroll: true,
-				pageNav: true,
-				vertical: true
-			}
-		);
-		glow.events.addListener(carousel6, "itemClick", function(e) {
-			manualTests.log('carousel6: itemClick, item ' + e.itemIndex);
-			return false;
-		});
-		glow.events.addListener(carousel6, "scroll", function(e) {
-			manualTests.log('carousel6: scroll');
-		});
-		glow.events.addListener(carousel6, "afterScroll", function(e) {
-			manualTests.log('carousel6: afterScroll');
 		});
 	});
 	// ]]>
