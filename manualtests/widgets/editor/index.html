@@ -16,7 +16,7 @@
 		);
 	// ]]></script>
 	
-	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.widgets.Editor'])</script>
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.data', 'glow.widgets.Editor'])</script>
 	
 	<style type="text/css" media="screen">
 		#commentEntry
@@ -35,6 +35,37 @@
 
 <body>
 	<h1>glow.widgets.Editor</h1>
+	
+	<h2>Settings</h2>
+	
+	<!--
+		You may want to use this to provide a simple way to switch themes
+		and orientation. urlOpts will contain the results of the form
+		
+		Simply delete if you don't need it
+	-->
+	
+	<form action="?" id="urlOpts">
+		<p>
+			<label>
+				Theme:
+				<select name="theme">
+					<option value="dark">Dark</option>
+					<option value="light">Light</option>
+				</select>
+			</label>
+			<input type="submit" value="Go" />
+		</p>
+	</form>
+	
+	<script type="text/javascript">
+		// get values from url
+		var urlOpts = glow.data.decodeUrl( window.location.search.slice(1) );
+		// set defaults here, eg...
+		urlOpts.theme = urlOpts.theme || "light";
+		// update the form
+		glow.dom.get('#urlOpts').val(urlOpts);
+	</script>
 	
 	<h2>Basic Editor</h2>
 	
@@ -59,49 +90,15 @@
 	<script type="text/javascript" class="showSrc">
 	// <![CDATA[
 	glow.ready(function() {
-		window.editor1 = new glow.widgets.Editor("#editor1Field");
+		window.editor1 = new glow.widgets.Editor("#editor1Field", {
+			theme: urlOpts.theme
+		});
 		
 		glow.events.addListener(editor1, 'commit', function() {
 			manualTests.log('editor1: commit');
 		});
 		glow.events.addListener('#getFormVals1', 'click', function() {
 			manualTests.log( 'editor1 val: ' + glow.dom.get('#editor1Field').val() );
-			return false;
-		});
-	});
-	// ]]>
-	</script>
-	
-	
-	<h2>Dark theme</h2>
-	
-	<ul>
-		<li>As above but with dark theme</li>
-	</ul>
-	
-	<form action="foo" method="get" id="editor2Form">
-		<div>
-			<label for="editor2Field">Your Comment:</label>
-			<textarea id="editor2Field" name="editor2Field" rows="10" cols="100" style="width: 500px"></textarea>
-		</div>
-	</form>
-	
-	<p>
-		<a href="#" id="getFormVals2">Get form value</a>
-	</p>
-	
-	<script type="text/javascript">
-	// <![CDATA[
-	glow.ready(function() {
-		window.editor2 = new glow.widgets.Editor("#editor2Field", {
-			theme: 'dark'
-		});
-		
-		glow.events.addListener(editor2, 'commit', function() {
-			manualTests.log('editor2: commit');
-		});
-		glow.events.addListener('#getFormVals2', 'click', function() {
-			manualTests.log( 'editor2 val: ' + glow.dom.get('#editor2Field').val() );
 			return false;
 		});
 	});

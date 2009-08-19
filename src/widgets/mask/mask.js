@@ -17,59 +17,59 @@
 			noScrollContainer,
 			// javascript:false stops IE complaining over SSL
 			iframeSrc = '<iframe class="glowNoMask" src="javascript:false" style="margin:0;padding:0;position:absolute;top:0;left:0;filter:alpha(opacity=0);display:none"></iframe>';
-/**
-@name glow.widgets.Mask
-@class
-@description A semi transparent layer covering the page
-
-Use this if you're wanting to block out the main content of the page.
-Anything you want to be on top of the mask needs to have a higher z-index (default: 9990).
-
-<div class="info">Widgets must be called in a <code>glow.ready()</code> call.</div>
-
-@see <a href="../furtherinfo/widgets/mask/">Mask user guide</a>
-
-@param {Object} opts Object containing the attributes specified below.
-@param {Number} [opts.opacity=0.7] The opacity of the mask (from 0 to 1).
-@param {String} [opts.color=black] The colour of the mask
-@param {Function} [opts.onClick] Shortcut to attach an event listener that is called when the user clicks on the mask.
-@param {Number} [opts.zIndex=9990] The z-index of mask layer
-
-@example
-	var mask = new glow.widget.Mask({
-		onClick : function () {
-			this.remove();
-		}
-	});
-	mask.add();
-
-*/
-
-/*
-Deprecated glow.widgets.Mask() param
-
-@param {Boolean} [opts.disableScroll=false] If set to true, scrolling is disabled in the main document.
-
-This feature is experimental. It works by moving
-the document into a new container, offsetting it and setting overflow
-to none. Because this adds a new element between body and your document,
-you may have problems if your scripts rely on certain elements. Children
-of &lt;body> which have class "glowNoMask" will be left as children of
-&lt;body>.
-
-*/
-
-/**
-    @name glow.widgets.Mask#maskElement
-    @type glow.dom.NodeList
-    @description The node overlayed to create the mask.
-    @example
-		//create mask instance
-		var myMask = new glow.widgets.Mask();
-
-		//display mask
-		myMask.maskElement.css("background", "url(stripe.png)");
- */
+		/**
+		@name glow.widgets.Mask
+		@class
+		@description A semi transparent layer covering the page
+		
+		Use this if you're wanting to block out the main content of the page.
+		Anything you want to be on top of the mask needs to have a higher z-index (default: 9990).
+		
+		<div class="info">Widgets must be called in a <code>glow.ready()</code> call.</div>
+		
+		@see <a href="../furtherinfo/widgets/mask/">Mask user guide</a>
+		
+		@param {Object} opts Object containing the attributes specified below.
+		@param {Number} [opts.opacity=0.7] The opacity of the mask (from 0 to 1).
+		@param {String} [opts.color=black] The colour of the mask
+		@param {Function} [opts.onClick] Shortcut to attach an event listener that is called when the user clicks on the mask.
+		@param {Number} [opts.zIndex=9990] The z-index of mask layer
+		
+		@example
+			var mask = new glow.widget.Mask({
+				onClick : function () {
+					this.remove();
+				}
+			});
+			mask.add();
+		
+		*/
+		
+		/*
+		Deprecated glow.widgets.Mask() param
+		
+		@param {Boolean} [opts.disableScroll=false] If set to true, scrolling is disabled in the main document.
+		
+		This feature is experimental. It works by moving
+		the document into a new container, offsetting it and setting overflow
+		to none. Because this adds a new element between body and your document,
+		you may have problems if your scripts rely on certain elements. Children
+		of &lt;body> which have class "glowNoMask" will be left as children of
+		&lt;body>.
+		
+		*/
+		
+		/**
+			@name glow.widgets.Mask#maskElement
+			@type glow.dom.NodeList
+			@description The node overlayed to create the mask.
+			@example
+				//create mask instance
+				var myMask = new glow.widgets.Mask();
+		
+				//display mask
+				myMask.maskElement.css("background", "url(stripe.png)");
+		*/
 
 		function Mask(opts) {
 			this.opts = glow.lang.apply({
@@ -161,8 +161,8 @@ of &lt;body> which have class "glowNoMask" will be left as children of
 					// hide the mask so our measurement doesn't include the mask
 					that.maskElement.hide();
 					
-					var newHeight = that.opts.disableScroll ? noScrollContainer.height() : Math.max( body.height(), win.height() ),
-						newWidth  = that.opts.disableScroll ? noScrollContainer.width()  : Math.max( win.width(), doc.width() );
+					var newHeight = that.opts.disableScroll ? noScrollContainer.height() : Math.max( win.height(), doc.height() ),
+						newWidth  = that.opts.disableScroll ? noScrollContainer.width()  : Math.max( win.width(),  doc.width() );
 						
 					// Work out the required width to set the mask (this is basically the width of the content but without the mask)
 					that.maskElement.width(newWidth).height(newHeight);

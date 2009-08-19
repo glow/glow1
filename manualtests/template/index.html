@@ -16,11 +16,50 @@
 		);
 	// ]]></script>
 	
-	<script type="text/javascript">gloader.load(['glow', '@VERSION@'])</script>
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.data'])</script>
 </head>
 
 <body>
 	<h1>Module Name</h1>
+	
+	<h2>Settings</h2>
+	
+	<!--
+		You may want to use this to provide a simple way to switch themes
+		and orientation. urlOpts will contain the results of the form
+		
+		Simply delete if you don't need it
+	-->
+	
+	<form action="?" id="urlOpts">
+		<p>
+			<label>
+				Orientation:
+				<select name="vertical">
+					<option value="">Horizontal</option>
+					<option value="1">Vertical</option>
+				</select>
+			</label>
+			<label>
+				Theme:
+				<select name="theme">
+					<option value="dark">Dark</option>
+					<option value="light">Light</option>
+				</select>
+			</label>
+			<input type="submit" value="Go" />
+		</p>
+	</form>
+	
+	<script type="text/javascript">
+		// get values from url
+		var urlOpts = glow.data.decodeUrl( window.location.search.slice(1) );
+		// set defaults here, eg...
+		urlOpts.theme = urlOpts.theme || "light";
+		urlOpts.vertical = urlOpts.vertical || '';
+		// update the form
+		glow.dom.get('#urlOpts').val(urlOpts);
+	</script>
 	
 	<h2>Test Title</h2>
 	

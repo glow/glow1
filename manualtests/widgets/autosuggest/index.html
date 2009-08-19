@@ -18,7 +18,7 @@
 	
 	<script type="text/javascript">
 		gloader.load(
-			['glow', '@VERSION@', 'glow.events', 'glow.widgets.AutoSuggest', 'glow.widgets.AutoComplete']
+			['glow', '@VERSION@', 'glow.events', 'glow.data', 'glow.widgets.AutoSuggest', 'glow.widgets.AutoComplete']
 		);
 	</script>
 	
@@ -35,6 +35,28 @@
 
 <body>
 	<h1>glow.widgets.AutoSuggest</h1>
+	
+	<h2>Settings</h2>
+	
+	<form action="?" id="urlOpts">
+		<p>
+			<label>
+				Theme:
+				<select name="theme">
+					<option value="dark">Dark</option>
+					<option value="light">Light</option>
+				</select>
+			</label>
+			<input type="submit" value="Go" />
+		</p>
+	</form>
+	
+	<script type="text/javascript">
+		var urlOpts = glow.data.decodeUrl( window.location.search.slice(1) );
+		// set defaults here, eg...
+		urlOpts.theme = urlOpts.theme || "light";
+		glow.dom.get('#urlOpts').val(urlOpts);
+	</script>
 	
 	<h2>Autosuggest with minimum input length, and completion</h2>
 	
@@ -74,7 +96,8 @@
 				},
 				complete: true,
 				activeOnShow: false,
-				delim: " "
+				delim: " ",
+				theme: urlOpts.theme
 			}
 		).loadData();
 		
@@ -120,7 +143,8 @@
 					html += '<'+'/div><'+'/div>';
 					html += item.name;
 					return html;
-				}
+				},
+				theme: urlOpts.theme
 			}
 		).loadData();
 		
@@ -169,7 +193,8 @@
 					var pat = new RegExp(glow.lang.trim(this.getValue()), 'i');
 					return item.name.replace(pat, "<u>$&<"+"/u>");
 				},
-				delim: ","
+				delim: ",",
+				theme: urlOpts.theme
 				// complete: this option makes no sense here!
 			}
 		).loadData();
@@ -208,7 +233,8 @@
 				caseSensitive: true,
 				maxListLength: 10,
 				complete: true,
-				delim: ","
+				delim: ",",
+				theme: urlOpts.theme
 			}
 		).loadData();
 		
@@ -222,7 +248,6 @@
 	
 
 	<h2>Autosuggest with appearance options</h2>
-	<p>Using the non-default theme of "dark" and changing the dimensions of the suggestion list.</p>
 	
 	<div class="sandbox">
 		<form action="#" id="testForm5">
@@ -242,7 +267,7 @@
 				},
 				width: 600,
 				height: 100,
-				theme: "dark"
+				theme: urlOpts.theme
 			}
 		).loadData();
 		
@@ -271,7 +296,9 @@
 		glow.ready(function() {
 			new glow.widgets.AutoComplete(
 				"#complete1",
-				"tags.js"
+				"tags.js", {
+					theme: urlOpts.theme
+				}
 			).autosuggest.loadData();
 		});
 		// ]]>
@@ -295,7 +322,8 @@
 				"#complete2",
 				"tags.js",
 				{
-					delim: ","
+					delim: ",",
+					theme: urlOpts.theme
 				}
 			).autosuggest.loadData();
 		});
@@ -321,7 +349,8 @@
 				"tags.js",
 				{
 					complete: true,
-					delim: ","
+					delim: ",",
+					theme: urlOpts.theme
 				}
 			).loadData();
 		});

@@ -448,17 +448,11 @@
 			else if (elm.getElementById) { // is document
 				r = Math.max(
 					docBody["scroll" + cssPropCaps],
-					docBody["offset" + cssPropCaps]
+					docBody["offset" + cssPropCaps],
+					docElm["client" + cssPropCaps],
+					docElm["offset" + cssPropCaps],
+					docElm["scroll" + cssPropCaps]
 				)
-				// values from the documentElement can be incorrect in IE (6, 7, 8), can return values that are too large
-				if ( !(glow.env.ie) ) {
-					r = Math.max(
-						r,
-						docElm["client" + cssPropCaps],
-						docElm["scroll" + cssPropCaps],
-						docElm["offset" + cssPropCaps]
-					)
-				}
 			}
 			else {
 				// get an array of css borders & padding
@@ -1668,7 +1662,7 @@
 
 					for (prop in vals) {
 						currentField = form[prop];
-						if (currentField && currentField[0]) { // is array of fields
+						if (currentField && currentField[0] && !currentField.options) { // is array of fields
 							//normalise values to array of vals
 							vals[prop] = vals[prop] && vals[prop].push ? vals[prop] : [vals[prop]];
 							//order the fields by types that matter
