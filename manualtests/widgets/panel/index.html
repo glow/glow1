@@ -25,6 +25,30 @@
 	
 	<p>More tests are included in Panel's base class, <a href="../overlay">Overlay</a></p>
 	
+	<h2>Settings</h2>
+	
+	<form action="?" id="urlOpts">
+		<p>
+			<label>
+				Theme:
+				<select name="theme">
+					<option value="dark">Dark</option>
+					<option value="light">Light</option>
+				</select>
+			</label>
+			<input type="submit" value="Go" />
+		</p>
+	</form>
+	
+	<script type="text/javascript">
+		// get values from url
+		var urlOpts = glow.data.decodeUrl( window.location.search.slice(1) );
+		// set defaults here, eg...
+		urlOpts.theme = urlOpts.theme || "dark";
+		// update the form
+		glow.dom.get('#urlOpts').val(urlOpts);
+	</script>
+	
 	<h2>Basic Panel</h2>
 	
 	<ul>
@@ -62,7 +86,8 @@
 		glow.ready(function() {
 			window.panel1 = new glow.widgets.Panel('#panel1', {
 				returnTo: '#panel1Show',
-				closeOnEsc: true
+				closeOnEsc: true,
+				theme: urlOpts.theme
 			});
 			
 			panel1.header.css("color", "red");

@@ -41,6 +41,30 @@
 <body>
 	<h1>glow.widgets.InfoPanel</h1>
 	
+	<h2>Settings</h2>
+	
+	<form action="?" id="urlOpts">
+		<p>
+			<label>
+				Theme:
+				<select name="theme">
+					<option value="dark">Dark</option>
+					<option value="light">Light</option>
+				</select>
+			</label>
+			<input type="submit" value="Go" />
+		</p>
+	</form>
+	
+	<script type="text/javascript">
+		// get values from url
+		var urlOpts = glow.data.decodeUrl( window.location.search.slice(1) );
+		// set defaults here, eg...
+		urlOpts.theme = urlOpts.theme || "light";
+		// update the form
+		glow.dom.get('#urlOpts').val(urlOpts);
+	</script>
+	
 	<h2>Basic InfoPanel</h2>
 	
 	<ul>
@@ -90,7 +114,9 @@
 	<script type="text/javascript" class="showSrc">
 		glow.ready(function() {
 			window.infoPanel1 = new glow.widgets.InfoPanel('#infoPanel1', {
-				context: '#infoPanelField1'
+				context: '#infoPanelField1',
+				theme: urlOpts.theme,
+				returnTo: ''
 			});
 			glow.events.addListener('#infoPanelField1', 'focus', function() {
 				infoPanel1.show();
@@ -136,7 +162,8 @@
 				context: '#infoPanel2TargetContainer',
 				offsetInContext: {x: 100, y: '50%'},
 				pointerPosition: 'l',
-				anim: 'fade'
+				anim: 'fade',
+				theme: urlOpts.theme
 			});
 			glow.events.addListener('#infoPanel2TargetContainer', 'click', function() {
 				infoPanel2.show();
