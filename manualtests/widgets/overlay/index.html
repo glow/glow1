@@ -29,11 +29,14 @@
 		.dontHide, #overlay1 .elmToHide {
 			border: 5px solid green;
 		}
-		#overlay1 {
+		#overlay1, #overlay2, #overlay3 {
 			background: #ccc;
 			padding: 10px;
 			border: 5px solid #aaa;
 			width: 200px;
+		}
+		#overlay3FocusLink:focus {
+			background: green;
 		}
 	</style>
 </head>
@@ -44,18 +47,14 @@
 	<h2>Showing / Hiding Flash &amp; other elements</h2>
 	
 	<ul>
-		<li>Click the link below to toggle the panel</li>
+		<li><a href="#" id="toggleOverlay1">Toggle Overlay</a></li>
 		<li>Panel should appear in the bottom-right of the view</li>
 		<li>Resize the view, ensure the panel stays in the bottom-right</li>
 		<li>Once the overlay shows, the first smiley beneath the "Toggle Overlay" link should remain, the 2nd should hide (as it may appear on top of the overlay)</li>
 		<li>Once the overlay shows, the red square beneath the "Toggle Overlay" link should hide, the green square should remain</li>
 		<li>Within the overlay, there should be a smiley &amp; a green square</li>
 	</ul>
-	
-	<p>
-		<a href="#" id="toggleOverlay1">Toggle Overlay</a>
-	</p>
-	
+
 	<p>
 		<span id="flash1"></span>
 		<span id="flash2"></span>
@@ -106,7 +105,10 @@
 				} else {
 					overlay1.show();
 				}
+				return false;
 			});
+			
+			// log events
 			glow.events.addListener(overlay1, 'show', function() {
 				manualTests.log('overlay1: show');
 			});
@@ -118,6 +120,140 @@
 			});
 			glow.events.addListener(overlay1, 'afterHide', function() {
 				manualTests.log('overlay1: afterHide');
+			});
+		});
+	</script>
+	
+	<h2>Overlay positioning</h2>
+	
+	<ul>
+		<li><a href="#" id="toggleOverlay2">Toggle Overlay</a></li>
+		<li>Overlay should appear in the centre of the viewport by default</li>
+		<li>Overlay should 'slide' in, as in start at zero height and grow to be the full height</li>
+		<li><a href="#" id="positionOverlay2.1">{x: "0%" y: 10} of viewport</a>. Overlay should stay in position relative to the viewport when scrolling</li>
+		<li><a href="#" id="positionOverlay2.2">{x: "100%" y: 10} of viewport</a>. Overlay should stay in position relative to the viewport when scrolling</li>
+		<li><a href="#" id="positionOverlay2.3">{x: 10 y: "100%"} of viewport</a>. Overlay should stay in position relative to the viewport when scrolling</li>
+		<li><a href="#" id="positionOverlay2.4">{x: "100%" y: "100%"} of viewport</a>. Overlay should stay in position relative to the viewport when scrolling</li>
+		<li><a href="#" id="positionOverlay2.5">{x: 10 y: 10} of document</a>. Overlay should stay realtive to the document (shouldn't move when scrolled)</li>
+	</ul>
+	
+	<div id="overlay2">
+		Overlay 2
+	</div>
+	
+	<script type="text/javascript" class="showSrc">
+		glow.ready(function() {
+			window.overlay2 = new glow.widgets.Overlay('#overlay2', {
+				anim: 'slide'
+			});
+			glow.events.addListener('#toggleOverlay2', 'click', function() {
+				if (overlay2.isShown) {
+					overlay2.hide();
+				} else {
+					overlay2.show();
+				}
+				return false;
+			});
+			
+			glow.events.addListener('#positionOverlay2\\.1', 'click', function() {
+				overlay2.autoPosition = true;
+				overlay2.setPosition("0%", 10);
+				return false;
+			});
+			glow.events.addListener('#positionOverlay2\\.2', 'click', function() {
+				overlay2.autoPosition = true;
+				overlay2.setPosition("100%", 10);
+				return false;
+			});
+			glow.events.addListener('#positionOverlay2\\.3', 'click', function() {
+				overlay2.autoPosition = true;
+				overlay2.setPosition(10, "100%");
+				return false;
+			});
+			glow.events.addListener('#positionOverlay2\\.4', 'click', function() {
+				overlay2.autoPosition = true;
+				overlay2.setPosition("100%", "100%");
+				return false;
+			});
+			glow.events.addListener('#positionOverlay2\\.5', 'click', function() {
+				overlay2.autoPosition = false;
+				overlay2.container.css({
+					top: 10,
+					left: 10,
+					position: 'absolute'
+				});
+				return false;
+			});
+			
+			// log events
+			glow.events.addListener(overlay2, 'show', function() {
+				manualTests.log('overlay2: show');
+			});
+			glow.events.addListener(overlay2, 'hide', function() {
+				manualTests.log('overlay2: hide');
+			});
+			glow.events.addListener(overlay2, 'afterShow', function() {
+				manualTests.log('overlay2: afterShow');
+			});
+			glow.events.addListener(overlay2, 'afterHide', function() {
+				manualTests.log('overlay2: afterHide');
+			});
+		});
+	</script>
+	
+	<h2>Large amounts of content</h2>
+	
+	<ul>
+		<li><a href="#" id="showOverlay3">Show Overlay</a></li>
+		<li>Overlay should be modal (have a mask)</li>
+		<li>Clicking the mask should close the overlay</li>
+		<li>Resize the window so it's shorter than the overlay, you should be able to scroll up to "Content start" and down to "Content End"</li>
+		<li>When the overlay closes, <a href="#" id="overlay3FocusLink">this link</a> should have focus</li>
+	</ul>
+	
+	<div id="overlay3">
+		<p>Content start</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content</p>
+		<p>Content end</p>
+	</div>
+	
+	<script type="text/javascript" class="showSrc">
+		glow.ready(function() {
+			window.overlay3 = new glow.widgets.Overlay('#overlay3', {
+				modal: true,
+				returnTo: '#overlay3FocusLink'
+			});
+			
+			glow.events.addListener('#showOverlay3', 'click', function() {
+				overlay3.show();
+				return false;
+			});
+			
+			// log events
+			glow.events.addListener(overlay3, 'show', function() {
+				manualTests.log('overlay3: show');
+			});
+			glow.events.addListener(overlay3, 'hide', function() {
+				manualTests.log('overlay3: hide');
+			});
+			glow.events.addListener(overlay3, 'afterShow', function() {
+				manualTests.log('overlay3: afterShow');
+			});
+			glow.events.addListener(overlay3, 'afterHide', function() {
+				manualTests.log('overlay3: afterHide');
 			});
 		});
 	</script>

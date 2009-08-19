@@ -268,7 +268,7 @@
 				If the overlay is modal, the zIndex of the mask will be set to one less than the value of this attribute.
 			@param {Boolean} [opts.autoPosition="true"] Position the overlay relative to the viewport
 				If true, the overlay will be positioned to the viewport according to the x & y
-				options. If false, you will have to set the position manually by setting the left / right css styles of the
+				options. If false, you will have to set the position manually by setting the left / top css styles of the
 				container property.
 			@param {Number|String} [opts.x="50%"] Distance of overlay from the left of the viewport
 				If the unit is a percentage	then 0% is aligned to the left of
@@ -435,7 +435,7 @@
 			@name glow.widgets.Overlay#autoPosition
 			@description Position the overlay relative to the viewport
 				If true, the overlay will be positioned to the viewport according to the x & y
-				options. If false, you will have to set the position manually by setting the left / right css styles of the
+				options. If false, you will have to set the position manually by setting the left / top css styles of the
 				container property.
 			@type Boolean
 			*/
@@ -689,7 +689,7 @@
 				var that = this,
 					hideAnim,
 					animOpt = that.opts.anim,
-					returnTo = returnTo ? $(that.returnTo) : "",
+					returnTo = that.returnTo ? $(that.returnTo) : new glow.dom.NodeList(),
 					returnNodeName;
 
 				if (this._blockActions || !that.isShown) { return that; }
@@ -728,7 +728,6 @@
 
 				//update aria state
 				that.container.attr("aria-hidden", "true");
-
 				//move the focus if applicable
 				if (returnTo[0]) {
 					returnNodeName = returnTo[0].nodeName;
@@ -742,7 +741,6 @@
 
 						returnTo.attr("tabindex", "-1");
 					}
-
 					returnTo[0].focus();
 				}
 
