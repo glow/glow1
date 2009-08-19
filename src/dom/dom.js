@@ -1662,7 +1662,7 @@
 
 					for (prop in vals) {
 						currentField = form[prop];
-						if (currentField && currentField[0]) { // is array of fields
+						if (currentField && currentField[0] && !currentField.options) { // is array of fields
 							//normalise values to array of vals
 							vals[prop] = vals[prop] && vals[prop].push ? vals[prop] : [vals[prop]];
 							//order the fields by types that matter
