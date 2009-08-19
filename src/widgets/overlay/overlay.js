@@ -58,7 +58,13 @@
 				);
 			}
 			//gather other things to hide
-			if (hideWhileShown) { thingsToHide.push($(hideWhileShown)); }
+			if (hideWhileShown) {
+				thingsToHide.push( $(hideWhileShown) );
+			}
+			// filter out the elements that are inside the overlay
+			thingsToHide = thingsToHide.filter(function() {
+				return !$(this).isWithin(overlay.content);
+			});
 			//get rid of stuff the user doesn't want hidden
 			if (hideFilter) { thingsToHide = thingsToHide.filter(hideFilter); }
 			
@@ -93,8 +99,7 @@
 			if (
 				(that.getAttribute("type") == "application/x-shockwave-flash" ||
 				flashUrlTest.test(that.getAttribute("data") || that.getAttribute("src") || "") ||
-				(that.getAttribute("classid") || "").toLowerCase() == "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000") &&
-				!$(that).isWithin(overlay.content)
+				(that.getAttribute("classid") || "").toLowerCase() == "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000")
 			) {
 				wmode = that.getAttribute("wmode");
 
