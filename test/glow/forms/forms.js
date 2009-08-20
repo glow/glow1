@@ -569,7 +569,7 @@ t.test("glow.forms.tests.maxLen", function() {
 });
 
 t.test("glow.forms.tests.isEmail", function() {
-	t.expect(4);
+	t.expect(5);
 	
 	var myFormElem = glow.dom.get("#register");
 	
@@ -592,19 +592,25 @@ t.test("glow.forms.tests.isEmail", function() {
 	.addTests(
 		"email",
 		["isEmail"]
+	)
+	.addTests(
+		"email_confirm",
+		["isEmail"]
 	);
 	
 	myForm.formNode.val({
 		username: "1abc-123@abc.a1-b2.xyz.co.uk",
 		age: "abc@abc@.com",
-		email: "abc123"
+		email: "abc123",
+		email_confirm: " abc123@abc.com "
 	});
 	
 	myForm.validate('submit');
 	
 	 t.equals(validateResults.fields[0].result, glow.forms.PASS, "isEmail passes when value is valid email.");
 	 t.equals(validateResults.fields[1].result, glow.forms.FAIL, "isEmail fails when value is almost a valid email.");
-	 t.equals(validateResults.fields[1].result, glow.forms.FAIL, "isEmail fails when value is not a valid email.");
+	 t.equals(validateResults.fields[2].result, glow.forms.FAIL, "isEmail fails when value is not a valid email.");
+	 t.equals(validateResults.fields[3].result, glow.forms.PASS, "isEmail passes when value is a valid email, but has whitespace padding.");
 	
 	//clean up
 	resetFormsTestElement();

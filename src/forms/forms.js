@@ -691,7 +691,7 @@ glow.forms.tests = {
 		var message = opts.message || opts._localeModule.TEST_MESSAGE_IS_EMAIL;
 
 		for (var i = 0, len = values.length; i < len; i++) {
-			if (!/^[A-Za-z0-9](([_\.\-]*[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$/.test(values[i])) {
+			if (!/^\s*[A-Za-z0-9](([_\.\-]*[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})\s*$/.test(values[i])) {
 				callback(glow.forms.FAIL, message);
 				return;
 			}
