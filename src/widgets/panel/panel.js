@@ -20,11 +20,12 @@
 			defaultTemplate,
 			//a hash of themes, true if their images have been preloaded
 			themesPreloaded = {},
-			accessAddition = '<div class="panelAccess">{END_LABEL}. <a href="#">{CLOSE_LINK}</a></div>';
+			accessAddition = '<div class="panelAccess">{END_LABEL}. <a href="#">{TOP_OF_PANEL_LINK}</a><a href="#">{CLOSE_LINK}</a></div>';
 
 		$i18n.addLocaleModule("GLOW_WIDGETS_PANEL", "en", {
 			END_LABEL : "End of panel",
-			CLOSE_LINK : "Close Panel"
+			CLOSE_LINK : "Close Panel",
+			TOP_OF_PANEL_LINK : "Back to top of panel"
 		});
 	
 
@@ -45,7 +46,8 @@
 						for (; i < len; i++) {
 							if (sheets[i].href.indexOf("widgets/widgets") != -1) {
 								return sheets[i];
-							} else {
+							}
+							else {
 								if (sheets[i].imports.length && (sheet = arguments.callee(sheets[i].imports))) {
 									return sheet;
 								}
@@ -207,7 +209,22 @@
 				fullContentClone,
 				i,
 				localePanelModule = glow.i18n.getLocaleModule("GLOW_WIDGETS_PANEL"),
-				accessLinks = dom.create(accessAddition, {interpolate: localePanelModule});
+				accessLinks = dom.create(accessAddition, {interpolate: setAccessibilityFooter(localePanelModule)});
+
+			/**
+			* @name setAccessibilityFooter
+			* @private
+			* @function
+			* @description If the param opts.accessbilityFooter is set then override the i18n label with the contents of the param
+			*
+			* @param {glow.i18n.getLocaleModule} localePanelModule
+			*/
+			function setAccessibilityFooter(localePanelModule) {
+				if (typeof opts.accessibilityFooter == "string") {
+					localePanelModule["END_LABEL"] = opts.accessibilityFooter;
+				}
+				return localePanelModule;
+			}
 
 			if (!customTemplate) {
 				fullContent.addClass("panel-" + opts.theme);
@@ -269,7 +286,12 @@
 
 			//add listeners for close buttons
 			events.addListener(fullContent.get(".panel-close"), "click", closeClick, this);
-			events.addListener(accessLinks.get("a"), "click", closeClick, this);
+			events.addListener(accessLinks.get("a").item(1), "click", closeClick, this);
+
+			// accessibility link: give screen reader link to go back to the top of the panel
+			events.addListener(accessLinks.get("a").item(0), "click", function() {
+				$('.overlay-focalPoint')[0].focus();
+			}, this);
 
 			Overlay.call(this, fullContent, opts);
 
