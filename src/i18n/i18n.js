@@ -383,7 +383,7 @@
 		/**
 		@name glow.i18n.checkLocale
 		@function
-		@description Developer focusssed checker for getting the locale tag(s) returned by tag negotiation
+		@description Developer focused checker for getting the locale tag(s) returned by tag negotiation
 			if no options passed it returns a structured data object of the entire data set for the given locale
 			if just a module name is passed, the result set is limited to that module
 			if a module name and a label are passed it returns a string for just that label
