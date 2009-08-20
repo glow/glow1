@@ -92,7 +92,7 @@
 			@description Position the overlay under the input element.
 		 */
 		function place(that) {
-			if (!that.opts.autoPosition) return;
+			if (!that.opts.autoPosition) { return; }
 			
 			var inputOffset = that.inputElement.offset();
 
@@ -117,7 +117,7 @@
 						}
 					})(that.opts.index);
 				}
-				else if (typeof that.opts.index.push != 'undefined') { // it's an array of field names
+				else if (that.opts.index.push !== undefined) { // it's an array of field names
 					that._indexer = (function(index) {
 						var l = index.length-1; // assumes the index length never changes
 						return function(dataItem) {
@@ -265,7 +265,10 @@
 		 */
 		function addEvents(that) { /*debug*///console.log('addEvents()');
 			// make show or hide events from the overlay bubble up to AutoSuggest
-			var bubble = function(e) { glow.events.fire(that, e.type, e); };
+			var bubble = function(e) {
+				glow.events.fire(that, e.type, e);
+				return !e.defaultPrevented();
+			};
 			events.addListener(that.overlay, 'show', bubble);
 			events.addListener(that.overlay, 'hide', bubble);
 			
@@ -521,7 +524,7 @@
 			@description What to do when the value in the input element changes.
 		 */
 		function valueChanged(that, withoutFinding) { /*debug*///console.log("valueChanged(that, "+withoutFinding+")");
-			if (typeof that._oldValue == "undefined")  that._oldValue = that.inputElement.val(); // initially
+			if (that._oldValue === undefined)  that._oldValue = that.inputElement.val(); // initially
 			var currentValue = that.getValue(); // grab value, so we can send it with the event
 
 			/*debug*///console.log("oldValue is '"+that._oldValue+"'; currentValue is '"+currentValue+"';");
@@ -580,6 +583,7 @@
 				
 			@param {Function} [opts.formatItem] Given the matched data item, return HTML or NodeList.
 			@param {Boolean} [opts.autoPosition=true] Automatically position the suggestion list under the input element.
+				If you set autoPosition to false, you can position the suggestion list yourself in a handler for the show event of your AutoSuggest object. 
 			@param {Boolean} [opts.activeOnShow=true] Should the first suggestion automatically be active when the suggestion list appears?
 			@param {Number} [opts.maxListLength] Limit the size of the result list to this.
 			@param {Boolean} [opts.caseSensitive=false] Whether case is important when matching suggestions.
@@ -728,7 +732,7 @@
 						var selectedOffset = that.getSelectedOffset();
 						if (selectedOffset == -1) return false;
 						var matchedOn = (that._found[selectedOffset][this.opts.index]||that._found[selectedOffset]['name']||that._found[selectedOffset]);
-						if (typeof matchedOn.push != "undefined") matchedOn = that._matchedOn;
+						if (matchedOn.push !== undefined) matchedOn = that._matchedOn;
 						that.suggest(matchedOn);
 						
 						return true;
@@ -776,7 +780,7 @@
 		glow.widgets.AutoSuggest.prototype.configure = function(opts) {
 			this.opts = opts || {};
 			
-			if (typeof this.opts.autoPosition == "undefined") this.opts.autoPosition = true;
+			if (this.opts.autoPosition === undefined) { this.opts.autoPosition = true; }
 			if (this.opts.height) {
 				var listContainer = $(this.overlay.container.get('.glowCSSVERSION-autoSuggest').get('ul')[0]);
 				listContainer.css('overflow-x', 'hidden');
@@ -920,7 +924,7 @@
 				);
 		 */
 		glow.widgets.AutoSuggest.prototype.val = function(value) { /*debug*///console.log("called val("+value+")");
-			if (typeof value == 'undefined') { //set
+			if (value === undefined) { //set
 				return this._value;
 			}
 			else {
@@ -956,7 +960,7 @@
 		glow.widgets.AutoSuggest.prototype.getValue = function() { /*debug*///console.log("getValue()");
 			var value = this._value || this.inputElement.val();
 			
-			if (typeof this.opts.delim != 'undefined' && this.opts.delim != '') {
+			if (this.opts.delim !== undefined && this.opts.delim != '') {
 			 	value = (value.match(new RegExp('(^|'+this.opts.delim+' *)([^'+this.opts.delim+']*)$')) || ['', '', '']);
 			 	value = value[2];
 			 }
@@ -1040,7 +1044,7 @@
 		  @returns undefined
 		 */
 		glow.widgets.AutoSuggest.prototype.find = function(lookFor) { /*debug*///console.log("find()")
-			if (typeof lookFor == "undefined") lookFor = this.getValue();
+			if (lookFor === undefined) lookFor = this.getValue();
 			
 			// ltrim
 			while (lookFor.charAt(0) == ' ') lookFor = lookFor.substring(1);
