@@ -161,6 +161,7 @@
 					// hide the mask so our measurement doesn't include the mask
 					that.maskElement.hide();
 					
+					// the new height should be the size of the window or the size of the document, whatever's biggest
 					var newHeight = that.opts.disableScroll ? noScrollContainer.height() : Math.max( win.height(), doc.height() ),
 						newWidth  = that.opts.disableScroll ? noScrollContainer.width()  : Math.max( win.width(),  doc.width() );
 						
