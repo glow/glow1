@@ -326,7 +326,7 @@
 								item: el[0],
 								itemIndex: el[0]["_index"+glow.UID] % that._countReal
 							});
-							return !event.defaultPrevented;
+							return !event.defaultPrevented();
 						}
 						break;
 					}
@@ -337,7 +337,7 @@
 		// add events for mouse navigation
 		function addMouseNavEvents() {
 			var that = this,
-				bothNavElms = glow.dom.get(this._navPrev).push(this._navNext);
+				bothNavElms = $(this._navPrev).push(this._navNext);
 				
 			// add navigational events
 			events.addListener(bothNavElms, "click", function(e) {
@@ -437,7 +437,7 @@
 			
 			// capture focus on the element to catch tabbing
 			glow.events.addListener(this.element, "focus", function(e) {
-				_focusCallback.call( that, glow.dom.get(e.source) );
+				_focusCallback.call( that, $(e.source) );
 			});
 		}
 		
@@ -453,7 +453,7 @@
 			) {
 				// Get the element's index number from it's parent
 				var elmItemNum = _getCarouselItemNum.call(this, elm);
-				// return if we got an invalid item num
+				// return if elmItemNum is -1 (item not found) or item is a clone
 				if (elmItemNum === -1 || this.items.slice(elmItemNum, elmItemNum+1).hasClass('carousel-added')) {
 					return;
 				}
@@ -849,16 +849,9 @@
 		
 		// triggered when scrolling ends
 		function endScroll() { /*debug*///console.log("Carousel-endScroll()");
-			var visibleIndexFirst = this._visibleIndexFirst();
-			
 			// stop any currently playing animations
 			this._slideNext.stop();
 			this._slidePrev.stop();
-			
-			// if the first visible item is a clone, move back to the start
-			if ( this.items.slice(visibleIndexFirst, visibleIndexFirst + 1).hasClass('carousel-added') ) {
-				this.moveTo(0, false);
-			}
 		}
 		
 		/**
