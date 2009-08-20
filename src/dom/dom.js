@@ -428,10 +428,10 @@
 			];
 		
 		/*
-		PrivateMethod: getElmDimention
+		PrivateMethod: getElmDimension
 			Gets the size of an element as an integer, not including padding or border
 		*/		
-		function getElmDimention(elm, cssProp /* (width|height) */) {
+		function getElmDimension(elm, cssProp /* (width|height) */) {
 			var r, // val to return
 				docElmOrBody = env.standardsMode ? docElm : docBody,
 				isWidth = (cssProp == "width"),
@@ -593,10 +593,10 @@
 			if (propTest[1]) { // is width / height
 				if (!isVisible(elm)) { //element may be display: none
 					return tempBlock(elm, function() {
-						return getElmDimention(elm, propTest[1]) + "px";
+						return getElmDimension(elm, propTest[1]) + "px";
 					});
 				}
-				return getElmDimention(elm, propTest[1]) + "px";
+				return getElmDimension(elm, propTest[1]) + "px";
 			}
 			else if (propTest[2] //is border-*-width
 				&& glow.env.ie
@@ -651,7 +651,7 @@
 
 		/*
 		PrivateMethod: getPixelValue
-			Converts a relative value into an absolute pixel value. Only works in IE with dimention value (not stuff like relative font-size).
+			Converts a relative value into an absolute pixel value. Only works in IE with Dimension value (not stuff like relative font-size).
 			Based on some Dean Edwards' code
 
 		Arguments:
@@ -2283,7 +2283,7 @@
 			*/
 			width: function(width) {
 				if (width == undefined) {
-					return getElmDimention(this[0], "width");
+					return getElmDimension(this[0], "width");
 				}
 				setElmsSize(this, width, "width");
 				return this;
@@ -2326,7 +2326,7 @@
 			*/
 			height: function(height) {
 				if (height == undefined) {
-					return getElmDimention(this[0], "height");
+					return getElmDimension(this[0], "height");
 				}
 				setElmsSize(this, height, "height");
 				return this;
