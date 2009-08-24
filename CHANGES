@@ -1,5 +1,14 @@
 Glow Changelog
 
+1.6.0
+
+* glow.widgets.Carousel - Fixed issues with tabbing naviagation
+* glow.widgets.Carousel - Making itemClick event preventable
+* glow.widgets.Mask - Fixing issues where Mask didn't dover the whole page
+* glow.widgets.Overlay - Fixed issue where hideWhileShown was hiding items inside the overlay
+* glow.widgets.Overlay - Fixed returnTo focus
+* glow.widgets.NodeList - Fixed setting val() for select items in Firefox
+
 1.6.0-rc2
 
 * glow.widgets.AutoSuggest - Improved interface when using keys to navigate suggestions, esc now restores the original value

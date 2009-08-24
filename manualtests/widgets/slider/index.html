@@ -2,95 +2,269 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-	<title>Slider Examples</title>
-	
-	<!-- assumes gloader project folder is next to glow project folder -->
-	<script type="text/javascript" src="../../../../gloader/src/gloader.js">
-		gloader.use(
-			"glow",
-			{
-				$map:  "../../../srcloader/map.js",
-				$base: "../../../src/"
-			}
+	<title>glow.widgets.Slider</title>
+	<script type="text/javascript" src="../../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
 		);
-	</script>
+	// ]]></script>
 	
-	<script type="text/javascript">
-		gloader.load(
-			['glow', '@VERSION@', 'glow.widgets.Slider']
-		);
-	</script>
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.dom', 'glow.data', 'glow.widgets.Slider'])</script>
 </head>
 
 <body>
-	<h1>glow.widgets.Slider examples</h1>
+	<h1>glow.widgets.Slider</h1>
 	
-	<div class="example">	
-		<h2>Basic Slider</h2>
-		<p>With ticks, snaps and labels.</p>
-		
-		<script type="text/javascript" class="showSrc">
-		// <![CDATA[
-		glow.ready(function() {
-			var mySlider = new glow.widgets.Slider("#slider1",
-				{
-					bindTo: "#slider1input",
-					step: 10,
-					min: 0,
-					max: 100,
-					snapOnDrag: true,
-					tickMajor: 10,
-					labels: 10
-				}
-			);
-		});
-		// ]]>
-		</script>
-		
-		<div class="sandbox">
-			<form action="#">
-				<div id="slider1">
-					<label for="slider1input">Slider Value:</label>
-					<input type="text" id="slider1input" name="sliderValue" />
-				</div>
-			</form>
-		</div>
-	</div>
-
-	<div class="example">
-		<h2>Vertical Slider</h2>
-		<p>With dark theme.</p>
-		
-		<script type="text/javascript" class="showSrc">
-		// <![CDATA[
-		glow.ready(function() {
-			var mySlider = new glow.widgets.Slider("#slider2",
-				{
-					bindTo: "#slider2input",
-					step: 10,
-					min: 0,
-					max: 100,
-					snapOnDrag: true,
-					tickMajor: 10,
-					labels: 10,
-					vertical: true,
-					theme: "dark"
-				}
-			);
-		});
-		// ]]>
-		</script>
-		
-		<div class="sandbox">
-			<form action="#" style="background-color: #333; color: #ccc; padding: 8px;">
-				<div id="slider2">
-					<label for="slider2input">Slider Value:</label>
-					<input type="text" id="slider2input" name="sliderValue" />
-				</div>
-			</form>
-		</div>
-	</div>	
+	<h2>Settings</h2>
 	
-	<script type="text/javascript" src="../../includes/js/showsrc.js"></script>
+	<form action="?" id="urlOpts">
+		<p>
+			<label>
+				Orientation:
+				<select name="vertical">
+					<option value="">Horizontal</option>
+					<option value="1">Vertical</option>
+				</select>
+			</label>
+			<label>
+				Theme:
+				<select name="theme">
+					<option value="dark">Dark</option>
+					<option value="light">Light</option>
+				</select>
+			</label>
+			<input type="submit" value="Go" />
+		</p>
+	</form>
+	
+	<script type="text/javascript">
+		var urlOpts = glow.data.decodeUrl( window.location.search.slice(1) );
+		// defaults
+		urlOpts.theme = urlOpts.theme || "light";
+		urlOpts.vertical = urlOpts.vertical || '';
+		glow.dom.get('#urlOpts').val(urlOpts);
+	</script>
+	
+	<h2>Basic slider</h2>
+	
+	<ul>
+		<li>The handle of the slider can be dragged on its axis</li>
+		<li>The handle of the slider cannot be dragged off its track</li>
+		<li>The back &amp; forward buttons can be used to move the slider</li>
+		<li>The slider can receive tab focus (and visually shows this)</li>
+		<li>While having focus, the arrow keys can be used to control the slider</li>
+		<li>Clicking anywhere on the slider track moves the handle to that position</li>
+		<li>Clicking anywhere on the slider track &amp; dragging drags the slider handle</li>
+		<li>'change' should only fire when sliding stops</li>
+		<li>
+			<a href="#" id="slider1Disable">Disable / enable slider</a> should toggle the
+			state of the slider. Once disabled, you should not be able to interact with
+			the slider.
+		</li>
+	</ul>
+	
+	<div id="slider1"></div>
+	
+	<script type="text/javascript" class="showSrc">
+		glow.ready(function() {
+			window.slider1 = new glow.widgets.Slider('#slider1', {
+				theme: urlOpts.theme,
+				vertical: urlOpts.vertical
+			});
+			glow.events.addListener('#slider1Disable', 'click', function() {
+				slider1.disabled( !slider1.disabled() );
+				return false;
+			});
+			
+			// event logging
+			glow.events.addListener(slider1, 'slideStart', function() {
+				manualTests.log('slider1: slideStart');
+			});
+			glow.events.addListener(slider1, 'slideStop', function() {
+				manualTests.log('slider1: slideStop');
+			});
+			glow.events.addListener(slider1, 'change', function() {
+				manualTests.log('slider1: change');
+			});
+		})
+	</script>
+	
+	<h2>Form binding</h2>
+	
+	<ul>
+		<li>The form field should update when sliding stops</li>
+		<li>Values should be between 0 - 100 and always integer</li>
+		<li>Changing the number in the field (and tabbing / clicking out of it) should update the slider</li>
+		<li>Enting out of range or non-numerical data into the input should not cause an error</li>
+		<li>
+			<a href="#" id="slider2Disable">Disable / enable slider</a> should toggle the
+			state of the slider. Once disabled, you should not be able to interact with
+			the slider. The form field should also be disabled.
+		</li>
+	</ul>
+	
+	<p><input type="text" id="slider2Field" /></p>
+	
+	<div id="slider2"></div>
+	
+	<script type="text/javascript" class="showSrc">
+		glow.ready(function() {
+			window.slider2 = new glow.widgets.Slider('#slider2', {
+				bindTo: '#slider2Field',
+				theme: urlOpts.theme,
+				vertical: urlOpts.vertical
+			});
+			glow.events.addListener('#slider2Disable', 'click', function() {
+				slider2.disabled( !slider2.disabled() );
+				return false;
+			});
+			
+			// event logging
+			glow.events.addListener(slider2, 'slideStart', function() {
+				manualTests.log('slider2: slideStart');
+			});
+			glow.events.addListener(slider2, 'slideStop', function() {
+				manualTests.log('slider2: slideStop');
+			});
+			glow.events.addListener(slider2, 'change', function() {
+				manualTests.log( 'slider2: change ' + slider2.val() );
+			});
+		})
+	</script>
+	
+	
+	<h2>Value stepping, snapping, range, changing during drag, ticks &amp; labels</h2>
+	
+	<ul>
+		<li>Values should be between -10 and 10 to the nearest .5</li>
+		<li>The change event should fire while moving the handle</li>
+		<li>The input should update while moving the handle</li>
+		<li>The slider should be 600 pixels in width</li>
+		<li>The slider should have a large tick mark on every integer</li>
+		<li>The slider should have a small tick mark on every .5</li>
+		<li>The slider should have a correct numerical label every (even) 2</li>
+		<li>Clicking on a label will move the slider to that value</li>
+		<li>The handle should drag smoothly, but snap to the nearest tick mark once released</li>
+	</ul>
+	
+	<p><input type="text" id="slider3Field" /></p>
+	
+	<div id="slider3"></div>
+	
+	<script type="text/javascript" class="showSrc">
+		glow.ready(function() {
+			window.slider3 = new glow.widgets.Slider('#slider3', {
+				bindTo: '#slider3Field',
+				size: 600,
+				min: -10,
+				max: 10,
+				step: .5,
+				snapOnDrop: true,
+				tickMajor: 1,
+				tickMinor: 0.5,
+				changeOnDrag: true,
+				labels: 2,
+				theme: urlOpts.theme,
+				vertical: urlOpts.vertical
+			});
+			
+			// event logging
+			glow.events.addListener(slider3, 'slideStart', function() {
+				manualTests.log('slider3: slideStart');
+			});
+			glow.events.addListener(slider3, 'slideStop', function() {
+				manualTests.log('slider3: slideStop');
+			});
+			glow.events.addListener(slider3, 'change', function() {
+				manualTests.log( 'slider3: change ' + slider3.val() );
+			});
+		})
+	</script>
+	
+	<h2>Labels, snapped dragging &amp; no buttons</h2>
+	
+	<ul>
+		<li>The interface should not include left &amp; right (or top &amp; bottom) buttons</li>
+		<li>The handle cannot be moved between the tick marks</li>
+		<li>The large tick marks have the labels Sad, Meh &amp; Happy, in that order</li>
+		<li>Clicking those labels will move the handle to that point</li>
+		<li>The change event only fires if the slider is moved to a different value (ie, not dragged &amp; placed back in the original place)</li>
+	</ul>
+	
+	<div id="slider4"></div>
+	
+	<script type="text/javascript" class="showSrc">
+		glow.ready(function() {
+			window.slider4 = new glow.widgets.Slider('#slider4', {
+				size: 400,
+				min: 0,
+				max: 4,
+				snapOnDrag: true,
+				tickMajor: 2,
+				tickMinor: 1,
+				labels: {
+					"0": "Sad",
+					"2": "Meh",
+					"4": "Happy"
+				},
+				buttons: false,
+				theme: urlOpts.theme,
+				vertical: urlOpts.vertical
+			});
+			
+			// event logging
+			glow.events.addListener(slider4, 'slideStart', function() {
+				manualTests.log('slider4: slideStart');
+			});
+			glow.events.addListener(slider4, 'slideStop', function() {
+				manualTests.log('slider4: slideStop');
+			});
+			glow.events.addListener(slider4, 'change', function() {
+				manualTests.log( 'slider4: change ' + slider4.val() );
+			});
+		})
+	</script>
+	
+	<h2>Zero Step</h2>
+	
+	<ul>
+		<li>When dropped, the handle gives a decimal value between 0-100</li>
+		<li>The nudge buttons move the handle by a single pixel</li>
+	</ul>
+	
+	<div id="slider5"></div>
+	
+	<script type="text/javascript" class="showSrc">
+		glow.ready(function() {
+			window.slider5 = new glow.widgets.Slider('#slider5', {
+				size: 400,
+				step: 0,
+				theme: urlOpts.theme,
+				vertical: urlOpts.vertical
+			});
+			
+			// event logging
+			glow.events.addListener(slider5, 'slideStart', function() {
+				manualTests.log('slider5: slideStart');
+			});
+			glow.events.addListener(slider5, 'slideStop', function() {
+				manualTests.log('slider5: slideStop');
+			});
+			glow.events.addListener(slider5, 'change', function() {
+				manualTests.log( 'slider5: change ' + slider5.val() );
+			});
+		})
+	</script>
+	
+	
+	<script type="text/javascript">manualTests.showSrc();</script>
+	<script type="text/javascript">manualTests.log('Logging enabled');</script>
 </body>
 </html>
