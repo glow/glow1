@@ -149,6 +149,9 @@ gloader.map.add(
 	},
 	{
 		$version: "1.6.0-rc2"
+	},
+	{
+		$version: "1.6.0"
 	}
 );
 
