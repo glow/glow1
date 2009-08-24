@@ -2,80 +2,178 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-	<title>Timetable Examples</title>
-	
-	<!-- assumes gloader project folder is next to glow project folder -->
-	<script type="text/javascript" src="../../../../gloader/src/gloader.js">
-		gloader.use(
-			"glow",
-			{
-				$map:  "../../../srcloader/map.js",
-				$base: "../../../src/"
-			}
+	<title>glow.widgets.Timetable</title>
+	<script type="text/javascript" src="../../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
 		);
-	</script>
+	// ]]></script>
 	
-	<script type="text/javascript">
-		gloader.load(
-			['glow', '@VERSION@', 'glow.widgets.Timetable']
-		);
-	</script>
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.data', 'glow.widgets.Timetable'])</script>
+	<script type="text/javascript" src="data.js"></script>
 </head>
 
 <body>
-	<h1>glow.widgets.Timetable examples</h1>
+	<h1>glow.widgets.Timetable</h1>
 	
-	<div class="example">	
-		<h2>Basic Timetable</h2>
-		<p>no description.</p>
-		
-		<script type="text/javascript" class="showSrc">
-		// <![CDATA[
+	<h2>Settings</h2>
+	
+	<form action="?" id="urlOpts">
+		<p>
+			<label>
+				Orientation:
+				<select name="vertical">
+					<option value="">Horizontal</option>
+					<option value="1">Vertical</option>
+				</select>
+			</label>
+			<label>
+				Theme:
+				<select name="theme">
+					<option value="dark">Dark</option>
+					<option value="light">Light</option>
+				</select>
+			</label>
+			<input type="submit" value="Go" />
+		</p>
+	</form>
+	
+	<script type="text/javascript">
+		// get values from url
+		var urlOpts = glow.data.decodeUrl( window.location.search.slice(1) );
+		// set defaults here, eg...
+		urlOpts.theme = urlOpts.theme || "light";
+		urlOpts.vertical = urlOpts.vertical === undefined ? '1' : urlOpts.vertical;
+		// update the form
+		glow.dom.get('#urlOpts').val(urlOpts);
+	</script>
+	
+	<h2>TV Guide</h2>
+	
+	<ul>
+		<li>The timetable should display 2 tracks of TV shows</li>
+		<li>The first elements should be "00:00 Skiing Weather" and "01:20 BBC News 24"</li>
+		<li>The last elements should be "23:35 Damages" and "23:35 Later 200 with Jools Holland"</li>
+		<li>The two tracks should have a header and footer of "BBC One" and "BBC Two" respectively</li>
+		<li>You should be able to drag the timetable using the mouse</li>
+	</ul>
+	
+	<div id="timetable1"></div>
+	
+	<script type="text/javascript" class="showSrc">
 		glow.ready(function() {
-			var myTimetable = new glow.widgets.Timetable("#myTimeTable",
-				"1 January 2010 06:00", "1 January 2010 12:00", // start and end
-				"1 January 2010 09:00", "1 January 2010 12:00", // viewport
-				{
-					tracks : [
-						["Track 1", 100, {
-							items : [
-								["item1", "1 January 2010 08:30", "1 January 2010 09:45"],
-								["item2", "1 January 2010 9:45", "1 January 2010 10:45"]
-							]
-						}],
-						["Track 2", 100, {
-							items : [
-								["item3", "1 January 2010 08:00", "1 January 2010 08:55"],
-								["item4", "1 January 2010 09:00", "1 January 2010 11:30"]
-							]
-						}]
-					]
-				}
-			);
-			myTimetable.setBanding("hour");
-			myTimetable.addScrollbar("hour", "right", 50, {template: function(data){return data.start.getHours()}});
-			
-			myTimetable.draw();
-		});
-		// ]]>
-		</script>
 		
-		<div class="sandbox">
-			<p>This is where the timetable will go.</p>
+			window.timetable1 = new glow.widgets.Timetable(
+				"#timetable1",
+				new Date(2008, 01, 01, 00),
+				new Date(2008, 01, 02, 00),
+				new Date(2008, 01, 01, 00),
+				new Date(2008, 01, 01, 03),
+				{
+					size: 600,
+					vertical: urlOpts.vertical,
+					theme: urlOpts.theme,
+					collapseItemBorders: true,
+					collapseTrackBorders: false,
+					itemTemplate: function(item) {
+						var hh = item.start.getHours(),
+							mm = item.start.getMinutes();
+							
+						if (hh < 10) {
+							hh = "0" + hh;
+						}
+						if (mm < 10) {
+							mm = "0" + mm;
+						}
+						return "<strong>" + hh + ":" + mm + "</strong> " + item.title;
+					},
+					trackHeader: function(track) {
+						return track.title;
+					},
+					trackFooter: function(track) {
+						return track.title;
+					}
+				}
+			).setBanding("hour")
+			.addScale("hour", "left", 43, {
+				template: function(data) {
+					return data.start.getHours();
+				}
+			})
+			.addScale(30*60*1000, "left", 43, {
+				template: function(data) {
+					return data.start.getMinutes() == 0 ? "00" : "30";
+				}
+			})
+			.addScrollbar("hour", "both", 40, {
+				template: function(data) {
+					var hh = data.start.getHours();
+					if (hh < 10) {
+						hh = "0" + hh;
+					}
+					return String(hh);
+				}
+			});
 			
-			<div id="myTimeTable" style="height: 250px;">
-			</div>
-			
-			<p>
-			Lorem ipsum clee chea saeff a. Enfreep gleepi whop heeth zogh, kucka thee shoogh ne gead ca. Hegh en, vee, fu dreati whim breest taeth ste faeck blea blea dro, plan, rae ha su koo, jooff wreap ho I gla trag ir slae ripi enmaev logher moo pog queeth I slaeing whooth bean draem, ir paers. Gu perki, ghee plae kae. Za beeing hews, bae posting ri blorling ceack wrirl, unjaeh musher fri. A, sla frashe hi; Rae bla ro I whad. Stushe I dust whea droo lae, I infrap truroer bloos troshen pi, troo cae tis, lurth gleth, precuth sea so, wu queaing see quu wha cli pla jockal cresh se la. Doopi, ches shoorl grae vaell hi jeah, op gle prega cloo, quath ke inlockall dreaw. Rea wreela, de, op, droo frae vi, furd stae du drist purth ne draing pij quoo.
-			</p>
-			
-			<p>
-			Tord hea op, wra en, zash treeb; The perbrala cheath quee taed quaen, ghor sod; Blea bu a preree, glurl unseashew neeti chee fri bree la, bagh! Gi, concroshegher cuh unsheerd bloing, stohus, ju zem. Ruv faert, ungrupi, tesum. En degleed po ir stea. Conplerth a brogs, do.
-			</p>
-		</div>
-	</div>
+			var trackName,
+				trackData,
+				track,
+				i,
+				len,
+				itemData,
+				end;
+				
+			for (trackName in exampleData) {
+				
+				// force it to output only BBC1 & BBC2
+				if (trackName != 'BBC One' && trackName != 'BBC Two') {
+					continue;
+				} 
+				
+				trackData = exampleData[trackName];
+				track = timetable1.addTrack(trackName, 150);
 
-	<script type="text/javascript" src="../../includes/js/showsrc.js"></script>
+				for (i = 0, len = trackData.length; i < len; i++) {
+					itemData = trackData[i];
+					end = new Date( new Date("01/01/1970 " + itemData.duration).valueOf() + itemData.start.valueOf() );
+					track.addItem(
+						itemData.title,
+						itemData.start,
+						end
+					);
+				}
+			}
+			
+			timetable1.draw();
+			
+			// adding interface elements
+			
+			
+			// events
+			glow.events.addListener(timetable1, 'change', function() {
+				manualTests.log('timetable1: change');
+			});
+			glow.events.addListener(timetable1, 'itemClick', function(e) {
+				manualTests.log('timetable1: itemClick ' + e.item.title);
+			});
+			glow.events.addListener(timetable1, 'moveStart', function(e) {
+				manualTests.log('timetable1: moveStart');
+			});
+			glow.events.addListener(timetable1, 'moveStop', function(e) {
+				manualTests.log('timetable1: moveStop');
+			});
+		});
+	</script>
+	
+	
+	<script type="text/javascript">manualTests.showSrc();</script>
+	<script type="text/javascript">manualTests.log('Logging enabled');</script>
 </body>
 </html>
