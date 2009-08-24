@@ -3,6 +3,7 @@
 @namespace
 @description Internationalisation Module.
 @requires glow
+@see <a href="../furtherinfo/i18n/index.shtml">Using glow.i18n</a>
 */
 (window.gloader || glow).module({
 	name: "glow.i18n",
