@@ -116,7 +116,7 @@
 			window.infoPanel1 = new glow.widgets.InfoPanel('#infoPanel1', {
 				context: '#infoPanelField1',
 				theme: urlOpts.theme,
-				returnTo: ''
+				focusOnShow: false,
 			});
 			glow.events.addListener('#infoPanelField1', 'focus', function() {
 				infoPanel1.show();

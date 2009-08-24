@@ -110,9 +110,10 @@
 				the default is acceptable for panels which provide descriptive
 				content for a page element
 			@param {selector|Element|glow.dom.NodeList} [opts.returnTo] Element to give focus to when the overlay closes
-				By default, this is the context element.
+				By default, this is the context element if focusOnShow is true.
+				
 				For accessibility purposes you may want to set an element to give focus to when the overlay closes.
-				This meanss devices which present data to the user by the cursor position (such as screen readers)
+				This means devices which present data to the user by the cursor position (such as screen readers)
 				will be sent somewhere useful.
 		*/
 		function InfoPanel(content, opts) {
@@ -133,8 +134,13 @@
 					l: {x: 0, y: "50%"}
 				},
 				ariaRole: "description",
-				returnTo: opts.context
+				focusOnShow: true
+				// the default for opts.returnTo is set below
 			}, opts);
+			
+			if (opts.focusOnShow && opts.returnTo === undefined) {
+				opts.returnTo = opts.context;
+			}
 
 			//deal with context if it's a selector
 			opts.context = opts.context && $(opts.context);
