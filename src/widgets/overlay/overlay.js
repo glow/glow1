@@ -675,7 +675,9 @@
 				if (that.opts.focusOnShow) {
 					that._focalPoint[0].focus();
 				}
-
+				
+				if (that.opts.modal) { addModalBehaviour.call(that); }
+				
 				return that;
 			},
 			/**
@@ -693,11 +695,13 @@
 					returnNodeName;
 
 				if (this._blockActions || !that.isShown) { return that; }
-
+				
 				if (events.fire(that, "hide").defaultPrevented()) {
 					return that;
 				}
-
+				
+				if (that.opts.modal) { removeModalBehaviour.call(that); }
+				
 				//run the appropiate animation
 				if (typeof animOpt == "string") {
 					hideAnim = generatePresetAnimation(that, false);
@@ -741,6 +745,7 @@
 
 						returnTo.attr("tabindex", "-1");
 					}
+					
 					returnTo[0].focus();
 				}
 
@@ -764,7 +769,51 @@
 				return that;
 			}
 		};
-
+		
+		/** 
+			@private
+			@description Enforce requirement that focus to stay within the topmost overlay.
+			@this {glow.widgets.Overlay}
+		 */
+		function addModalBehaviour() {
+			if (this._keepfocusEventId !== undefined) { return; } // already added this requirement
+			
+			var overlay = this,   // this overlay
+			overlayZindex = null; // the z-index of this overlay
+			
+			overlayZindex = overlay.container.css('z-index'); // to be closured
+			
+			this._keepfocusEventId = events.addListener($('body'), 'focus', function(e) {
+				var parent = null,   // the parent element of the source element that is a child of the body
+				parentZindex = null; // the zindex of that parent
+				
+				// calculate the zindex of the source elements parent
+				parent = e.source.parentNode;				
+				while (parent) {
+					if (parent.parentNode == document.body) { break; }
+					parent = parent.parentNode;
+				}
+				parentZindex = $(parent).css('z-index');
+				
+				// when the source element's zindex is less than ours, we take focus back
+				if (!parentZindex || parentZindex == "auto" || parentZindex < overlayZindex) {
+					overlay._focalPoint && overlay._focalPoint[0].focus();
+					return false;
+				}
+			});
+		}
+		
+		/** 
+			@private
+			@description Leave environment clean of all changes made by addModalbehaviour().
+			@this {glow.widgets.Overlay}
+		 */
+		function removeModalBehaviour() {
+			if (this._keepfocusEventId === undefined) { return; } // already removed this requirement
+			events.removeListener(this._keepfocusEventId);
+			delete this._keepfocusEventId;
+		}
+		
 		glow.widgets.Overlay = Overlay;
 	}
 });
