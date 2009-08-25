@@ -663,7 +663,7 @@
 			Number
 		*/
 		function getPixelValue(element, value, useYAxis) {
-			if (/^\d(px)?$/i.test(value)) { return parseInt(value); }
+			if (/\d(px)?$/i.test(value)) { return parseInt(value); }
 			
 			// Remember the original values
 			var axisPos = useYAxis ? "top" : "left",
