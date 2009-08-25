@@ -915,7 +915,9 @@
 			@returns {Number}
 		 */
 		Carousel.prototype._visibleIndexFirst = function() { /*debug*///console.log("_visibleIndexFirst()");
-			var offset = Math.floor(Math.abs(parseInt(this._content.css("margin-" + this._direction))/this._sizeEach));
+			// get the amount the carousel has slided as a positive number
+			var slideOffset = parseInt( this._content.css("margin-" + this._direction) ) * -1;
+			var offset = Math.floor(slideOffset / this._sizeEach);
 			return this.items[offset]["_index"+glow.UID];
 		}
 		

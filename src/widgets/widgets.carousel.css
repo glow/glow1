@@ -19,6 +19,8 @@
 	top:0;
 	left:0;
 	overflow: hidden !important;
+	/* If the inner element is floated it creates positioning issues in IE */
+	float: none !important;
 }
 
 .glowCSSVERSION-carousel .carousel-item, .glowCSSVERSION-vCarousel .carousel-item {

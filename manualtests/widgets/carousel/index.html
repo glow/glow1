@@ -29,6 +29,14 @@
 		a img {
 			border: none;
 		}
+		#carousel6Container {
+			overflow: hidden;
+			zoom: 1;
+			width: 512px;
+		}
+		#carousel6Container ol {
+			float: left;
+		}
 	</style>
 </head>
 
@@ -223,6 +231,55 @@
 		});
 		glow.events.addListener(carousel5, "afterScroll", function(e) {
 			manualTests.log('carousel5: afterScroll');
+		});
+	});
+	// ]]>
+	</script>
+	
+	<h2>Fit-to-parent carousel with floating</h2>
+	
+	<p>
+		The ol is floated within its container. This caused a regression in IE7.
+	</p>
+	
+	<ul>
+		<li>Three full images should appear below, with the fourth partially visible</li>
+		<li>Navigate the carousel, ensure the carousel moves smoothly from position to position</li>
+	</ul>
+	
+	<div id="carousel6Container">
+		<ol id="carousel6">
+			<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>
+		</ol>
+	</div>
+	
+	<script type="text/javascript" class="showSrc">
+	// <![CDATA[
+	glow.ready(function() {
+		window.carousel6 = new glow.widgets.Carousel(
+			"#carousel6",
+			{
+				loop: true,
+				vertical: urlOpts.vertical,
+				theme: urlOpts.theme
+			}
+		);
+		glow.events.addListener(carousel6, "itemClick", function(e) {
+			manualTests.log('carousel6: itemClick, item ' + e.itemIndex + '');
+			return false;
+		});
+		glow.events.addListener(carousel6, "scroll", function(e) {
+			manualTests.log('carousel6: scroll');
+		});
+		glow.events.addListener(carousel6, "afterScroll", function(e) {
+			manualTests.log('carousel6: afterScroll');
 		});
 	});
 	// ]]>
