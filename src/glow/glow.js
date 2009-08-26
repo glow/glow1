@@ -533,46 +533,85 @@
 				@param {Object} opts Options object
 					@param {String} [opts.delimiter="{}"] Alternative label delimiter(s) for the template
 						The first character supplied will be the opening delimiter, and the second the closing. If only one character is supplied, it will be used for both ends.
+					@param {Boolean} [opts.escapeHtml=false] Escape any special html characters found in the data object
+						Use this to safely inject data from the user into an HTML template. The glow.dom module
+						must be present for this feature to work (an error will be thrown otherwise).
 
 				@returns {String}
 
 				@example
-					var data = {name: "Domino", colours: ["black", "white"], family:{mum: "Spot", dad: "Patch", siblings: []}};
+					var data = {
+						name: "Domino",
+						colours: ["black", "white"],
+						family: {
+							mum: "Spot",
+							dad: "Patch",
+							siblings: []
+						}
+					};
 					var template = "My cat's name is {name}. His colours are {colours.0} & {colours.1}. His mum is {family.mum}, his dad is {family.dad} and he has {family.siblings.length} brothers or sisters.";
 					var result = glow.lang.interpolate(template, data);
-					//result == "My cat's name is Domino. His colours are black & white. His mum is Spot, his dad is Patch and he has 0 brothers or sisters."
+					// result == "My cat's name is Domino. His colours are black & white. His mum is Spot, his dad is Patch and he has 0 brothers or sisters."
+				
+				@example
+					var data = {
+						name: 'Haxors!!1 <script src="hackhackhack.js"></script>'
+					}
+					var template = '<p>Hello, my name is {name}</p>';
+					var result = glow.lang.interpolate(template, data, {
+						escapeHtml: true
+					});
+					// result == '<p>Hello, my name is Haxors!!1 &lt;script src="hackhackhack.js"&gt;&lt;/script&gt;</p>'
 				*/
 				interpolate : function (template, data, opts) {
-					var rx, l, r;
+					var placeHolderRx,
+						leftDelimiter,
+						rightDelimiter,
+						// div used for html escaping
+						div;
 
 					opts = opts || {};
-
-					if(opts.delimiter == undefined) {
-						rx = /\{[^{}]+\}/g;
-					} else {
-						l = opts.delimiter.substr(0, 1).replace(regexEscape, "\\$1");
-						r = (opts.delimiter.length == 1)?l:opts.delimiter.substr(1, 1).replace(regexEscape, "\\$1");
-						rx = new RegExp(l + "[^" + l + r + "]+" + r, "g");
+					
+					// make sure the dom module is around
+					if (opts.escapeHtml) {
+						if (!glow.dom) { throw new Error('glow.lang.interpolate - glow.dom is needed for escapeHtml'); }
+						div = glow.dom.create('<div></div>');
 					}
 
-					return template.replace(rx, function (found) {
+					if (opts.delimiter == undefined) {
+						placeHolderRx = /\{[^{}]+\}/g;
+					} else {
+						leftDelimiter = opts.delimiter.substr(0, 1).replace(regexEscape, "\\$1");
+						rightDelimiter = opts.delimiter.substr(1, 1).replace(regexEscape, "\\$1") || leftDelimiter;
+						placeHolderRx = new RegExp(leftDelimiter + "[^" + leftDelimiter + rightDelimiter + "]+" + rightDelimiter, "g");
+					}
 
-						var t = found.substring(1, found.length - 1),
-							exp = t.split("."),
+					return template.replace(placeHolderRx, function (placeholder) {
+
+						var key = placeholder.slice(1, -1),
+							keyParts = key.split("."),
+							val,
+							i = 0,
+							len = keyParts.length;
+						
+						if (key in data) {
+							// need to be backwards compatible with "flattened" data.
+							val = data[key]; 
+						} else {
+							// look up the chain
 							val = data;
-
-						if(data[t]) {
-							return data[t]; // need to be backwards compatible with "flattened" data.
-						}
-
-						for(var i = 0, l = exp.length; i < l; i++) {
-							if(val[exp[i]] != undefined) {
-								val = val[exp[i]];
-							} else {
-								return found;
+							for (; i < len; i++) {
+								if (keyParts[i] in val) {
+									val = val[ keyParts[i] ];
+								} else {
+									return placeholder;
+								}
 							}
 						}
-
+						
+						if (opts.escapeHtml) {
+							val = div.text(val).html();
+						}
 						return val;
 					});
 				},

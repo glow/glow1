@@ -255,7 +255,7 @@ t.test("glow.lang.apply()", function() {
 });
 
 t.test("glow.lang.interpolate()", function() {
-	t.expect(13);
+	t.expect(16);
 
 	t.equals(
 		glow.lang.interpolate("Hello {people}. Foo {bar}. Thankyou, {goodnight}", {people: "world", bar: "foo", notused: "garg!"}),
@@ -334,6 +334,22 @@ t.test("glow.lang.interpolate()", function() {
 		"{foo} is {bar}, but FOO is BAR",
 		"Works with alternate single delimiter (regex char)"
 	);
+	
+	// test html escaping
+	var data = {
+			faveElms: '<strong>strong</strong> & <h1>h1</h1>',
+			food: 'cake',
+			lt: '<',
+			gt: '>'
+		},
+		str = glow.lang.interpolate('<div>My favourite elements are {faveElms}. Do you have any {food}? Here\'s a {lt}span{gt}</div>', data, {
+			escapeHtml: true
+		}),
+		elm = glow.dom.create(str);
+	
+	t.equals(elm[0].nodeName.toLowerCase(), 'div', 'div created');
+	t.equals(elm.get('*').length, 0, 'No extra elements created');
+	t.equals(elm.text(), 'My favourite elements are <strong>strong</strong> & <h1>h1</h1>. Do you have any cake? Here\'s a <span>', 'Html special chars correctly escaped');
 });
 
 
