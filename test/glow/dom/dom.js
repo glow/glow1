@@ -2260,6 +2260,22 @@ t.test("glow.dom.NodeList.data data method", function() {
 	t.equals(dataTest.data("count"), 8, "All multiple key:vals are set.");
 });
 
+t.test("glow.dom.NodeList.data removeData method", function() {
+	t.expect(4);
+	var dataTest = glow.dom.get("#dataTest p");
+	
+	var data = dataTest.data();
+	t.equals(data.colour, "red", "Data is already set on the NodeList.");
+	dataTest.removeData("colour");
+	t.equals(data.colour, undefined, "Can remove data by key name.");
+	
+	t.equals(data.size, "grande", "More data is already set on the NodeList.");
+	
+	dataTest.removeData();
+	data = dataTest.data();
+	t.equals(data.size, undefined, "can remove all data.");
+});
+
 t.test("glow.dom.NodeList.data Destroy", function() {
 	t.expect(1);
 	

@@ -3019,6 +3019,8 @@
 			@name glow.dom.NodeList#data
 			@function
 			@description Lorem ipsum
+			@param {String|Object} [key]
+			@param {Object} [val]
 			*/
 			data: function (key, val) { /*debug*///console.log("data()");
 				if (typeof key === "object") { // setting many values
@@ -3026,7 +3028,8 @@
 				}
 				
 				var elm = null,
-					i = this.length;
+					i = this.length,
+					index = null;
 				// uses private class-scoped variables: dataCache, dataPropName, dataIndex
 				
 				while (i--) {
@@ -3037,14 +3040,16 @@
 						dataCache[dataIndex++] = {};
 					}
 					
+					index = elm[dataPropName];
+					
 					// TODO - need to defend against reserved words being used as keys?
 					switch (arguments.length) {
 						case 0:
-							return dataCache[ elm[dataPropName] ];
+							return dataCache[index];
 						case 1:
-							return dataCache[ elm[dataPropName] ][key];
+							return dataCache[index][key];
 						case 2:
-							dataCache[ elm[dataPropName] ][key] = val;
+							dataCache[index][key] = val;
 							break;
 						default:
 							throw new Error("glow.dom.NodeList#data expects 2 or less arguments, not "+arguments.length+".");
@@ -3052,13 +3057,43 @@
 				}
 			},
 			
+			// TODO - clone() and destroy() need to handle attached data
+			
 			/**
 			@name glow.dom.NodeList#removeData
 			@function
 			@description Lorem ipsum
+			@param {String} [key]
 			*/
-			removeData: function () {
-				throw new Error("glow.dom.NodeList#removeData is not yet implemented.");
+			removeData: function (key) {
+				var elm = null,
+					i = this.length,
+					index = null;
+				// uses private class-scoped variables: dataCache, dataPropName
+				
+				while (i--) {
+					elm = this[i];
+					index = elm[dataPropName];
+					if ( index !== undefined ) {
+						switch (arguments.length) {
+							case 0:
+								delete dataCache[index];
+								try {
+									delete elm[dataPropName]; // IE 6 goes wobbly here
+								}
+								catch(e) { // remove expando from IE 6
+									elm[dataPropName] = undefined;
+									elm.removeAttribute && elm.removeAttribute(dataPropName);
+								}
+								break;
+							case 1:
+								delete dataCache[index][key];
+								break;
+							default:
+								throw new Error("glow.dom.NodeList#removeData expects 1 or less arguments, not "+arguments.length+".");
+						}
+					}
+				}
 			},
 
 			/**
