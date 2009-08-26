@@ -72,7 +72,38 @@
 			This is the property name used by unique checks
 		*/
 			ucheckPropName = "_unique" + glow.UID,
-
+			
+		/**
+			@name glow.dom-dataPropName
+			@private
+			@type String
+			@description The property name added to the DomElement by the NodeList#data method.
+		*/
+			dataPropName = "_glowData" + glow.UID,
+		
+		/**
+			@name glow.dom-dataIndex
+			@private
+			@type String
+			@description The value of the dataPropName added by the NodeList#data method.
+		*/
+			dataIndex = 0,
+			
+		/**
+			@name glow.dom-dataCache
+			@private
+			@type Object
+			@description Holds the data used by the NodeList#data method.
+			
+			The structure is like:
+			[
+				{
+					myKey: "my data"
+				}
+			]
+		*/
+			dataCache = [],
+		
 		/*
 		PrivateVar: htmlColorNames
 			Mapping of colour names to hex values
@@ -2983,6 +3014,52 @@
 				}
 				return this;
 			},
+			
+			/**
+			@name glow.dom.NodeList#data
+			@function
+			@description Lorem ipsum
+			*/
+			data: function (key, val) { /*debug*///console.log("data()");
+				if (typeof key === "object") { // setting many values
+					for (var prop in key) { this.data(prop, key[prop]); }
+				}
+				
+				var elm = null,
+					i = this.length;
+				// uses private class-scoped variables: dataCache, dataPropName, dataIndex
+				
+				while (i--) {
+					elm = this[i];
+					
+					if (elm[dataPropName] === undefined) {
+						elm[dataPropName] = dataIndex;
+						dataCache[dataIndex++] = {};
+					}
+					
+					// TODO - need to defend against reserved words being used as keys?
+					switch (arguments.length) {
+						case 0:
+							return dataCache[ elm[dataPropName] ];
+						case 1:
+							return dataCache[ elm[dataPropName] ][key];
+						case 2:
+							dataCache[ elm[dataPropName] ][key] = val;
+							break;
+						default:
+							throw new Error("glow.dom.NodeList#data expects 2 or less arguments, not "+arguments.length+".");
+					}
+				}
+			},
+			
+			/**
+			@name glow.dom.NodeList#removeData
+			@function
+			@description Lorem ipsum
+			*/
+			removeData: function () {
+				throw new Error("glow.dom.NodeList#removeData is not yet implemented.");
+			},
 
 			/**
 			@name glow.dom.NodeList#get
@@ -3275,7 +3352,7 @@
 					}
 					return r;
 				}
-
+				
 				// main implementation
 				return function(sSelector) {
 					// no point trying if there's no current context
