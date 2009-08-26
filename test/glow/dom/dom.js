@@ -182,7 +182,7 @@ t.test("glow.dom.NodeList constructor", function () {
 });
 
 t.test("glow.dom.create", function () {
-	t.expect(17);
+	t.expect(16);
 
 	var NodeList = glow.dom.create(' <div id="aNewNode1">test</div> <div id="aNewNode2">test</div> ');
 	
@@ -253,11 +253,37 @@ t.test("glow.dom.create", function () {
 	var style = glow.dom.create('<style type="text/css">#abc1234 { margin:0; }</style>');
 	t.equals(style[0].nodeName.toLowerCase(), "style", "Style element created");
 
-	// interpolate test
-	var iNodes = glow.dom.create("<div>{foo}</div>", {interpolate: {foo: "FOO"}});
-	t.equals(iNodes.text(), "FOO", "Create works with interpolation");
+});
 
-
+t.test("glow.dom.create - interpolate", function() {
+	t.expect(4);
+	
+	var iNodes = glow.dom.create("<div>{foo}</div>", {
+		interpolate: {foo: "FOO"}
+	});
+	t.equals(iNodes.text(), "FOO", "Basic Interpolation");
+	
+	var data = {
+			faveElms: '<strong>strong</strong> & <h1>h1</h1>',
+			food: 'cake',
+			lt: '<',
+			gt: '>'
+		},
+		template = '<div>My favourite elements are {faveElms}. Do you have any {food}? Here\'s a {lt}span{gt}. This {<b>placeholder</b>} does not exist.</div>';
+	
+	var elm = glow.dom.create(template, {
+		interpolate: data
+	});
+	
+	t.equals(elm.get("*").length, 4, "HTML not escaped");
+	
+	elm = glow.dom.create(template, {
+		interpolate: data,
+		escapeHtml: true
+	});
+	
+	t.equals(elm.get("span, strong, h1").length, 0, "HTML escaped, no unwanted elements created");
+	t.equals(elm.text(), 'My favourite elements are <strong>strong</strong> & <h1>h1</h1>. Do you have any cake? Here\'s a <span>. This {placeholder} does not exist.', "HTML escaped, text retained");
 });
 
 t.test("Load DOM", function() {

@@ -875,12 +875,24 @@
 			@param {Object} [opts.interpolate] Data for a call to glow.lang.interpolate
 				If this option is set, the String html parameter will be passed through glow.lang.interpolate with this as the data and no options
 				If glow.lang.interpolates options are required, an explicit call must be made
+			@param {Boolean} [opts.escapeHtml] Escape html injected from the interpolate object.
+				This will let you safely inject text into an HTML template. If the
+				injected text cotains special HTML characters they will be escaped.
 
 		@returns {glow.dom.NodeList}
 
 		@example
 			// NodeList of two elements
 			var myNodeList = glow.dom.create("<div>Hello</div><div>World</div>");
+			
+		@example
+			// Nodelist of one list item
+			var listItem = glow.dom.create('<li>{content}</li>', {
+				interpolate: {content: textFromUser},
+				escapeHtml: true
+			});
+			// if testFromUser contains HTML, it will be correctly escaped
+			// before being inserted into the li
 		*/
 		r.create = function(sHtml, opts) {
 			var ret = [],
@@ -891,7 +903,9 @@
 			opts = opts || {};
 			
 			if(opts.interpolate != undefined) {
-				sHtml = lang.interpolate(sHtml, opts.interpolate);
+				sHtml = lang.interpolate(sHtml, opts.interpolate, {
+					escapeHtml: opts.escapeHtml
+				});
 			}
 			
 			toCheck = stringToNodes(sHtml);
