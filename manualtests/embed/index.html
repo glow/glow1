@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>glow.embed</title>
+	<script type="text/javascript" src="../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
+		);
+	// ]]></script>
+	
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.data', 'glow.embed'])</script>
+</head>
+
+<body>
+	<h1>glow.embed</h1>
+	
+	<h2>glow.embed.Flash - simple test</h2>
+	
+	<ul>
+		<li>If you have Flash 9 or later installed, you should see a smiley face below</li>
+		<li>Without Flash installed, you should see the text "Please install Flash 9 to see this content"</li>
+		<li>Test on machines with / without Flash</li>
+		<li>Test on machines with Flash but disabled via the browser (if possible)</li>
+		<li>Test on machines with Flash but an earlier version</li>
+	</ul>
+	
+	<div id="flash1Container">Alternative Content</div>
+	
+	<script type="text/javascript" class="showSrc">
+		manualTests.log( glow.embed.Flash.version().actual );
+	
+		glow.ready(function() {
+			new glow.embed.Flash("smile.swf", "#flash1Container", "9", {
+				width: 32,
+				height: 32,
+				message: "Please install Flash 9 to see this content"
+			}).embed();
+		});
+	</script>
+	
+	
+	<script type="text/javascript">manualTests.showSrc();</script>
+	<script type="text/javascript">manualTests.log('Logging enabled');</script>
+</body>
+</html>
