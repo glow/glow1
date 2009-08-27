@@ -54,6 +54,8 @@
 			@_param {String} [opts.toolset="basic"]
 			@param {String} [opts.theme="light"] Visual Theme
 			Currently supported themes are "dark" and "light".
+			@param {Function} [opts.onCommit] Event shortcut.
+			See documentation below
 			@_property {glow.dom.NodeList} element
 			@_property {glow.dom.NodeList} textarea
 			@_property {glow.widgets.Editor.Toolbar} toolbar
@@ -80,11 +82,12 @@
 
 			opts = this._opts = glow.lang.apply(
 				{
-					toolset: "basic"
+					toolset: "basic",
+					onCommit: null
 				},
 				opts
 			);
-// interpolate context
+			// interpolate context
 			this.element = glow.dom.create('<div class="glowCSSVERSION-editor"><p class="glowCSSVERSION-hidden">{ENTER_MESSAGE}, <a href="#endOfEditor' + endOfEditorCounter() + '" tabindex="0">{SKIP_LINK_TEXT}</a></p><div class="editor-' + (opts.theme || "light") + '"><div class="editor-state"></div></div><p id="endOfEditor' + endOfEditorCounter() + '" class="glowCSSVERSION-hidden endOfEditorCounter" tabindex="0">{LEAVE_MESSAGE}</p></div>', {interpolate : editorLocaleModule});
 			this.textarea = textarea;
 			this.toolbar = new glow.widgets.Editor.Toolbar(this);
@@ -101,6 +104,9 @@
 			if (!isSafariTwo()) {
 				place.apply(this);
 				bindEditor.apply(this, []);
+			}
+			if (opts.onCommit){
+				events.addListener(this, "commit", opts.onCommit);
 			}
 		}
 
