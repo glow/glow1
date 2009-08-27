@@ -3018,9 +3018,26 @@
 			/**
 			@name glow.dom.NodeList#data
 			@function
-			@description Lorem ipsum
-			@param {String|Object} [key]
-			@param {Object} [val]
+			@description Use this to safely attach arbitrary data to any DOM Element.
+			
+			This method is useful when you wish to avoid memory leaks that are possible when adding your own data directly to DOM Elements.
+			
+			When called with no arguments, will return glow's entire data store for the first item in the NodeList.
+			
+			Otherwise, when given a stringy key, will return the associated value from the first item in the NodeList.
+			
+			When given both a key and a value, will store that data on every item in the NodeList.
+			
+			Optionally you can pass in a single object composed of multiple key, value pairs.
+			
+			@param {String|Object} [key] The name of the value in glow's data store for the NodeList item.
+			@param {Object} [val] The the value you wish to associate with the given key.
+			@see glow.dom.NodeList#removeData
+			@example
+			
+			glow.dom.get("p").data("tea", "milky");
+			var colour = glow.dom.get("p").data("tea"); // milky
+			
 			*/
 			data: function (key, val) { /*debug*///console.log("data()");
 				if (typeof key === "object") { // setting many values
@@ -3062,8 +3079,13 @@
 			/**
 			@name glow.dom.NodeList#removeData
 			@function
-			@description Lorem ipsum
-			@param {String} [key]
+			@description Removes data previously added by {@link glow.dom.NodeList#data} from items in a NodeList.
+			
+			When called with no arguments, will delete glow's entire data store for every item in the NodeList.
+			
+			Otherwise, when given a key, will delete the associated value from every item in the NodeList.
+			
+			@param {String} [key] The name of the value in glow's data store for the NodeList item.
 			*/
 			removeData: function (key) {
 				var elm = null,
@@ -3074,7 +3096,8 @@
 				while (i--) {
 					elm = this[i];
 					index = elm[dataPropName];
-					if ( index !== undefined ) {
+					
+					if (index !== undefined) {
 						switch (arguments.length) {
 							case 0:
 								delete dataCache[index];
