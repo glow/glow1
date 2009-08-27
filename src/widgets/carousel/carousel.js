@@ -34,6 +34,18 @@
 				@param {Number} [opts.animDuration=0.2] Duration of animation in seconds.
 				@param {Function} [opts.animTween=glow.tweens.easeBoth()] A Glow tween function to animate scrolling.
 				@param {Number|String} [opts.step=1] Number of items to scroll by. When the string 'page' is passed in the carousel will be set to scroll by the number of viewable items.
+				@param {Function} [opts.onAddItem] Event shortcut.
+				See documentation below
+				@param {Function} [opts.onRemoveItem] Event shortcut.
+				See documentation below
+				@param {Function} [opts.onScroll] Event shortcut.
+				See documentation below
+				@param {Function} [opts.onAddItem] Event shortcut.
+				See documentation below
+				@param {Function} [opts.onAfterScroll] Event shortcut.
+				See documentation below
+				@param {Function} [opts.onItemClick] Event shortcut.
+				See documentation below
 				@param {Boolean} [opts.vertical=false] Used to create a vertical oriented carousel
 				@param {Number} [opts.size] Number of items the carousel displays at any one time
 					By default, the carousel will fill all available horizontal (or vertical) space.
