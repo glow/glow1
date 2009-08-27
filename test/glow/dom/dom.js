@@ -2221,3 +2221,106 @@ t.test("glow.dom.NodeList#position", function() {
 	
 	node.destroy();	
 });
+
+/*-----------------------------------------------------------------------------*/
+
+t.module("glow.dom.NodeList#data");
+
+t.test("Load DOM", function() {
+	t.expect(1);
+	t.stop();
+	
+	glow.ready(function() {
+		t.ok(glow.isReady, "Document Ready");
+		t.start();
+	});
+});
+
+t.test("glow.dom.NodeList#data Setup", function() {
+	t.expect(1);
+	
+	try {
+		glow.dom.create('' +
+			'<div id="dataTest">' +
+				'<p id="para1">' +
+					'<span id="span1">one</span>' +
+				'</p>' +
+				'<p id="para2">two</p>' +
+				'<p id="para3">three</p>' +
+			'</div>' +
+		'').appendTo(document.body);
+	}
+	catch (e) {
+	}
+	
+	t.equals(glow.dom.get("#para1").length, 1, "The created node is found.");
+});
+
+t.test("glow.dom.NodeList#data API", function() {
+	t.expect(2);
+	var dataTest = glow.dom.get("#dataTest");
+	
+	t.equals(typeof dataTest.data, "function", "A NodeList instance has a method named 'data'.");
+	t.equals(typeof dataTest.removeData, "function", "A NodeList instance has a method named 'removeData'.");
+});
+
+t.test("glow.dom.NodeList#data method", function() {
+	t.expect(5);
+	var dataTest = glow.dom.get("#dataTest p");
+	
+	dataTest.data("colour", "red");
+	t.equals(dataTest.data("colour"), "red", "Can set and get a key:val from NodeList.");
+	
+	var data = dataTest.data();
+	t.equals(data.colour, "red", "Can get the entire data object from NodeList when given no arguments.");
+	
+	data = glow.dom.get("#para1").data();
+	t.equals(data.colour, "red", "Can get the same data from different NodeLists that refer to the same DomElements.");
+
+	dataTest.data({
+		size: "grande",
+		count: 8
+	});
+	t.equals(dataTest.data("size"), "grande", "Can set multiple key:vals at once.");
+	t.equals(dataTest.data("count"), 8, "All the multiple key:vals are set.");
+});
+
+t.test("glow.dom.NodeList#removeData method", function() {
+	t.expect(4);
+	var dataTest = glow.dom.get("#dataTest p");
+	
+	var data = dataTest.data();
+	t.equals(data.colour, "red", "Data is already set on the NodeList.");
+	dataTest.removeData("colour");
+	t.equals(data.colour, undefined, "Can remove data by key name.");
+	
+	t.equals(data.size, "grande", "More data is already set on the NodeList.");
+	
+	dataTest.removeData();
+	data = dataTest.data();
+	t.equals(data.size, undefined, "can remove all data at once.");
+});
+
+t.test("glow.dom.NodeList#data Clone", function() {
+	t.expect(1);
+	
+	var testData = glow.dom.get("#dataTest");
+	testData.data("tea", "milky");
+	
+	var testClone = glow.dom.get("#dataTest").clone();
+	t.equals(testClone.data("tea"), "milky", "Cloned nodes have the same data as the nodes they are based on.");
+});
+
+t.test("glow.dom.NodeList#data Destroy", function() {
+	t.expect(2);
+
+	var testData = glow.dom.get("#dataTest");
+	testData.data("tea", "milky");
+	
+	t.equals(testData.data("tea"), "milky", "Before being destroyed the node's data is defined.");
+	testData.destroy();
+
+	t.equals(testData.data("tea"), undefined, "After being destroyed the node's data is undefined.");
+});
+
+/*-----------------------------------------------------------------------------*/

@@ -72,7 +72,38 @@
 			This is the property name used by unique checks
 		*/
 			ucheckPropName = "_unique" + glow.UID,
-
+			
+		/**
+			@name glow.dom-dataPropName
+			@private
+			@type String
+			@description The property name added to the DomElement by the NodeList#data method.
+		*/
+			dataPropName = "_glowData" + glow.UID,
+		
+		/**
+			@name glow.dom-dataIndex
+			@private
+			@type String
+			@description The value of the dataPropName added by the NodeList#data method.
+		*/
+			dataIndex = 0,
+			
+		/**
+			@name glow.dom-dataCache
+			@private
+			@type Object
+			@description Holds the data used by the NodeList#data method.
+			
+			The structure is like:
+			[
+				{
+					myKey: "my data"
+				}
+			]
+		*/
+			dataCache = [],
+		
 		/*
 		PrivateVar: htmlColorNames
 			Mapping of colour names to hex values
@@ -2159,10 +2190,14 @@
 				glow.dom.get("a").destroy();
 			*/
 			destroy: function () {
+				// remove any data attached to this NodeList
+				this.get("*").push(this).removeData();
+				
 				this.appendTo(tmpDiv);
 				// destroy nodes
 				tmpDiv.innerHTML = "";
 				// empty the nodelist
+				
 				Array.prototype.splice.call(this, 0, this.length);
 				return this;
 			},
@@ -2195,6 +2230,8 @@
 
 				while (i--) {
 					ret[i] = this[i].cloneNode(true);
+					// copy data onto the new clone
+					glow.dom.get(ret[i]).data(glow.dom.get(this[i]).data());
 				}
 				
 				// some browsers (ie) also clone node properties as attributes
@@ -2997,6 +3034,110 @@
 				}
 				return this;
 			},
+			
+			/**
+			@name glow.dom.NodeList#data
+			@function
+			@description Use this to safely attach arbitrary data to any DOM Element.
+			
+			This method is useful when you wish to avoid memory leaks that are possible when adding your own data directly to DOM Elements.
+			
+			When called with no arguments, will return glow's entire data store for the first item in the NodeList.
+			
+			Otherwise, when given a stringy key, will return the associated value from the first item in the NodeList.
+			
+			When given both a key and a value, will store that data on every item in the NodeList.
+			
+			Optionally you can pass in a single object composed of multiple key, value pairs.
+			
+			@param {String|Object} [key] The name of the value in glow's data store for the NodeList item.
+			@param {Object} [val] The the value you wish to associate with the given key.
+			@see glow.dom.NodeList#removeData
+			@example
+			
+			glow.dom.get("p").data("tea", "milky");
+			var colour = glow.dom.get("p").data("tea"); // milky
+			
+			*/
+			data: function (key, val) { /*debug*///console.log("data()");
+				if (typeof key === "object") { // setting many values
+					for (var prop in key) { this.data(prop, key[prop]); }
+				}
+				
+				var elm = null,
+					i = this.length,
+					index = null;
+				// uses private class-scoped variables: dataCache, dataPropName, dataIndex
+				
+				while (i--) {
+					elm = this[i];
+					
+					if (elm[dataPropName] === undefined) {
+						elm[dataPropName] = dataIndex;
+						dataCache[dataIndex++] = {};
+					}
+					
+					index = elm[dataPropName];
+					
+					// TODO - need to defend against reserved words being used as keys?
+					switch (arguments.length) {
+						case 0:
+							return dataCache[index];
+						case 1:
+							return dataCache[index][key];
+						case 2:
+							dataCache[index][key] = val;
+							break;
+						default:
+							throw new Error("glow.dom.NodeList#data expects 2 or less arguments, not "+arguments.length+".");
+					}
+				}
+			},
+			
+			// TODO - clone() and destroy() need to handle attached data
+			
+			/**
+			@name glow.dom.NodeList#removeData
+			@function
+			@description Removes data previously added by {@link glow.dom.NodeList#data} from items in a NodeList.
+			
+			When called with no arguments, will delete glow's entire data store for every item in the NodeList.
+			
+			Otherwise, when given a key, will delete the associated value from every item in the NodeList.
+			
+			@param {String} [key] The name of the value in glow's data store for the NodeList item.
+			*/
+			removeData: function (key) {
+				var elm = null,
+					i = this.length,
+					index = null;
+				// uses private class-scoped variables: dataCache, dataPropName
+				
+				while (i--) {
+					elm = this[i];
+					index = elm[dataPropName];
+					
+					if (index !== undefined) {
+						switch (arguments.length) {
+							case 0:
+								delete dataCache[index];
+								try {
+									delete elm[dataPropName]; // IE 6 goes wobbly here
+								}
+								catch(e) { // remove expando from IE 6
+									elm[dataPropName] = undefined;
+									elm.removeAttribute && elm.removeAttribute(dataPropName);
+								}
+								break;
+							case 1:
+								delete dataCache[index][key];
+								break;
+							default:
+								throw new Error("glow.dom.NodeList#removeData expects 1 or less arguments, not "+arguments.length+".");
+						}
+					}
+				}
+			},
 
 			/**
 			@name glow.dom.NodeList#get
@@ -3289,7 +3430,7 @@
 					}
 					return r;
 				}
-
+				
 				// main implementation
 				return function(sSelector) {
 					// no point trying if there's no current context
