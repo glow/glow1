@@ -2176,10 +2176,14 @@
 				glow.dom.get("a").destroy();
 			*/
 			destroy: function () {
+				// remove any data attached to this NodeList
+				this.get("*").push(this).removeData();
+				
 				this.appendTo(tmpDiv);
 				// destroy nodes
 				tmpDiv.innerHTML = "";
 				// empty the nodelist
+				
 				Array.prototype.splice.call(this, 0, this.length);
 				return this;
 			},
@@ -2212,6 +2216,8 @@
 
 				while (i--) {
 					ret[i] = this[i].cloneNode(true);
+					// copy data onto the new clone
+					glow.dom.get(ret[i]).data(glow.dom.get(this[i]).data());
 				}
 				
 				// some browsers (ie) also clone node properties as attributes
