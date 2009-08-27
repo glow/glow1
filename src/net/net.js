@@ -75,7 +75,8 @@
 					async: true,
 					useCache: false,
 					data: null,
-					defer: false
+					defer: false,
+					forceXml: false
 				},
 				opts || {}
 			);
@@ -129,7 +130,7 @@
 					if (opts.timeout) {
 						request._timeout = setTimeout(function() {
 							abortRequest(request);
-							var response = new Response(req, true);
+							var response = new Response(req, true, request);
 							events.fire(request, "error", response);
 						}, opts.timeout * 1000);
 					}
@@ -140,7 +141,7 @@
 							request._timeout && clearTimeout(request._timeout);
 							//set as completed
 							request.completed = true;
-							var response = new Response(req);
+							var response = new Response(req, false, request);
 							if (response.wasSuccessful) {
 								events.fire(request, "load", response);
 							} else {
@@ -153,7 +154,7 @@
 				} else {
 					req.send(data);
 					request.completed = true;
-					var response = new Response(req);
+					var response = new Response(req, false, request);
 					if (response.wasSuccessful) {
 						events.fire(request, "load", response);
 					} else {
@@ -197,6 +198,9 @@
 				the time is reached, the error event will fire with a "408" status code.
 			@param {Boolean} [opts.defer=false] Do not send the request straight away
 				Deferred requests need to be triggered later using myRequest.send()
+			@param {Boolean} [opts.forceXml=false] Treat the response as XML.
+				This will allow you to use {@link glow.net.Response#xml response.xml()}
+				even if the response has a non-XML mime type.
 
 		@returns {glow.net.Request|glow.net.Response}
 			A response object for non-defered sync requests, otherwise a
@@ -443,6 +447,21 @@
 			 * @type Number
 			 */
 			this._timeout = null;
+			
+			/*
+			 @name glow.net.Request#_forceXml
+			 @private
+			 @type Boolean
+			 @description Force the response to be treated as xml
+			*/
+			this._forceXml = opts.forceXml;
+			
+			// force the reponse to be treated as xml
+			// IE doesn't support overrideMineType, we need to deal with that in {@link glow.net.Response#xml}
+			if (opts.forceXml && requestObj.overrideMimeType) {
+				requestObj.overrideMimeType('application/xml');
+			}
+			
 			/**
 			 * @name glow.net.Request#complete
 			 * @description Boolean indicating whether the request has completed
@@ -589,12 +608,21 @@
 		 These params are hidden as we don't want users to try and create instances of this...
 
 		 @param {XMLHttpRequest} nativeResponse
-		 @param {boolean} [timedOut=false]
+		 @param {Boolean} [timedOut=false] Set to true if the response timed out
+		 @param {glow.net.Request} [request] Original request object
 		*/
-		function Response(nativeResponse, timedOut) {
+		function Response(nativeResponse, timedOut, request) {
 			//run Event constructor
 			events.Event.call(this);
-
+			
+			/**
+			@name glow.net.Response#_request
+			@private
+			@description Original request object
+			@type glow.net.Request
+			*/
+			this._request = request;
+			
 			/**
 			@name glow.net.Response#nativeResponse
 			@description The response object from the browser.
@@ -652,19 +680,22 @@
 			xml: function() {
 				var nativeResponse = this.nativeResponse;
 				
-				// check property exists
-				if (!nativeResponse.responseXML) {
-					throw new Error(STR.XML_ERR);
-				}
-				
-				// IE 6 & 7 fail to recognise Content-Types ending +xml (eg application/rss+xml)
-				// as XML, so we create an XML object from the text here
-				if ( glow.env.ie < 8 && endsPlusXml.test(this.header("Content-Type")) ) {
+				if (
+					// IE 6 & 7 fail to recognise Content-Types ending +xml (eg application/rss+xml)
+					// as XML, so we create an XML object from the text here
+					( glow.env.ie < 8 && endsPlusXml.test(this.header("Content-Type")) )
+					// If the _forceXml option is set, we need to turn the response text into xml
+					|| ( this._request._forceXml && !this._request.nativeRequest.overrideMimeType && window.ActiveXObject )
+				) {
 					var doc = new ActiveXObject("Microsoft.XMLDOM");
                     doc.loadXML( nativeResponse.responseText );
 					return doc;
 				}
 				else {
+					// check property exists
+					if (!nativeResponse.responseXML) {
+						throw new Error(STR.XML_ERR);
+					}
 					return nativeResponse.responseXML;
 				}				
 			},

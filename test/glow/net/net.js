@@ -102,6 +102,27 @@ t.test("glow.net.get async xml", function() {
 	});
 });
 
+t.test("glow.net.get force xml", function() {
+	t.expect(5);
+	t.stop();
+	var request = glow.net.get("testdata/xhr/xml.txt", {
+		forceXml: true,
+		onLoad: function(response) {
+			t.ok(true, "correct callback used");
+			var xml = response.xml();
+			t.ok(xml, "xml returned");
+			t.equals(xml.getElementsByTagName("hello").length, 1, "1 element of hello");
+			t.equals(xml.getElementsByTagName("world").length, 1, "1 element of world");
+			t.equals(xml.getElementsByTagName("world")[0].childNodes[0].nodeValue, 'Yey for XML', "Got text node value");
+			t.start();
+		},
+		onError: function() {
+			t.ok(false, "correct callback used");
+			t.start();
+		}
+	});
+});
+
 t.test("glow.net.get async json", function() {
 	t.expect(4);
 	t.stop();
@@ -321,8 +342,6 @@ t.test("glow.net.get timeout cancelling", function() {
 		t.start();
 	}, 3000);
 });
-
-//xml with namespace
 
 //get rid of all the script elements from end of the page
 function clearScriptsFromEnd() {
