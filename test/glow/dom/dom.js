@@ -2044,11 +2044,11 @@ t.test("glow.dom.NodeList.css getting", function() {
 	t.equals(glow.dom.get("#cssTests ul.listTest li").css("list-style-position"), "outside", "list-style-position (on li)");
 	t.equals(glow.dom.get("#cssTests ul.listTest li").css("list-style-type"), "square", "list-style-type (on li)");
 	
-	//colour tests
+	//color tests
 	t.equals(glow.dom.get("#cssTests div.colourTest").css("color"), "rgb(0, 255, 0)", "color");
 	t.equals(glow.dom.get("#cssTests div.colourTest div").css("color"), "rgb(0, 255, 0)", "color nested");
 	//safari gets this one a little wrong, but it's ok
-	t.ok(/rgb\(12[78], 12[78], 12[78]\)/.test(glow.dom.get("#cssTests div.colourTest").css("background-color")), "background-color (percentage colour)");
+	t.ok(/rgb\(12[78], 12[78], 12[78]\)/.test(glow.dom.get("#cssTests div.colourTest").css("background-color")), "background-color (percentage color)");
 	t.equals(glow.dom.get("#cssTests div.colourTest").css("border-left-color"), "rgb(0, 128, 0)", "border-left-color (keyword)");
 	
 	//background test
@@ -2265,50 +2265,61 @@ t.test("glow.dom.NodeList#data API", function() {
 });
 
 t.test("glow.dom.NodeList#data method", function() {
-	t.expect(5);
-	var dataTest = glow.dom.get("#dataTest p");
+	t.expect(7);
 	
-	dataTest.data("colour", "red");
-	t.equals(dataTest.data("colour"), "red", "Can set and get a key:val from NodeList.");
+	var dataTest = glow.dom.get("#dataTest > p");
+	var self = dataTest.data("color", "red");
+	t.equals(dataTest.data("color"), "red", "Can set and get a key:val from NodeList.");
+	t.ok((dataTest === self), "The call to set a key:val is chainable.");
 	
 	var data = dataTest.data();
-	t.equals(data.colour, "red", "Can get the entire data object from NodeList when given no arguments.");
+	t.equals(data.color, "red", "Can get the entire data object from NodeList when given no arguments.");
 	
-	data = glow.dom.get("#para1").data();
-	t.equals(data.colour, "red", "Can get the same data from different NodeLists that refer to the same DomElements.");
+	var para1 = glow.dom.get("#para1");
+	t.equals(para1.data("color"), "red", "Can get the same data from different NodeLists that refer to the same DomElements.");
 
-	dataTest.data({
+	self = dataTest.data({
 		size: "grande",
 		count: 8
 	});
 	t.equals(dataTest.data("size"), "grande", "Can set multiple key:vals at once.");
 	t.equals(dataTest.data("count"), 8, "All the multiple key:vals are set.");
+	t.ok((dataTest === self), "The call to multiple key:val is chainable.");
+
 });
 
 t.test("glow.dom.NodeList#removeData method", function() {
-	t.expect(4);
+	t.expect(5);
 	var dataTest = glow.dom.get("#dataTest p");
 	
 	var data = dataTest.data();
-	t.equals(data.colour, "red", "Data is already set on the NodeList.");
-	dataTest.removeData("colour");
-	t.equals(data.colour, undefined, "Can remove data by key name.");
+	t.equals(data.color, "red", "Data is already set on the NodeList.");
+	dataTest.removeData("color");
+	t.equals(data.color, undefined, "Can remove data by key name.");
 	
 	t.equals(data.size, "grande", "More data is already set on the NodeList.");
 	
-	dataTest.removeData();
+	var self = dataTest.removeData();
 	data = dataTest.data();
-	t.equals(data.size, undefined, "can remove all data at once.");
+	t.equals(data.size, undefined, "Can remove all data at once.");
+	t.ok( (dataTest === self), "The call to removeData is chainable.");
 });
 
 t.test("glow.dom.NodeList#data Clone", function() {
-	t.expect(1);
+	t.expect(3);
 	
 	var testData = glow.dom.get("#dataTest");
 	testData.data("tea", "milky");
 	
-	var testClone = glow.dom.get("#dataTest").clone();
-	t.equals(testClone.data("tea"), "milky", "Cloned nodes have the same data as the nodes they are based on.");
+	testData.get("#span1").data("biscuits", 2);
+	var testClone = testData.clone();
+	t.equals(testClone.get("#span1").data("biscuits"), 2, "A cloned node has a copy of the data from the node it's based on.");
+	
+	t.equals(testClone.data("tea"), "milky", "A child node in a cloned node has the same data as the node it's based on.");
+
+	testData.data("tea", "lemony");
+	t.equals(testClone.data("tea"), "milky", "Changing the original data doesn't change the cloned data.");
+	
 });
 
 t.test("glow.dom.NodeList#data Destroy", function() {

@@ -79,7 +79,7 @@
 			@type String
 			@description The property name added to the DomElement by the NodeList#data method.
 		*/
-			dataPropName = "_glowData" + glow.UID,
+			dataPropName = "_uniqueData" + glow.UID,
 		
 		/**
 			@name glow.dom-dataIndex
@@ -87,7 +87,7 @@
 			@type String
 			@description The value of the dataPropName added by the NodeList#data method.
 		*/
-			dataIndex = 0,
+			dataIndex = 1, // must be a truthy value
 			
 		/**
 			@name glow.dom-dataCache
@@ -2226,22 +2226,31 @@
 				var ret = [],
 					i = this.length,
 					allCloneElms,
+					allBaseElms
 					eventIdProp = '__eventId' + glow.UID;
 
 				while (i--) {
 					ret[i] = this[i].cloneNode(true);
-					// copy data onto the new clone
-					glow.dom.get(ret[i]).data(glow.dom.get(this[i]).data());
 				}
 				
 				// some browsers (ie) also clone node properties as attributes
 				// we need to get rid of the eventId.
+				allCloneElms = r.get( ret ).get("*").push( ret );
 				if (nodePropertiesCloned && !isXml(ret[0])) {
-					allCloneElms = r.get( ret ).get("*").push( ret );
 					i = allCloneElms.length;
 					while(i--) {
 						allCloneElms[i][eventIdProp] = null;
 					}
+				}
+				
+				// copy data from base elements to clone elements
+				allBaseElms = this.get("*").push( this );
+				i = allCloneElms.length;
+				while (i--) {
+					allCloneElms[i].removeAttribute(dataPropName);
+					glow.dom.get(allCloneElms[i]).data(
+						glow.dom.get(allBaseElms[i]).data()
+					);
 				}
 				
 				// shall we clone events too?
@@ -3057,44 +3066,46 @@
 			
 			glow.dom.get("p").data("tea", "milky");
 			var colour = glow.dom.get("p").data("tea"); // milky
-			
+			@returns {Object} When setting a value this method can be chained, as in that case it will return itself.
 			*/
-			data: function (key, val) { /*debug*///console.log("data()");
+			data: function (key, val) { /*debug*///console.log("data("+key+", "+val+")");
 				if (typeof key === "object") { // setting many values
 					for (var prop in key) { this.data(prop, key[prop]); }
+					return this; // chainable with ({key: val}) signature
 				}
 				
-				var elm = null,
-					i = this.length,
-					index = null;
-				// uses private class-scoped variables: dataCache, dataPropName, dataIndex
+				var index,
+					elm;
+					// uses private class-scoped variables: dataCache, dataPropName, dataIndex
 				
-				while (i--) {
-					elm = this[i];
-					
-					if (elm[dataPropName] === undefined) {
-						elm[dataPropName] = dataIndex;
-						dataCache[dataIndex++] = {};
-					}
-					
-					index = elm[dataPropName];
-					
-					// TODO - need to defend against reserved words being used as keys?
-					switch (arguments.length) {
-						case 0:
-							return dataCache[index];
-						case 1:
-							return dataCache[index][key];
-						case 2:
+				switch (arguments.length) {
+					case 0: // getting entire cache from first node
+						if (this[0] === undefined) { return undefined; }
+						index = this[0][dataPropName] || dataIndex++;
+						return dataCache[index] || (dataCache[index] = {}); // create a new cache when reading entire cache
+					case 1:  // getting val from first node
+						if (this[0] === undefined) { return undefined; }
+						index = this[0][dataPropName]; // don't create a new cache when reading just a specific val
+						return index? dataCache[index][key] : undefined;
+					case 2: // setting key:val on every node
+						// TODO - need to defend against reserved words being used as keys?
+						for (var i = this.length; i--;) {
+							elm = this[i];
+							
+							if ( !(index = elm[dataPropName]) ) { // assumes index is always > 0
+								index = dataIndex++;
+								
+								elm[dataPropName] = index;
+								dataCache[index] = {};
+							}
 							dataCache[index][key] = val;
-							break;
-						default:
-							throw new Error("glow.dom.NodeList#data expects 2 or less arguments, not "+arguments.length+".");
-					}
+						}
+						
+						return this; // chainable with (key, val) signature
+					default:
+						throw new Error("glow.dom.NodeList#data expects 2 or less arguments, not "+arguments.length+".");
 				}
 			},
-			
-			// TODO - clone() and destroy() need to handle attached data
 			
 			/**
 			@name glow.dom.NodeList#removeData
@@ -3107,11 +3118,11 @@
 			
 			@param {String} [key] The name of the value in glow's data store for the NodeList item.
 			*/
-			removeData: function (key) {
-				var elm = null,
+			removeData: function (key) { /*debug*///console.log("removeData("+key+")");
+				var elm,
 					i = this.length,
-					index = null;
-				// uses private class-scoped variables: dataCache, dataPropName
+					index;
+					// uses private class-scoped variables: dataCache, dataPropName
 				
 				while (i--) {
 					elm = this[i];
@@ -3120,16 +3131,17 @@
 					if (index !== undefined) {
 						switch (arguments.length) {
 							case 0:
-								delete dataCache[index];
+								dataCache[index] = undefined;
+								elm[dataPropName] = undefined;
 								try {
 									delete elm[dataPropName]; // IE 6 goes wobbly here
 								}
 								catch(e) { // remove expando from IE 6
-									elm[dataPropName] = undefined;
 									elm.removeAttribute && elm.removeAttribute(dataPropName);
 								}
 								break;
 							case 1:
+								dataCache[index][key] = undefined;
 								delete dataCache[index][key];
 								break;
 							default:
@@ -3137,6 +3149,8 @@
 						}
 					}
 				}
+				
+				return this; // chainable
 			},
 
 			/**
