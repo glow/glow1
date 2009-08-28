@@ -2222,7 +2222,34 @@ t.test("glow.dom.NodeList#position", function() {
 	node.destroy();	
 });
 
-/*-----------------------------------------------------------------------------*/
+t.test("glow.dom.NodeList#scrollLeft & scrollTop", function() {
+	t.expect(6);
+	
+	var testElm = glow.dom.create(' \
+		<div style="width:300px; height:200px; overflow:scroll; zoom:1;"> \
+			<div style="width:2000px;height:2000px"></div> \
+		</div> \
+	').appendTo(document.body);
+	
+	// set scroll positions to 0,0
+	// setting scrollLeft twice to test chaining
+	testElm.scrollLeft(10).scrollTop(0).scrollLeft(0);
+	
+	t.equals( testElm.scrollTop(), 0, 'scrollTop' );
+	t.equals( testElm.scrollLeft(), 0, 'scrollLeft' );
+	
+	testElm.scrollLeft(30);
+	
+	t.equals( testElm.scrollTop(), 0, 'scrollTop' );
+	t.equals( testElm.scrollLeft(), 30, 'scrollLeft' );
+	
+	testElm.scrollTop(50);
+	
+	t.equals( testElm.scrollTop(), 50, 'scrollTop' );
+	t.equals( testElm.scrollLeft(), 30, 'scrollLeft' );
+	
+	testElm.destroy();
+});
 
 t.module("glow.dom.NodeList#data");
 

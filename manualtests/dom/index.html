@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>glow.dom</title>
+	<script type="text/javascript" src="../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
+		);
+	// ]]></script>
+	
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.data', 'glow.dom', 'glow.events'])</script>
+	
+	<style type="text/css">
+		#scroll1 {
+			width: 300px;
+			height: 200px;
+			overflow: scroll;
+			zoom: 1;
+			position: relative;
+			background: #ccc;
+		}
+		#scroll1Inner {
+			width: 1000px;
+			height: 1000px;
+		}
+		#scroll1Test1 {
+			position: absolute;
+			width: 15px;
+			height: 15px;
+			background: green;
+			left: 100px;
+			top: 200px;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>glow.dom</h1>
+	
+	<h2>glow.dom.NodeList#scrollLeft &amp; scrollTop on an element</h2>
+	
+	<p>
+		This is provided as a manual test to ensure the element visually scrolls
+	</p>
+	
+	<ul>
+		<li><a href="#" id="scroll1Get">Get the current scroll position of the element below</a></li>
+		<li>It should be 'Left: 0, Top: 0' when the scrollbars are at the far left &amp; top</li>
+		<li><a href="#" id="scroll1Set100-200">Set the scroll position to 'Left: 100, Top: 200'</a></li>
+		<li>A green box should appear in the top left of the element</li>
+		<li>Get the scroll position again, it should read 'Left: 100, Top: 200'</li>
+		<li><a href="#" id="scroll1Set3000-3000">Set the scroll position to 'Left: 3000, Top: 3000'</a></li>
+		<li>The element should scroll to the bottom right</li>
+	</ul>
+	
+	<div id="scroll1">
+		<div id="scroll1Inner"></div>
+		<div id="scroll1Test1"></div>
+	</div>
+	
+	<script type="text/javascript" class="showSrc">
+		var scroll1 = glow.dom.get('#scroll1');
+		
+		glow.events.addListener('#scroll1Get', 'click', function() {
+			manualTests.log( 'Left: ' + scroll1.scrollLeft() + ', Top: ' + scroll1.scrollTop() );
+			return false;
+		});
+		
+		glow.events.addListener('#scroll1Set100-200', 'click', function() {
+			scroll1.scrollLeft(100).scrollTop(200);
+			return false;
+		});
+		
+		glow.events.addListener('#scroll1Set3000-3000', 'click', function() {
+			scroll1.scrollLeft(3000).scrollTop(3000);
+			return false;
+		});
+		
+	</script>
+	
+	<h2>glow.dom.NodeList#scrollLeft &amp; scrollTop on the window</h2>
+
+	<ul>
+		<li><a href="#" id="scroll2AddElm">Give this window some scrollbars</a></li>
+		<li><a href="#" id="scroll2Get">Get the current scroll position of the window</a></li>
+		<li>It should be 'Left: 0, Top: 0' when the scrollbars are at the far left &amp; top</li>
+		<li><a href="#" id="scroll2Set100-200">Set the scroll position to 'Left: 100, Top: 200'</a></li>
+		<li>Get the scroll position again, it should read 'Left: 100, Top: 200'</li>
+		<li><a href="#" id="scroll2Set3000-3000">Set the scroll position to 'Left: 3000, Top: 3000'</a></li>
+		<li>The window should scroll to the bottom right</li>
+	</ul>
+	
+	<script type="text/javascript" class="showSrc">
+		var win = glow.dom.get(window);
+		
+		glow.events.addListener('#scroll2AddElm', 'click', function() {
+			glow.dom.create('<div style="width:2000px; height:1000px"></div>').appendTo(document.body);
+			return false;
+		});
+		
+		glow.events.addListener('#scroll2Get', 'click', function() {
+			manualTests.log( 'Left: ' + win.scrollLeft() + ', Top: ' + win.scrollTop() );
+			return false;
+		});
+		
+		glow.events.addListener('#scroll2Set100-200', 'click', function() {
+			win.scrollTop(200).scrollLeft(100);
+			return false;
+		});
+		
+		glow.events.addListener('#scroll2Set3000-3000', 'click', function() {
+			win.scrollLeft(3000).scrollTop(3000);
+			return false;
+		});
+		
+	</script>
+	
+	
+	<script type="text/javascript">manualTests.showSrc();</script>
+	<script type="text/javascript">manualTests.log('Logging enabled');</script>
+</body>
+</html>
