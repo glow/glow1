@@ -218,7 +218,8 @@
 		 */
 		function init(container, opts) {
 			var that = this; // used in callbacks to refer to myself
-
+			
+			if (this.items.length == 0) { return; }
 			// calculate the view size if it isn't given, and size the view window
 			// we absolutely position the item for a moment so it shrinks to fit
 			var oldPositionVal = this.items[0].style.position;
@@ -949,9 +950,11 @@
 		Carousel.prototype.visibleIndexes = function() {
 			var leftmost = this._visibleIndexFirst();
 			var visibleIndexes = [];
-			for (var i = 0, l = this._opts.size; (i < l) && (leftmost+i < this._countRealItems); i++) {
+
+			for (var i = 0, l = this._opts.size; (i < l) /*&& (leftmost+i < this._countRealItems)*/; i++) {
 				visibleIndexes.push((leftmost+i) % this._countReal);
 			}
+
 			return visibleIndexes;
 		}
 		
