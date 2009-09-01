@@ -1,5 +1,14 @@
 t.module("glow.anim");
 
+t.test("Load DOM", function() {
+  t.expect(1);
+  t.stop();
+  glow.ready(function() {
+    t.ok(glow.isReady, "Document Ready");
+    t.start();
+  });
+});
+
 t.test("glow.anim.Animation events", function() {
 	t.expect(12);
 	var events = glow.events;
@@ -171,4 +180,21 @@ t.test("glow.anim.SlideDown SlideDown", function() {
 			t.start();
 		} 
 	});
+});
+
+t.test('glow.anim.css background colour', function() {
+	t.expect(2);
+	t.stop();
+	
+	var elm = glow.dom.create('<div style="background:#0fa"></div>').appendTo(document.body);
+	var myAnim = glow.anim.css(elm, 0.5, {
+		'background-color': '#05a'
+	}, {
+		onComplete: function() {
+			t.ok(true, 'animation complete');
+			t.start();
+		}
+	});
+	t.ok(myAnim, 'animation created');
+	myAnim.start();
 });
