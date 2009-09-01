@@ -667,7 +667,7 @@
 				}
 				//this returns cascaded values so needs fixing
 				r = String(elmCurrentStyle[toStyleProp(prop)]);
-				if (/\d+[a-z%]+$/i.test(r) && prop != "font-size") {
+				if (/^\-\d+[a-z%]+$/i.test(r) && prop != "font-size") {
 					r = getPixelValue(elm, r, usesYAxis.test(prop)) + "px";
 				}
 			}
