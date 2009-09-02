@@ -79,8 +79,9 @@ glow.forms.Form = function(formNode, opts) { /*debug*///console.log("glow.forms.
 		this.formNode,
 		"submit",
 		function(){
+			thisForm._allowSubmit = false;
 			thisForm.validate('submit');
-			return false;
+			return thisForm._allowSubmit;
 		}
 	);
 }
@@ -117,7 +118,7 @@ glow.forms.Form.prototype.validate = function(eventName, fieldName) { /*debug*//
 glow.forms.Form.prototype._nextTest = function() { /*debug*///console.log("glow.forms.Form#_nextTest()");
 	this._testCur++;
 	if (this._testCur >= this._fields[this._fieldCur]._tests.length) { // run out of tests for the current field?
-		if (!this._nextField()) return false;
+		if (!this._nextField()) return;
 	}
 
 	var currentTest = this._fields[this._fieldCur]._tests[this._testCur]; // shortcut
@@ -180,11 +181,13 @@ glow.forms.Form.prototype._nextField = function() { /*debug*///console.log("glow
 		this._fieldCur = 0;
 		// ready to fire the validate event now
 		glow.events.fire(this, "validate", this._result);
-		if (this.eventName == "submit" && this._result && !this._result.defaultPrevented()) this.formNode[0].submit();
-		return false;
+		if (this.eventName == "submit" && this._result && !this._result.defaultPrevented()) {
+			this._allowSubmit = true;
+		}
+		return false; // don't keep going
 	}
 
-	return true;
+	return true; // do keep going
 }
 
 /**
