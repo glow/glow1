@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>glow.forms</title>
+	<script type="text/javascript" src="../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
+		);
+	// ]]></script>
+	
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.forms'])</script>
+</head>
+
+<body>
+	<h1>glow.forms</h1>
+	
+	<h2>Test Title</h2>
+	
+	<p>Issue #29 - expando named submit breaks validation.</p>
+	
+	<form action="#" onsubmit="manualTests.log('Form.submit handler ran.');" id="myFormElement">
+		<p>
+			<label>
+				Name:
+				<input name="name" id="name" type="text" />
+			</label>
+		</p>
+		
+		<p>
+			<label>
+				Email Address:
+				<input name="email" id="email" type="text" />
+			</label>
+		</p>
+		
+		<!--script type="text/javascript">
+			manualTests.log("original submit is: "+document.forms[0].submit);
+		</script-->
+		
+		<p>
+			<label>
+				Will you submit to receiving our newsletter?
+				<input name="submit" id="submit" type="checkbox" />
+			</label>
+		</p>
+		
+		<p>
+			<label>
+				Sign Up:
+				<input name="go_go_go" type="submit" value="Do It!" />
+			</label>
+		</p>
+	</form>
+	
+	<!--script type="text/javascript">
+		manualTests.log("current submit is: "+document.forms[0].submit);
+		
+		document.forms[0].submit.parentNode.removeChild(document.forms[0].submit);
+		delete document.forms[0].submit;
+		
+		manualTests.log("restored submit is: "+document.forms[0].submit);
+	</script-->
+	
+	<script type="text/javascript" class="showSrc">
+		var myForm = new glow.forms.Form("#myFormElement");
+		myForm
+		.addTests(
+			"name",
+			[
+				"custom",
+				{
+					arg: function(values, opts, callback, formData) {
+						for (var i = 0, len = values.length; i < len; i++) {
+							if (values[i] == "Jake") {
+								callback(glow.forms.FAIL, "The name Jake is not allowed.");
+								return;
+							}
+						}
+						callback(glow.forms.PASS, "Good name.");
+					}
+				}
+			]
+		).addTests(
+			"email",
+			["required"]
+		).addTests(
+			"submit",
+			["required", {
+				message: "You MUST submit to our newsletter. Comply!"
+			}]
+		);
+	</script>
+	
+	<script type="text/javascript">manualTests.showSrc();</script>
+</body>
+</html>
