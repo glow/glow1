@@ -2141,7 +2141,7 @@ t.test("glow.dom.NodeList#offset", function() {
 });
 
 t.test("glow.dom.NodeList#position", function() {
-	t.expect(16);
+	t.expect(18);
 	
 	var node = glow.dom.create('' +
 		'<div id="positionTest" style="position:relative; background:#000; zoom:1; overflow: hidden">' +
@@ -2157,6 +2157,9 @@ t.test("glow.dom.NodeList#position", function() {
 			'<div id="pos4" style="position:absolute; height:50px; width:50px; padding:5px; margin:10px; top:5px; left: 5px">' +
 				'<div id="pos4_1" style="height:5px; width:5px; padding:0px; margin:5px"></div>' +
 			'</div>' +
+			'<div id="pos5" style="position:relative; height:140px; width:300px; padding:20px; margin:10px; border: 10px solid red">' +
+				'<div id="pos5_1" style="height:5px; width:5px; padding:0px; margin-top:-10px; background: yellow"></div>' +
+			'</div>' +
 		'</div>' +
 	'').appendTo(document.body);
 	
@@ -2168,6 +2171,7 @@ t.test("glow.dom.NodeList#position", function() {
 	var pos3_1Position = glow.dom.get("#pos3_1").position();
 	var pos4Position = glow.dom.get("#pos4").position();
 	var pos4_1Position = glow.dom.get("#pos4_1").position();
+	var pos5_1Position = glow.dom.get("#pos5_1").position();
 	
 	t.equals(pos1Position.top, 0, "pos1 top position");
 	t.equals(pos1Position.left, 0, "pos1 left position");
@@ -2192,6 +2196,9 @@ t.test("glow.dom.NodeList#position", function() {
 	
 	t.equals(pos4_1Position.top, (glow.env.ie == 6) ? 0 : 5, "pos4_1 top position");
 	t.equals(pos4_1Position.left, 5, "pos4_1 left position");
+	
+	t.equals(pos5_1Position.top, 20, "pos5_1 top position");
+	t.equals(pos5_1Position.left, 20, "pos5_1 left position");
 	
 	node.destroy();	
 });

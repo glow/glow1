@@ -514,9 +514,9 @@
 			*/
 
 			outerBounds: function () {
-				var position = this.el.position(),
-					left = position.left,
-					top = position.top;
+				var offset = this.el.offset(),
+					left = offset.left,
+					top = offset.top;
 				return [
 					top,
 					left + this.borderWidth(),
@@ -548,6 +548,7 @@
 
 			intersectSize: function (that, touches) {
 				var a = this.outerBounds(), b = that.outerBounds();
+				
 				if (touches) {
 					a[1]++; b[1]++; a[2]++; b[2]++;
 				}
