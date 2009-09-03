@@ -247,6 +247,8 @@
 				As in, take up the same space. This must be false if you want your tracks to be separated by a margin.
 			@param {Boolean} [opts.keepItemContentInView=true] Should the content of an item that is partially in view be moved into view?
 			@param {String | glow.dom.NodeList | Function} [opts.itemTemplate] Template for each Item on a Track in the Timetable
+				The {@link glow.widgets.Timetable.Item item} will be passed into the template.
+			
 				<p>A default template is used if this is not provided, which displays just the item title</p>
 				<ul>
 					<li>If a String is provided, it is passed through glow.lang.interpolate, with the Item as the data parameter, and the output is used.</li>
@@ -254,9 +256,13 @@
 					<li>If a function is provided it should take the Item as its only argument, and return the HTML or a NodeList to use.</li>
 				</ul>
 			@param {String | glow.dom.NodeList | Function} [opts.trackHeader] Template for the header section the each Track in the Timetable
+				The {@link glow.widgets.Timetable.Track track} will be passed into the template.
+			
 				Defaults to no header.
 				See itemTemplate above for a description of how the different values are treated.
 			@param {String | glow.dom.NodeList | Function} [opts.trackFooter] Template for the footer section the each Track in the Timetable
+				The {@link glow.widgets.Timetable.Track track} will be passed into the template.
+				
 				Defaults to no footer.
 				See itemTemplate above for a description of how the different values are treated.
 			@param {Function} [opts.onChange] Event shortcut
@@ -497,18 +503,25 @@
 				@param {String} [opts.id=auto-generated] An id for the Track
 				@param {String} [opts.className] A class name for the Track's container element
 				@param {String | glow.dom.NodeList | Function} [opts.itemTemplate] Template for each Item on this Track.
-					<p>Overrides any template specified at Timetable level.</p>
+					The {@link glow.widgets.Timetable.Item item} will be passed into the template.
+					
 					<ol>
 						<li>If a String is provided, it is passed through glow.lang.interpolate, with the Item as the other parameter, and the output is used.</li>
 						<li>If a NodeList is provided it is used directly.</li>
 						<li>If a function is provided it should take the Item as its only argument, and return the HTML or a NodeList to use.</li>
 					</ol>
 				@param {String | glow.dom.NodeList | Function} [opts.trackHeader] Template for the header section the this Track.
-					<p>Overrides any template specified at Timetable level.</p>
-					<p>See itemTemplate above for a description of how the different values are treated.</p>
+					The {@link glow.widgets.Timetable.Track track} will be passed into the template.
+					
+					Overrides any template specified at Timetable level.
+					
+					See itemTemplate above for a description of how the different values are treated.
 				@param {String | glow.dom.NodeList | Function} [opts.trackFooter] Template for the footer section the this Track.
-					<p>Overrides any template specified at Timetable level.</p>
-					<p>See itemTemplate above for a description of how the different values are treated.</p>
+					The {@link glow.widgets.Timetable.Track track} will be passed into the template.
+					
+					Overrides any template specified at Timetable level.
+					
+					See itemTemplate above for a description of how the different values are treated.
 				@param {Object} [opts.data] An object of arbitrary data to be attached to the Track.
 				@param {Boolean} [opts.disabled=false] A disabled track is not rendered in the view
 				@param {Array} [opts.items] An array of Items to create the Track with
@@ -639,6 +652,7 @@
 			@name glow.widgets.Timetable#setItemTemplate
 			@function
 			@description Sets the Default Item template for the Timetable
+				The {@link glow.widgets.Timetable.Item item} will be passed into the template.
 			@param {String | glow.dom.NodeList | function} template The template to use
 			@returns this
 
@@ -654,6 +668,7 @@
 			@name glow.widgets.Timetable#setTrackHeaderTemplate
 			@function
 			@description Sets the default Track header template for the Timetable
+				The {@link glow.widgets.Timetable.Track track} will be passed into the template.
 			@param {String | glow.dom.NodeList | Function} template The template to use
 			@returns this
 
@@ -668,6 +683,7 @@
 			@name glow.widgets.Timetable#setTrackFooterTemplate
 			@function
 			@description Sets the default Track footer template for the Timetable
+				The {@link glow.widgets.Timetable.Track track} will be passed into the template.
 			@param {String | glow.dom.NodeList | Function} template The template to use
 			@returns this
 
@@ -1208,6 +1224,7 @@
 			@name glow.widgets.Timetable.Track#setItemTemplate
 			@function
 			@description Sets the Default Item template for this track
+				The {@link glow.widgets.Timetable.Item item} will be passed into the template.
 			@param {String | glow.dom.NodeList | function} template The template to use
 			@returns this
 
@@ -1223,6 +1240,7 @@
 			@name glow.widgets.Timetable.Track#setTrackHeaderTemplate
 			@function
 			@description Sets the header template for this track
+				The {@link glow.widgets.Timetable.Track track} will be passed into the template.
 			@param {String | glow.dom.NodeList | function} template The template to use
 			@returns this
 
@@ -1238,6 +1256,7 @@
 			@name glow.widgets.Timetable.Track#setTrackFooterTemplate
 			@function
 			@description Sets the footer template for this track
+				The {@link glow.widgets.Timetable.Track track} will be passed into the template.
 			@param {String | glow.dom.NodeList | function} template The template to use
 			@returns this
 
@@ -1360,6 +1379,7 @@
 			@name glow.widgets.Timetable.Item#setItemTemplate
 			@function
 			@description Sets the Default Item template for the Timetable
+				The {@link glow.widgets.Timetable.Item item} will be passed into the template.
 			@param {String | glow.dom.NodeList | function} template The template to use
 			@returns this
 
