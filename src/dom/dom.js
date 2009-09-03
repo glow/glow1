@@ -2062,6 +2062,40 @@
 				for (; i < length; i++) {
 					ret[ri++] = this[i].parentNode;
 				}
+				
+				return r.get(unique(ret));
+			},
+			
+			/**
+			@name glow.dom.NodeList#ancestors
+			@function
+			@description Gets the unique ancestor nodes of each node as a new NodeList.
+
+			@returns {glow.dom.NodeList}
+
+				Returns a new NodeList containing the ancestor nodes, with
+				duplicates removed
+
+			@example
+				// get ancestory elements for anchor elements 
+				var ancestors = glow.dom.get("a").ancestors();
+			*/
+			ancestors: function() {
+				var ret = [],
+					ri = 0,
+					i = 0,
+					length = this.length,
+					elm;
+					
+				for (; i < length; i++) {
+					elm = this[i];
+					
+					while (elm = elm.parentNode) {				
+						ret[ri++] = elm;
+					}								
+					
+				}
+				
 				return r.get(unique(ret));
 			},
 

@@ -1009,6 +1009,24 @@ t.test("glow.dom.NodeList.parent()", function() {
 	t.ok(nodes instanceof glow.dom.NodeList, "Returns NodeList");
 });
 
+t.test("glow.dom.NodeList.ancestors()", function() {
+	t.expect(3);
+	
+	var nodes = glow.dom.get("#simon1").ancestors();
+	var expectedNodes = glow.dom.get("#firstp, #main, dl, body, html");
+	
+	t.isSet(nodes, expectedNodes, "Gets ancestors");
+	
+	var nodes = glow.dom.get("#simon1, #foo").ancestors();
+	var expectedNodes = glow.dom.get("#firstp, #main, dl, body, html");
+	
+	t.isSet(nodes, expectedNodes, "Gets only unique ancestors");
+	
+	nodes = glow.dom.get("#foo, #ap").ancestors();
+	
+	t.ok(nodes instanceof glow.dom.NodeList, "Returns NodeList");
+});
+
 t.test("glow.dom.NodeList.next()", function() {
 	t.expect(4);
 	var nodes = glow.dom.get("#foo, #google").next();
