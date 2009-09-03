@@ -26,11 +26,18 @@
 	
 	<p>Issue #29 - expando named submit breaks validation.</p>
 	
-	<form action="#" onsubmit="manualTests.log('Form.submit handler ran.');" id="myFormElement">
+	<form action="thanks.html" onsubmit="manualTests.log('Form.submit handler ran.'); return false;" id="myFormElement">
 		<p>
 			<label>
-				Name:
+				Your Name:
 				<input name="name" id="name" type="text" />
+			</label>
+		</p>
+		
+		<p>
+			<label>
+				Username:
+				<input name="username" id="username" type="text" /> (not "foo")
 			</label>
 		</p>
 		
@@ -88,10 +95,28 @@
 					}
 				}
 			]
-		).addTests(
+		)
+		.addTests(
+			"username",
+			["ajax", {
+				arg: function(response) {
+					manualTests.log("Server responded: "+response.text());
+					if (response.text().indexOf("OK") != -1) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				},
+				url: "checkname.php?name={username}",
+				message: "That username is not allowed."
+			}]
+		)
+		.addTests(
 			"email",
 			["required"]
-		).addTests(
+		)
+		.addTests(
 			"submit",
 			["required", {
 				message: "You MUST submit to our newsletter. Comply!"
