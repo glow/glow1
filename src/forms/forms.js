@@ -78,10 +78,9 @@ glow.forms.Form = function(formNode, opts) { /*debug*///console.log("glow.forms.
 	glow.events.addListener(
 		this.formNode,
 		"submit",
-		function(){
-			thisForm._allowSubmit = false;
+		function() {
 			thisForm.validate('submit');
-			return thisForm._allowSubmit;
+			return false; // submit() will be called from the nextField method instead
 		}
 	);
 }
@@ -104,21 +103,22 @@ glow.forms.Form.prototype.validate = function(eventName, fieldName) { /*debug*//
 	this._testCur = -1;
 
 	this._fieldName = fieldName;
-	this._nextTest();
+	nextTest.call(this);
 }
 
 /**
 	Advance the test cursor to get the next test in the queue and then run it.
 	@function
-	@name glow.forms.Form#_nextTest
+	@name nextTest
+	@this {glow.forms.Form}
 	@calledBy glow.forms.Form#validate
-	@calledBy glow.forms#_onTestResult
+	@calledBy onTestResult
 	@private
  */
-glow.forms.Form.prototype._nextTest = function() { /*debug*///console.log("glow.forms.Form#_nextTest()");
+var nextTest = function() { /*debug*///console.log("glow.forms.Form#nextTest()");
 	this._testCur++;
 	if (this._testCur >= this._fields[this._fieldCur]._tests.length) { // run out of tests for the current field?
-		if (!this._nextField()) return;
+		if (!nextField.call(this)) return;
 	}
 
 	var currentTest = this._fields[this._fieldCur]._tests[this._testCur]; // shortcut
@@ -136,8 +136,8 @@ glow.forms.Form.prototype._nextTest = function() { /*debug*///console.log("glow.
 	// values should always be an array
 	if (!fieldValue.join) fieldValue = [fieldValue];
 
-	var callback = function(o) { // closure
-		return function() { o._onTestResult.apply(o, arguments) };
+	var callback = function(that) { // closure
+		return function() { onTestResult.apply(that, arguments) };
 	}(this);
 
 	// only run tests that are tied to the eventName being validated
@@ -148,7 +148,7 @@ glow.forms.Form.prototype._nextTest = function() { /*debug*///console.log("glow.
 	) {
 		// skip tests that are not tied to the fieldName being validated
 		if (this._fieldName && this._fieldName != currentTest.name) {
-			this._nextTest();
+			nextTest.call(this);
 			return;
 		}
 
@@ -161,18 +161,19 @@ glow.forms.Form.prototype._nextTest = function() { /*debug*///console.log("glow.
 		glow.forms.tests[currentTest.type](fieldValue, currentTest.opts, callback, this.formNode.val());
 	}
 	else {
-		this._nextTest();
+		nextTest.call(this);
 	}
 }
 
 /**
 	Advance the field cursor to get the next field in the queue.
 	@function
-	@name glow.forms.Form#_nextField
-	@calledBy glow.forms.Form#_nextTest
+	@name nextField
+	@this {glow.forms.Form}
+	@calledBy glow.forms.Form#nextTest
 	@private
  */
-glow.forms.Form.prototype._nextField = function() { /*debug*///console.log("glow.forms.Form#_nextField()");
+var nextField = function() { /*debug*///console.log("glow.forms.Form#nextField()");
 	// start at the beginning of the next field
 	this._fieldCur++;
 	this._testCur = 0;
@@ -181,9 +182,19 @@ glow.forms.Form.prototype._nextField = function() { /*debug*///console.log("glow
 		this._fieldCur = 0;
 		// ready to fire the validate event now
 		glow.events.fire(this, "validate", this._result);
-		if (this.eventName == "submit" && this._result && !this._result.defaultPrevented()) {
-			this._allowSubmit = true;
+		
+		if ( this.eventName == "submit" && this._result && !this._result.defaultPrevented() ) { // ready to submit now
+			try {
+				// we cannot initiate a form submit by simply returning true or false from
+				// this event handler because there may be asynchronous tests still pending at this point,
+				// so we must call submit ourselves, after the last field has finally been tested
+				this.formNode[0].submit();
+			}
+			catch(e) {
+				throw new Error("Glow can't submit the form because the submit function can't be called. Perhaps that form's submit was replaced by an input element named 'submit'?");
+			}
 		}
+		
 		return false; // don't keep going
 	}
 
@@ -191,14 +202,15 @@ glow.forms.Form.prototype._nextField = function() { /*debug*///console.log("glow
 }
 
 /**
-	@name glow.forms.Form#_onTestResult
+	@name onTestResult
 	@function
+	@this {glow.forms.Form}
 	@calledBy glow.forms.tests.*
 	@param {Number} result One of: glow.forms.PASS, glow.forms.FAIL
 	@param {String} message
 	@private
  */
-glow.forms.Form.prototype._onTestResult = function(result, message) { /*debug*///console.log("glow.forms.Form#_onTestResult("+result+", "+message+")");
+var onTestResult = function(result, message) { /*debug*///console.log("glow.forms.Form#onTestResult("+result+", "+message+")");
 	// convert result from a boolean to glow.forms.FAIL / glow.forms.PASS
 	if (typeof result == "boolean") result = (result)? glow.forms.PASS : glow.forms.FAIL;
 
@@ -222,7 +234,7 @@ glow.forms.Form.prototype._onTestResult = function(result, message) { /*debug*//
 		this._testCur = this._fields[this._fieldCur]._tests.length;
 	}
 
-	this._nextTest();
+	nextTest.call(this);
 }
 
 /**
