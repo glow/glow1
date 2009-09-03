@@ -2573,16 +2573,16 @@
 							- docElm.clientLeft
 					};
 				} else { //damnit, let's go the long way around
-					var top = 0,
-						left = 0,
+					var top = elm.offsetTop,
+						left = elm.offsetLeft,
 						originalElm = elm,
 						nodeNameLower,
 						//does the parent chain contain a position:fixed element
 						involvesFixedElement = false,
-						offsetParentBeforeBody;
+						offsetParentBeforeBody = elm;
 
 					//add up all the offset positions
-					do {
+					while (elm = elm.offsetParent) {
 						left += elm.offsetLeft;
 						top += elm.offsetTop;
 
@@ -2591,18 +2591,17 @@
 							involvesFixedElement = true;
 						}
 
-						//gecko & webkit (safari 3) don't add on the border for absolutely positioned items
+						//gecko & webkit (safari 3) don't add on the border for positioned items
 						if (env.gecko || env.webkit > 500) {
-							left += parseInt(getCssValue(elm, "border-left-width"));
-							top += parseInt(getCssValue(elm, "border-top-width"));
+							left += parseInt(getCssValue(elm, "border-left-width")) || 0;
+							top  += parseInt(getCssValue(elm, "border-top-width"))  || 0;
 						}
 
 						//we need the offset parent (before body) later
 						if (elm.nodeName.toLowerCase() != "body") {
 							offsetParentBeforeBody = elm;
 						}
-
-					} while (elm = elm.offsetParent);
+					}
 
 					//deduct all the scroll offsets
 					elm = originalElm;

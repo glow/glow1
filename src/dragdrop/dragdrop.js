@@ -941,6 +941,7 @@
 				if (this._placeholder || this._dropIndicator) {
 					el.remove();
 				}
+				
 				if (origPos == 'static' && offset.y == startOffset.y && offset.x == startOffset.x) {
 					el.css('position', 'static');
 					el.css('left', '');

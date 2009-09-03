@@ -2108,6 +2108,69 @@ t.test("Load DOM", function() {
 });
 
 t.test("glow.dom.NodeList#offset", function() {
+	t.expect(18);
+	
+	var node = glow.dom.create('' +
+		'<div id="offsetTest" style="position:absolute; top:0; left:0; background:#000; zoom:1; overflow: hidden">' +
+			'<div id="elm1" style="position:relative; height:120px; width:300px; padding:20px; margin: 0 10px 10px 10px">' +
+				'<div id="elm1_1" style="height:5px; width:5px; padding:5px; border:5px solid #000"></div>' +
+			'</div>' +
+			'<div id="elm2" style="position:relative; height:140px; width:300px; padding:20px; margin:10px; border: 10px solid red">' +
+				'<div id="elm2_1" style="height:5px; width:5px; padding:20px; border:5px solid #000"></div>' +
+			'</div>' +
+			'<div id="elm3" style="height:200px; width:130px; padding:20px; margin:10px">' +
+				'<div id="elm3_1" style="height:5px; width:5px; padding:20px; border:5px solid #000; margin: 10px; background: #000"></div>' +
+			'</div>' +
+			'<div id="elm4" style="position:absolute; height:50px; width:50px; padding:5px; margin:10px; top:5px; left: 5px">' +
+				'<div id="elm4_1" style="height:5px; width:5px; padding:0px; margin:5px"></div>' +
+			'</div>' +
+			'<div id="elm5" style="position:relative; height:140px; width:300px; padding:20px; margin:10px; border: 10px solid red">' +
+				'<div id="elm5_1" style="height:5px; width:5px; padding:0px; margin-top:-10px; background: yellow"></div>' +
+			'</div>' +
+		'</div>' +
+	'').appendTo(document.body);
+	
+	var elm1Offset = glow.dom.get("#elm1").offset();
+	var elm1_1Offset = glow.dom.get("#elm1_1").offset();
+	var elm2Offset = glow.dom.get("#elm2").offset();
+	var elm2_1Offset = glow.dom.get("#elm2_1").offset();
+	var elm3Offset = glow.dom.get("#elm3").offset();
+	var elm3_1Offset = glow.dom.get("#elm3_1").offset();
+	var elm4Offset = glow.dom.get("#elm4").offset();
+	var elm4_1Offset = glow.dom.get("#elm4_1").offset();
+	var elm5_1Offset = glow.dom.get("#elm5_1").offset();
+	
+	t.equals(elm1Offset.top, 0, "elm1 top offset");
+	t.equals(elm1Offset.left, 10, "elm1 left offset");
+	
+	t.equals(elm1_1Offset.top, 20, "elm1_1 top offset");
+	t.equals(elm1_1Offset.left, 30, "elm1_1 left offset");
+	
+	t.equals(elm2Offset.top, 170, "elm2 top offset");
+	t.equals(elm2Offset.left, 10, "elm2 left offset");
+	
+	t.equals(elm2_1Offset.top, 200, "elm2_1 top offset");
+	t.equals(elm2_1Offset.left, 40, "elm2_1 left offset");
+	
+	t.equals(elm3Offset.top, 380, "elm3 top offset");
+	t.equals(elm3Offset.left, 10, "elm3 left offset");
+	
+	t.equals(elm3_1Offset.top, (glow.env.ie < 8) ? 400 : 410, "elm3_1 top offset");
+	t.equals(elm3_1Offset.left, 40, "elm3_1 left offset");
+	
+	t.equals(elm4Offset.top, 15, "elm4 top offset");
+	t.equals(elm4Offset.left, 15, "elm4 left offset");
+	
+	t.equals(elm4_1Offset.top, (glow.env.ie < 8) ? 20 : 25, "elm4_1 top offset");
+	t.equals(elm4_1Offset.left, 25, "elm4_1 left offset");
+	
+	t.equals(elm5_1Offset.top, 650, "elm5_1 top offset");
+	t.equals(elm5_1Offset.left, 40, "elm5_1 left offset");
+	
+	node.destroy();	
+});
+
+t.test("glow.dom.NodeList#offset with scrolling", function() {
   t.expect(4);
   var node = glow.dom.create("" +
 	'<div id="offsetTests" style="position:absolute;top:0;left:0;">' +
@@ -2188,13 +2251,13 @@ t.test("glow.dom.NodeList#position", function() {
 	t.equals(pos3Position.top, 370, "pos3 top position");
 	t.equals(pos3Position.left, 0, "pos3 left position");
 	
-	t.equals(pos3_1Position.top, (glow.env.ie == 6) ? 390 : 400, "pos3_1 top position");
+	t.equals(pos3_1Position.top, (glow.env.ie < 8) ? 390 : 400, "pos3_1 top position");
 	t.equals(pos3_1Position.left, 30, "pos3_1 left position");
 	
 	t.equals(pos4Position.top, 5, "pos4 top position");
 	t.equals(pos4Position.left, 5, "pos4 left position");
 	
-	t.equals(pos4_1Position.top, (glow.env.ie == 6) ? 0 : 5, "pos4_1 top position");
+	t.equals(pos4_1Position.top, (glow.env.ie < 8) ? 0 : 5, "pos4_1 top position");
 	t.equals(pos4_1Position.left, 5, "pos4_1 left position");
 	
 	t.equals(pos5_1Position.top, 20, "pos5_1 top position");
