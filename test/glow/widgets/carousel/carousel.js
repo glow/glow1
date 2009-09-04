@@ -34,8 +34,8 @@ t.test("new glow.widgets.Carousel with items", function() {
 			});
 		
 	t.equals(t_carousel.items.length, 9, 'Correct list items (3 are clones)')
-        t.ok(typeof window.t_carouselul, "The ul with 6 li is defined.");
-	t.ok(typeof window.t_carousel, "The carousel is defined.");
+        t.ok(window.t_carouselul, "The ul with 6 li is defined.");
+	t.ok(window.t_carousel, "The carousel is defined.");
        
 });
 
