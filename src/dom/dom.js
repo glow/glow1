@@ -2098,13 +2098,14 @@
 					length = this.length,
 					elm;
 					
-				for (; i < length; i++) {
-					elm = this[i];
+				while (i < length) {
+					elm = this[i].parentNode;
 					
-					while (elm = elm.parentNode) {				
+					while (elm && elm.nodeType == 1) {							
 						ret[ri++] = elm;
+						elm = elm.parentNode;
 					}								
-					
+					i++;
 				}
 				
 				return r.get(unique(ret));

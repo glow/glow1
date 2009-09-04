@@ -1028,6 +1028,7 @@ t.test("glow.dom.NodeList.ancestors()", function() {
 	
 	var nodes = glow.dom.get("#simon1, #foo").ancestors();
 	var expectedNodes = glow.dom.get("#firstp, #main, dl, body, html");
+      
 	
 	t.isSet(nodes, expectedNodes, "Gets only unique ancestors");
 	
