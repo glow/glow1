@@ -2250,13 +2250,16 @@ t.test("glow.dom.NodeList#position", function() {
 });
 
 t.test("glow.dom.NodeList#scrollLeft & scrollTop", function() {
-	t.expect(6);
+	t.expect(8);
 	
 	var testElm = glow.dom.create(' \
 		<div style="width:300px; height:200px; overflow:scroll; zoom:1;"> \
 			<div style="width:2000px;height:2000px"></div> \
 		</div> \
 	').appendTo(document.body);
+	
+	t.equals( typeof testElm.scrollLeft(), 'number', 'scrollLeft returns number' );
+	t.equals( typeof testElm.scrollTop(), 'number', 'scrollTop returns number' );
 	
 	// set scroll positions to 0,0
 	// setting scrollLeft twice to test chaining

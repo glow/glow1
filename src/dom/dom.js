@@ -803,20 +803,6 @@
 			}
 			return r.get(ret);
 		}
-
-		/*
-		 get the scroll offset. TODO: This should be replaced
-		 with a public function which works on all elements
-		*/
-		function scrollPos() {
-			var win = window,
-				docElm = env.standardsMode ? doc.documentElement : docBody;
-
-			return {
-				x: docElm.scrollLeft || win.pageXOffset || 0,
-				y: docElm.scrollTop || win.pageYOffset || 0
-			};
-		}
 		
 		/*
 		 Get the 'real' positioned parent for an element, otherwise return null.
@@ -844,18 +830,18 @@
 		 @private
 		 @description Get the scrollTop / scrollLeft of a particular element
 		 @param {Element} elm Element (or window object) to get the scroll position of
-		 @param {String} axis Must be "Top" or "Left"
+		 @param {Boolean} isLeft True if we're dealing with left scrolling, otherwise top
 		*/
-		function getScrollOffset(elm, axis) {
+		function getScrollOffset(elm, isLeft) {
 			var r,			
-				scrollProp = 'scroll' + axis;
+				scrollProp = 'scroll' + (isLeft ? "Left" : "Top");
 			
 			// are we dealing with the window object or the document object?
 			if (elm.window) {
 				// get the scroll of the documentElement or the pageX/Yoffset
 				// - some browsers use one but not the other
 				r = elm.document.documentElement[scrollProp]
-					|| (axis == 'Left' ? elm.pageXOffset : elm.pageYOffset)
+					|| (isLeft ? elm.pageXOffset : elm.pageYOffset)
 					|| 0;
 			}
 			else {
@@ -869,22 +855,44 @@
 		 @private
 		 @description Set the scrollTop / scrollLeft of a particular element
 		 @param {Element} elm Element (or window object) to get the scroll position of
-		 @param {String} axis Must be "Top" or "Left"
+		 @param {Boolean} isLeft True if we're dealing with left scrolling, otherwise top
 		 @param {Number} newVal New scroll value
 		*/
-		function setScrollOffset(elm, axis, newVal) {
-			var axisIsLeft = (axis == 'Left');
+		function setScrollOffset(elm, isLeft, newVal) {
 			
 			// are we dealing with the window object or the document object?
 			if (elm.window) {
 				// we need to get whichever value we're not setting
 				elm.scrollTo(
-					axisIsLeft  ? newVal : getScrollOffset(elm, 'Left'),
-					!axisIsLeft ? newVal : getScrollOffset(elm, 'Top')
+					isLeft  ? newVal : getScrollOffset(elm, true),
+					!isLeft ? newVal : getScrollOffset(elm, false)
 				);
 			}
 			else {
-				elm['scroll' + axis] = newVal;
+				elm['scroll' + (isLeft ? "Left" : "Top")] = newVal;
+			}
+		}
+		
+		/**
+		 @name glow.dom-scrollOffset
+		 @private
+		 @description Set/get the scrollTop / scrollLeft of a NodeList
+		 @param {glow.dom.NodeList} nodeList Elements to get / set the position of
+		 @param {Boolean} isLeft True if we're dealing with left scrolling, otherwise top
+		 @param {Number} [val] Val to set (if not provided, we'll get the value)
+		 
+		 @returns NodeList for sets, Number for gets
+		*/
+		function scrollOffset(nodeList, isLeft, val) {
+			var i = nodeList.length;
+			
+			if (val !== undefined) {
+				while (i--) {
+					setScrollOffset(nodeList[i], isLeft, val);
+				}
+				return nodeList;
+			} else {
+				return getScrollOffset(nodeList[0], isLeft);
 			}
 		}
 
@@ -2481,12 +2489,12 @@
 			/**
 			@name glow.dom.NodeList#scrollLeft
 			@function
-			@description Gets / sets the number of pixels the element has scrolled.
+			@description Gets/sets the number of pixels the element has scrolled horizontally
 				
-				Get the value by calling without parameters, set by providing a new
+				Get the value by calling without arguments, set by providing a new
 				value.
 				
-				To get / set the scroll position of the window, use this method on
+				To get/set the scroll position of the window, use this method on
 				a nodelist containing the window object.
 
 			@param {Number} [val] New left scroll position
@@ -2497,7 +2505,8 @@
 
 			@example
 				// get the scroll left value of #myDiv
-				glow.dom.get("#myDiv").scrollLeft();
+				var scrollPos = glow.dom.get("#myDiv").scrollLeft();
+				// scrollPos is a number, eg: 45
 
 			@example
 				// set the scroll left value of #myDiv to 20
@@ -2505,32 +2514,22 @@
 
 			@example
 				// get the scrollLeft of the window
-				glow.dom.get(window).scrollLeft()
-
+				var scrollPos = glow.dom.get(window).scrollLeft();
+				// scrollPos is a number, eg: 45
 			*/
 			scrollLeft: function(val) {
-				var i = this.length,
-					axis = 'Left';
-				
-				if (val !== undefined) {
-					while (i--) {
-						setScrollOffset(this[i], axis, val);
-					}
-					return this;
-				} else {
-					return getScrollOffset(this[0], axis);
-				}
+				return scrollOffset(this, true, val);
 			},
 			
 			/**
 			@name glow.dom.NodeList#scrollTop
 			@function
-			@description Gets / sets the number of pixels the element has scrolled.
+			@description Gets/sets the number of pixels the element has scrolled vertically
 				
-				Get the value by calling without parameters, set by providing a new
+				Get the value by calling without arguments, set by providing a new
 				value.
 				
-				To get / set the scroll position of the window, use this method on
+				To get/set the scroll position of the window, use this method on
 				a nodelist containing the window object.
 
 			@param {Number} [val] New top scroll position
@@ -2541,7 +2540,8 @@
 
 			@example
 				// get the scroll top value of #myDiv
-				glow.dom.get("#myDiv").scrollTop();
+				var scrollPos = glow.dom.get("#myDiv").scrollTop();
+				// scrollPos is a number, eg: 45
 
 			@example
 				// set the scroll top value of #myDiv to 20
@@ -2549,21 +2549,11 @@
 
 			@example
 				// get the scrollTop of the window
-				glow.dom.get(window).scrollTop()
-
+				var scrollPos = glow.dom.get(window).scrollTop();
+				// scrollPos is a number, eg: 45
 			*/
 			scrollTop: function(val) {
-				var i = this.length,
-					axis = 'Top';
-				
-				if (val !== undefined) {
-					while (i--) {
-						setScrollOffset(this[i], axis, val);
-					}
-					return this;
-				} else {
-					return getScrollOffset(this[0], axis);
-				}
+				return scrollOffset(this, false, val);
 			},
 			
 			/**
@@ -2779,7 +2769,10 @@
 			offset: function () {
 				// http://weblogs.asp.net/bleroy/archive/2008/01/29/getting-absolute-coordinates-from-a-dom-element.aspx - great bit of research, most bugfixes identified here (and also jquery trac)
 				var elm = this[0],
-					docScrollPos = scrollPos();
+					docScrollPos = {
+						x: getScrollOffset(window, true),
+						y: getScrollOffset(window, false)
+					}
 
 				//this is simple(r) if we can use 'getBoundingClientRect'
 				// Sorry but the sooper dooper simple(r) way is not accurate in Safari 4
