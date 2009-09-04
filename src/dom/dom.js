@@ -952,12 +952,11 @@
 			HTML must be wrapped in HTML tags).
 
 		@param {Object} [opts] An optional options object
-			@param {Object} [opts.interpolate] Data for a call to glow.lang.interpolate
+			@param {Object} [opts.interpolate] Data for a call to {@link glow.lang.interpolate}
 				If this option is set, the String html parameter will be passed through glow.lang.interpolate with this as the data and no options
 				If glow.lang.interpolates options are required, an explicit call must be made
-			@param {Boolean} [opts.escapeHtml] Escape html injected from the interpolate object.
-				This will let you safely inject text into an HTML template. If the
-				injected text cotains special HTML characters they will be escaped.
+			@param {Boolean} [opts.escapeHtml] Escape HTML in the interpolate data object.
+				See {@link glow.lang.interpolate}
 
 		@returns {glow.dom.NodeList}
 
@@ -980,9 +979,13 @@
 				rLen = 0,
 				toCheck;
 			
-			opts = opts || {};
+			// set default options
+			opts = glow.lang.apply({
+				interpolate: null,
+				escapeHtml: false
+			}, opts || {});
 			
-			if(opts.interpolate != undefined) {
+			if (opts.interpolate) {
 				sHtml = lang.interpolate(sHtml, opts.interpolate, {
 					escapeHtml: opts.escapeHtml
 				});

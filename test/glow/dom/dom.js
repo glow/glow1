@@ -256,7 +256,7 @@ t.test("glow.dom.create", function () {
 });
 
 t.test("glow.dom.create - interpolate", function() {
-	t.expect(4);
+	t.expect(5);
 	
 	var iNodes = glow.dom.create("<div>{foo}</div>", {
 		interpolate: {foo: "FOO"}
@@ -284,6 +284,15 @@ t.test("glow.dom.create - interpolate", function() {
 	
 	t.equals(elm.get("span, strong, h1").length, 0, "HTML escaped, no unwanted elements created");
 	t.equals(elm.text(), 'My favourite elements are <strong>strong</strong> & <h1>h1</h1>. Do you have any cake? Here\'s a <span>. This {placeholder} does not exist.', "HTML escaped, text retained");
+	
+	// test escapeHtml doesn't fail when interpolate isn't used
+	var moreNodes = glow.dom.create('<div>Hello</div>', {
+		escapeHtml: true
+	});
+	
+	t.equals(moreNodes.html(), "Hello", "Simple Node Created");
+	
+	iNodes.destroy();
 });
 
 t.test("Load DOM", function() {
