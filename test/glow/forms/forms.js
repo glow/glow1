@@ -753,6 +753,35 @@ t.test("glow.forms.tests.ajax", function() {
 	myForm.validate('submit');
 });
 
+t.test("glow.forms Bug: Input element named 'submit' throws error", function() {
+	t.expect(3);
+	
+	var myFormElem = glow.dom.get("#register"),
+		mySubmitElem = document.createElement("INPUT");
+	
+	glow.dom.get(mySubmitElem).attr("type", "text").attr("value", "foo").attr("name", "submit");
+	
+	t.equals(typeof myFormElem[0].submit, "function", "The form's submit property was originally a function.");
+	
+	myFormElem.append(mySubmitElem);
+	
+	t.equals(typeof myFormElem[0].submit, "object", "The form's submit property is not now a function.");
+
+	var myForm = new glow.forms.Form(myFormElem);
+	myForm
+	.addTests(
+		"submit",
+		["required"]
+	);
+	
+	try {
+		myForm.validate("submit");
+	}
+	catch(e) {
+		t.ok(e.message.indexOf("submit function can't be called") > -1, "A meaningful error message is thrown if submit is not a function.");
+	}
+});
+
 t.test("glow.forms manual tests", function() {
 	var $ = glow.dom.get;
 	var writer = {
