@@ -1002,10 +1002,8 @@ Idler.prototype._stop = function() {
 						//events.addListener(that.element[0].contentWindow, 'blur', function () { updateArea.call(that); } );
 					}
 					else {
-						events.addListener(that.contentWindow, 'blur', function () { updateArea.call(that); } );
-						//events.addListener(that.contentWindow, 'focus', function () { updateArea.call(that); } );
+						events.addListener(that.contentWindow.document, 'blur', function () { updateArea.call(that); } );
 						events.addListener(that.contentWindow, 'click', function () { updateArea.call(that); } );
-						events.addListener(that.contentWindow, 'mouseup', function () { updateArea.call(that); } );
 						events.addListener(that.contentWindow, 'keyup', function () { updateArea.call(that); } );
 					}
 					if (glow.env.gecko) {
