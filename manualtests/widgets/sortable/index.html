@@ -18,11 +18,10 @@
 	
 	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.widgets.Sortable'])</script>
 	
-	<style type="text/css">
+	<style type="text/css">	
 		#sortable1 li {
 			cursor: pointer;
 		}
-		
 		#sortable2 .handle {
 			cursor: pointer;
 			background: green;
@@ -33,18 +32,22 @@
 			width: 300px;
 			overflow: hidden;
 		}
-		 #sortable3 .col {
+		#sortable3 .col,
+		#sortable4 .col {
 			background: #555;
 			width: 200px;
 			overflow: hidden;
 		}
-		#sortable3 {
+		#sortable3, #sortable4 {
 			overflow: hidden;
+			zoom: 1;
 		}
-		#sortable3 .col {
+		#sortable3 .col, #sortable4 .col {
 			float: left;
 		}
-		#sortable2 .sortableItem, #sortable3 .sortableItem {
+		#sortable2 .sortableItem,
+		#sortable3 .sortableItem,
+		#sortable4 .sortableItem  {
 			border: 10px solid #ccc;
 			background: #fff;
 			padding: 10px;
@@ -52,11 +55,33 @@
 			height: 50px;
 			width: 240px;
 		}
-		#sortable3 .sortableItem {
+		#sortable3 .sortableItem,
+		#sortable4 .sortableItem {
 			width: 140px;
 		}
 		#sortable3 .sortableItemLarger {
 			height: 75px;
+		}
+		#sortable4 {
+			width: 600px;
+		}
+		#sortable4 .sortableItem {
+			height: 16px;
+			border-width: 2px;
+			width: 156px;
+			font-size: 0.8em;
+		}
+		#sortable4 p {
+			margin: 0;
+		}
+		#sortable4PromoElm {
+			height: 150px;
+			background: #ccc;
+			width: 400px;
+			float: left;
+		}
+		#sortable4 #sortable4ThirdCol {
+			margin-top: -150px;
 		}
 	</style>
 </head>
@@ -195,6 +220,75 @@
 			
 			glow.events.addListener(sortable3, 'sort', function() {
 				manualTests.log('sortable3: sort');
+			});
+		});
+	</script>
+	
+	<h2>Negative margins</h2>
+	
+	<ul>
+		<li>Drag an element from column 1 / 2 to the top of column 3</li>
+	</ul>
+	
+	<div id="sortable4">
+		<div id="sortable4PromoElm">Promo</div>
+		<div style="clear:left"></div>
+		<div class="col">
+			<div class="sortableItem">
+				<p>Sortable item 1.1</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 1.2</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 1.3</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 1.4</p>
+			</div>
+		</div>
+		<div class="col">
+			<div class="sortableItem">
+				<p>Sortable item 2.1</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 2.2</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 2.3</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 2.4</p>
+			</div>
+		</div>
+		<div class="col" id="sortable4ThirdCol">
+			<div class="sortableItem">
+				<p>Sortable item 3.1</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 3.2</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 3.3</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 3.4</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 3.5</p>
+			</div>
+			<div class="sortableItem">
+				<p>Sortable item 3.6</p>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript" class="showSrc">
+		glow.ready(function() {
+			var sortable4 = new glow.widgets.Sortable('#sortable4 > div.col');
+			
+			glow.events.addListener(sortable4, 'sort', function() {
+				manualTests.log('sortable4: sort');
 			});
 		});
 	</script>
