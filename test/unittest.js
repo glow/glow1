@@ -329,7 +329,6 @@ UnitTest.prototype = {
 	skip: function(reason) {
 		reason = reason || "Skipped";
 		this.currentTest.skipped = reason;
-		throw "Test skipped";
 	},	
 	/*
 	Method: ok

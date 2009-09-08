@@ -35,7 +35,7 @@ t.test("Test Embedding", function() {
 	movie.embed();
 	
 	if (!movie.movie) {
-	  t.skip("Flash 9 or greater required");
+	  t.skip("Flash 9 or greater required"); return;
 	}
 	
 	t.ok(movie.movie.nodeName.toLowerCase() == embed_tag, "Movie property references Flash")

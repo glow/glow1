@@ -69,7 +69,7 @@ t.test("glow.net.get aync header setting", function() {
 		onLoad: function(response) {
 			if (/^<!--#printEnv -->/.test(response.text())) {
 				t.start();
-				t.skip("This test requires a web server running mod_include in shtml files");	
+				t.skip("This test requires a web server running mod_include in shtml files"); return;
 			}
 			t.ok(true, "correct callback used");
 			t.ok(/REQUEST_METHOD=GET/.test(response.text()), "Using get method");
@@ -156,7 +156,7 @@ t.test("glow.net.post aync string", function() {
 			onLoad: function(response) {
 				if (/^<!--#printEnv -->/.test(response.text())) {
 					t.start();
-					t.skip("This test requires a web server running mod_include in shtml files");	
+					t.skip("This test requires a web server running mod_include in shtml files"); return;
 				}
 				t.ok(true, "correct callback used");
 				t.equals(/REQUEST_METHOD=(\w+)/.exec(response.text())[1], "POST", "Using post method");
@@ -180,7 +180,7 @@ t.test("glow.net.post aync json", function() {
 			onLoad: function(response) {
 				if (/^<!--#printEnv -->/.test(response.text())) {
 					t.start();
-					t.skip("This test requires a web server running mod_include in shtml files");	
+					t.skip("This test requires a web server running mod_include in shtml files"); return;
 				}
 				t.ok(true, "correct callback used");
 				t.equals(/REQUEST_METHOD=(\w+)/.exec(response.text())[1], "POST", "Using post method");
@@ -264,12 +264,12 @@ function testForRewriteAndHeaders(successCallback) {
 				successCallback();
 			} else {
 				t.start();
-				t.skip("mod_headers not enabled");
+				t.skip("mod_headers not enabled"); return;
 			}
 		},
 		onError: function() {
 			t.start();
-			t.skip("mod_rewrite / htaccess not enabled");
+			t.skip("mod_rewrite / htaccess not enabled"); return;
 		}
 	});
 }
@@ -399,7 +399,7 @@ t.test("glow.net.loadScript aborting", function() {
 		timeout: 2
 	});
 	if (request.completed) {
-		t.skip("Request complete, too late to abort");
+		t.skip("Request complete, too late to abort"); return;
 	}
 	request.abort();
 	
