@@ -58,23 +58,23 @@ t.test("glow.net.get sync", function() {
 	
 });
 
-t.test("glow.net.get aync header setting", function() {
+t.test("glow.net.get async header setting", function() {
 	t.expect(4);
 	t.stop();
-	var request = glow.net.get("testdata/xhr/env.shtml", {
+	var request = glow.net.get("testdata/xhr/requestheaderdump.php", {
 		headers: {
 			"Custom-Header": "thisisatest",
 			"Content-Type": "image/png"
 		},
 		onLoad: function(response) {
-			if (/^<!--#printEnv -->/.test(response.text())) {
+			if ( response.text().slice(0, 2) == '<?' ) {
 				t.start();
-				t.skip("This test requires a web server running mod_include in shtml files"); return;
+				t.skip("This test requires a web server running PHP5"); return;
 			}
 			t.ok(true, "correct callback used");
-			t.ok(/REQUEST_METHOD=GET/.test(response.text()), "Using get method");
-			t.ok(/HTTP_CUSTOM_HEADER=thisisatest/.test(response.text()), "Custom Header Sent");
-			t.ok(/CONTENT_TYPE=image\/png/.test(response.text()), "Content-type Changed");
+			t.ok(/^REQUEST_METHOD: GET/m.test(response.text()), "Using get method");
+			t.ok(/^HTTP_CUSTOM_HEADER: thisisatest/m.test(response.text()), "Custom Header Sent");
+			t.ok(/^CONTENT_TYPE: image\/png/m.test(response.text()), "Content-type Changed");
 			t.start();
 		},
 		onError: function() {
@@ -147,20 +147,20 @@ t.test("glow.net.abort", function() {
 	}, 1000);
 });
 
-t.test("glow.net.post aync string", function() {
+t.test("glow.net.post async string", function() {
 	t.expect(3);
 	t.stop();
-	var request = glow.net.post("testdata/xhr/env.shtml",
+	var request = glow.net.post("testdata/xhr/requestheaderdump.php",
 		"some=postData&blah=hurrah",
 		{
 			onLoad: function(response) {
-				if (/^<!--#printEnv -->/.test(response.text())) {
+				if ( response.text().slice(0, 2) == '<?' ) {
 					t.start();
-					t.skip("This test requires a web server running mod_include in shtml files"); return;
+					t.skip("This test requires a web server running PHP5"); return;
 				}
 				t.ok(true, "correct callback used");
-				t.equals(/REQUEST_METHOD=(\w+)/.exec(response.text())[1], "POST", "Using post method");
-				t.equals(/CONTENT_LENGTH=(\d+)/.exec(response.text())[1], "25", "Correct content length");
+				t.equals( (/^REQUEST_METHOD: (\w+)/m.exec(response.text()) || [,,])[1], "POST", "Using post method" );
+				t.equals( (/^CONTENT_LENGTH: (\d+)/m.exec(response.text()) || [,,])[1], "25",   "Correct content length" );
 				t.start();
 			},
 			onError: function() {
@@ -174,17 +174,17 @@ t.test("glow.net.post aync string", function() {
 t.test("glow.net.post aync json", function() {
 	t.expect(3);
 	t.stop();
-	var request = glow.net.post("testdata/xhr/env.shtml",
+	var request = glow.net.post("testdata/xhr/requestheaderdump.php",
 		{some:"postData", blah:["something", "somethingElse"]},
 		{
 			onLoad: function(response) {
-				if (/^<!--#printEnv -->/.test(response.text())) {
+				if ( response.text().slice(0, 2) == '<?' ) {
 					t.start();
-					t.skip("This test requires a web server running mod_include in shtml files"); return;
+					t.skip("This test requires a web server running PHP5"); return;
 				}
 				t.ok(true, "correct callback used");
-				t.equals(/REQUEST_METHOD=(\w+)/.exec(response.text())[1], "POST", "Using post method");
-				t.equals(/CONTENT_LENGTH=(\d+)/.exec(response.text())[1], "47", "Correct content length");
+				t.equals( (/^REQUEST_METHOD: (\w+)/m.exec(response.text()) || [,,])[1], "POST", "Using post method" );
+				t.equals( (/^CONTENT_LENGTH: (\d+)/m.exec(response.text()) || [,,])[1], "47",   "Correct content length" );
 				t.start();
 			},
 			onError: function() {
@@ -227,6 +227,12 @@ t.test("glow.net.get defering and multiple load events", function() {
 
 t.test("glow.net.get defering and multiple error events", function() {
 	t.expect(2);
+	
+	if (isLocal) {
+		t.skip('Requires web server');
+		return;
+	}
+	
 	t.stop();
 	var errorCallbacks = 0;
 	
@@ -256,24 +262,6 @@ t.test("glow.net.get defering and multiple error events", function() {
 });
 
 
-//the following tests need mod_rewrite and mod_headers. Test for them
-function testForRewriteAndHeaders(successCallback) {
-	glow.net.get("testdata/xhr/testrewrite", {
-		onLoad: function(response) {
-			if (response.header("X-headertest") == "true") {
-				successCallback();
-			} else {
-				t.start();
-				t.skip("mod_headers not enabled"); return;
-			}
-		},
-		onError: function() {
-			t.start();
-			t.skip("mod_rewrite / htaccess not enabled"); return;
-		}
-	});
-}
-
 //test redirects
 for (var i = 1; i < 5; i++) {
 	if (i == 4) i = 7;
@@ -281,20 +269,26 @@ for (var i = 1; i < 5; i++) {
 		t.test("glow.net.get redirect 30" + i, function() {
 			t.expect(2);
 			t.stop();
-			testForRewriteAndHeaders(function() {
-				glow.net.get("testdata/xhr/30" + i, {
-					onLoad: function(response) {
-						t.ok(true, "onLoad called");
-						t.equals(response.text(), "XHR Test Document", "File returned");
+			glow.net.get("testdata/xhr/redirect.php?code=" + i, {
+				onLoad: function(response) {
+					if ( response.text().slice(0,2) == '<?' ) {
 						t.start();
-					},
-					onError: function(response) {
-						t.ok(false, "onLoad called");
-						t.equals(response.text(), "XHR Test Document", "File returned");
-						t.start();
+						t.skip("This test requires a web server running PHP5"); return;
 					}
-				});
-			})
+					t.ok(true, "onLoad called");
+					t.equals(response.text(), "XHR Test Document", "File returned");
+					t.start();
+				},
+				onError: function(response) {
+					if ( response.text().slice(0,2) == '<?' ) {
+						t.start();
+						t.skip("This test requires a web server running PHP5"); return;
+					}
+					t.ok(false, "onLoad called");
+					t.equals(response.text(), "XHR Test Document", "File returned");
+					t.start();
+				}
+			});
 		});
 	})(i);
 }
