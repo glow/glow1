@@ -116,8 +116,8 @@ t.test("multiple", function() {
 	t.selects("a.blog,#main p", ["mark","simon","firstp","ap","sndp","en","sap","first"], "Comma Support");
 });
 
-t.todo("child and adjacent", function() {
-	t.expect(19);
+t.test("child and adjacent", function() {
+	t.expect(7);
 	t.selects("p > a", ["simon1","google","groups","mark","yahoo","simon"], "Child");
 	t.selects("p> a", ["simon1","google","groups","mark","yahoo","simon"], "Child");
 	t.selects("p >a", ["simon1","google","groups","mark","yahoo","simon"], "Child");
@@ -125,51 +125,6 @@ t.todo("child and adjacent", function() {
 	t.selects("p > a.blog", ["mark","simon"], "Child w/ Class");
 	t.selects("code > *", ["anchor1","anchor2"], "All Children");
 	t.selects("#dl p > * > *", ["anchor1","anchor2"], "All Grandchildren");
-	t.selects("a + a", ["groups"], "Adjacent");
-	t.selects("a +a", ["groups"], "Adjacent");
-	t.selects("a+ a", ["groups"], "Adjacent");
-	t.selects("a+a", ["groups"], "Adjacent");
-	t.selects("p + p", ["ap","en","sap"], "Adjacent");
-	t.selects("a + a, code > a", ["groups","anchor1","anchor2"], "Comma, Child, and Adjacent");
-	
-	t.selects("p:first-child", ["firstp","sndp"], "First Child");
-	t.selects("p:nth-child(1)", ["firstp","sndp"], "Nth Child");
-	
-	t.selects("p:last-child", ["sap"], "Last Child");
-	t.selects("a:last-child", ["simon1","anchor1","mark","yahoo","anchor2","simon"], "Last Child");
-	
-	t.selects("#main form#form > *:nth-child(2)", ["text2"], "Nth-child");
-	t.selects("#main form#form > :nth-child(2)", ["text2"], "Nth-child");
-});
-
-t.todo("attributes", function() {
-	t.expect(20);
-	t.selects("a[title]", ["google"], "Attribute Exists");
-	t.selects("*[title]", ["google"], "Attribute Exists");
-	t.selects("[title]", ["google"], "Attribute Exists");
-	
-	t.selects("a[rel='bookmark']", ["simon1"], "Attribute Equals");
-	t.selects('a[rel="bookmark"]', ["simon1"], "Attribute Equals");
-	t.selects("a[rel=bookmark]", ["simon1"], "Attribute Equals");
-	t.selects("#form input[type='hidden'],#form input[type='radio']", ["hidden1","radio1","radio2"], "Multiple Attribute Equals");
-	t.selects("#form input[type=\"hidden\"],#form input[type='radio']", ["hidden1","radio1","radio2"], "Multiple Attribute Equals");
-	t.selects("#form input[type=hidden],#form input[type=radio]", ["hidden1","radio1","radio2"], "Multiple Attribute Equals");
-	
-	t.selects("span[lang=中文]", ["台北"], "Attribute selector using UTF8");
-	
-	t.selects("a[href ^= 'http://www']", ["google","yahoo"], "Attribute Begins With");
-	t.selects("a[href $= 'org/']", ["mark"], "Attribute Ends With");
-	t.selects("a[href *= 'google']", ["google","groups"], "Attribute Contains");
-	
-	t.selects("#select1 option[selected]", ["option1a"], "Select options via [selected]");
-	t.selects("#select2 option[selected]", ["option2d"], "Select options via [selected]");
-	t.selects("#select3 option[selected]", ["option3b", "option3c"], "Select options via [selected]");
-	
-	t.selects("input[name='foo[bar]']", ["hidden2"], "Grouped Form Elements");
-	
-	t.selects("#form select:not([multiple])", ["select1", "select2"], ":not() Existing attribute");
-	t.selects("#form select:not([name=select1])", ["select2", "select3"], ":not() Equals attribute");
-	t.selects("#form select:not([name='select1'])", ["select2", "select3"], ":not() Equals quoted attribute");
 });
 
 t.module("glow.dom.NodeList creation");
