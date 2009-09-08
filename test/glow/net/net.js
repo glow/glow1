@@ -2,9 +2,9 @@ t.module("glow.net");
 
 t.test("glow.net.get async", function() {
 	if (isLocal) {
-		t.expect(5);
+		t.expect(4);
 	} else {
-		t.expect(9);
+		t.expect(8);
 	}
 	
 	t.stop();
@@ -18,8 +18,8 @@ t.test("glow.net.get async", function() {
 				t.ok(response.statusText(), "Status returned: " + response.statusText());
 				t.equals(response.header("Content-Type"), "text/plain", "Content-Type header");
 			}
+			t.ok(this.completed, "Request completed");
 			t.equals(response.text(), "XHR Test Document", "Returned text");
-			t.ok(getRef.completed, "Request completed");
 			t.start();
 		},
 		onError: function() {
@@ -27,7 +27,6 @@ t.test("glow.net.get async", function() {
 			t.start();
 		}
 	});
-	t.ok(!getRef.completed, "Request not completed");
 	
 	t.equals(typeof getRef.abort, "function", "Return object has abort method");
 });
@@ -123,6 +122,12 @@ t.test("glow.net.get async json", function() {
 
 t.test("glow.net.abort", function() {
 	t.expect(2);
+	
+	// below happens on all current version of IE 6, 7, 8
+	if (glow.env.ie && isLocal) {
+		t.skip('IE completes request too quickly from filesystem');
+		return;
+	}
 	
 	t.stop();
 	var aborted = true;
@@ -316,17 +321,7 @@ t.test("glow.net.get timeout cancelling", function() {
 	}, 3000);
 });
 
-//xml with namespace
-
-//get rid of all the script elements from end of the page
-function clearScriptsFromEnd() {
-	while (document.body.lastChild.nodeName.toLowerCase() == "script") {
-		document.body.removeChild(document.body.lastChild);
-	}
-}
-
 t.test("glow.net.loadScript general", function() {
-	clearScriptsFromEnd();
 	t.expect(3);
 	t.stop();
 	var timeoutCancelled = true;
@@ -341,15 +336,14 @@ t.test("glow.net.loadScript general", function() {
 		},
 		timeout: 2
 	});
-	
 	window.setTimeout(function () {
 		t.ok(timeoutCancelled, "onError not called")
 		t.start();
 	}, 3000);
+	
 });
 
 t.test("glow.net.loadScript timeout and charset", function() {
-	clearScriptsFromEnd();
 	t.expect(3);
 	t.stop();
 	
@@ -373,7 +367,6 @@ t.test("glow.net.loadScript timeout and charset", function() {
 });
 
 t.test("glow.net.loadScript aborting", function() {
-	clearScriptsFromEnd();
 	t.expect(3);
 	t.stop();
 	var onLoadCalled = false;
