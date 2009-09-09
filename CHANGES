@@ -1,5 +1,16 @@
 Glow Changelog
 
+1.6.1
+
+* glow.widgets.Sortable - Fixed negative margin issue
+* glow.widgets.Carousel - Fixed edge case where original element was floated
+* glow.widgets.Carousel - Fixed issue with visibleIndexes misreporting
+* glow.widgets.Editor - Fixed issue with 'commit' even firing too often
+* glow.widgets.Carousel, glow.widgets.Editor, glow.widgets.Timetable - Documentation updates
+* glow.dom.NodeList#offset - Fixed for browser that don't support getBoundingClientRect
+* glow.dom.NodeList#css - Fix to real-to-absolute unit convertor for IE
+* glow.forms.Form - Better error reporting when form as an element with name='submit'
+
 1.6.0
 
 * glow.widgets.Carousel - Fixed issues with tabbing naviagation
