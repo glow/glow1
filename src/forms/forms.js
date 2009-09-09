@@ -86,6 +86,24 @@ glow.forms.Form = function(formNode, opts) { /*debug*///console.log("glow.forms.
 }
 
 /**
+	@name glow.forms.Form#event:validate
+	@event
+	@description Fired whenever the glow tries to validate a form.
+	
+	If you prefer you can set a handler for this event via the <code>onValidate</code> option of the glow.forms.Form constructor.
+	
+	@param {glow.forms.ValidateResult} event A specialised Event object.
+	@example
+	
+	glow.events.addListener(myForm, "validate", function(e) {
+		if (e.eventName == 'submit') {
+			if (e.errorCount == 0) { alert("Well done!"); }
+			else { e.preventDefault(); } // stop the submit from happening
+		}
+	});
+ */
+
+/**
 	@name glow.forms.Form#validate
 	@function
 	@description Run validation tests.
@@ -346,12 +364,36 @@ glow.forms.Form.prototype.addTests = function(fieldName /*...*/) { /*debug*///co
 /**
 	@name glow.forms.ValidateResult
 	@constructor
-	@description This is created automatically by the running validation and passed to
-	the onValidate handler once all eligible tests have finished running.
+	@extends glow.events.Event
+	@description The overall result returned by an attempt to validate the current state of the form.
+	
+	The ValidateResult object is used by glow.forms.Form to accumulate and record the test results as they are run. It is created automatically by the running validation so it is not necessary for the user to instantiate it directly, but it is useful to know the properties and their meanings as these will likely be referred to when a custom <code>onValidate</code> handler is run.
 	@param {String} eventName
-	@property {String} eventName The name on the event that was associated with this validation.
+	@property {String} eventName The name of the event that was associated with this validation event.
+	
+	Validation can happen based on one of several different user interactions, this property allows you to identify the type of interaction that initiated this validation. Examples are:
+	
+		<dl>
+			<dt>submit</dt>
+			<dd>The user has done something to submit the form, for example by pressing the Submit button.</dd>
+			<dt>change</dt>
+			<dd>The user has modified the value of a form field.</dd>
+			<dt>idle</dt>
+			<dd>The user is typing in a form field but has paused for a moment (by default 1 second).</dd>
+			<dt>click</dt>
+			<dd>The user has clicked the mouse on or in a form field.</dd>
+		</dl>
+	
+	Which user interaction is associated with which tests is determined by the options you used when you added the test. See the documentation for {@link glow.forms.Form#addTests} for more information. 
+	
+	@property {Object[]} fields Each object in this array has a name of a field, a test result such as glow.forms.PASS, glow.forms.FAIL or glow.forms.SKIP, and a message describing the test result.
+	
+	The effect of validation is that the value or state of each field in the form is compared to the tests the developer has added to the fields. In each tested field a determination is made that the current value either passes or fails (or, if the test wasn't run at all, is skipped). The <code>fields</code> property provides information on the overall result of the validation, on each field that was tested and the results.
+	
 	@property {Number} errorCount The number of fields that had a failing test.
-	@property {Object[]} fields Each field object has a name, a value {-1, 0, 1}, and a message.
+	
+	From the <code>fields</code> property you can determine how many fields have failing or passing values; this is property is simply a more convenient way to access the total failing count of tests that fail. If no tests fail then this value will be 0 and you can consider the form to have validated.
+	
  */
 glow.forms.ValidateResult = function(eventName) {
 	glow.events.Event.apply(this);
@@ -368,21 +410,21 @@ glow.lang.extend(glow.forms.ValidateResult, glow.events.Event);
 	@name glow.forms.PASS
 	@type Number
 	@description Constant for a passed test.
-		You can use this when creating {@link glow.forms.tests.custom custom tests}
+		This indicates that the value in a field passes all the tests associated with it. You can use this when creating {@link glow.forms.tests.custom custom tests}
  */
 glow.forms.PASS =  1;
 /**
 	@name glow.forms.FAIL
 	@type Number
 	@description Constant for a failing test.
-		You can use this when creating {@link glow.forms.tests.custom custom tests}
+		This indicates that the value in a field fails at least one of the tests associated with it. You can use this when creating {@link glow.forms.tests.custom custom tests}
  */
 glow.forms.FAIL =  0;
 /**
 	@name glow.forms.SKIP
 	@type Number
 	@description Constant for a skipped test.
-		You can use this when creating {@link glow.forms.tests.custom custom tests}.
+		This indicates that there was some unmet condition associated with the applied tests, so they were not run. This state is not considered a fail, and will not affect glow.forms.ValidateResult#errorCount. You can use this when creating {@link glow.forms.tests.custom custom tests}.
  */
 glow.forms.SKIP = -1;
 
@@ -391,13 +433,11 @@ glow.forms.SKIP = -1;
 	@namespace
 	@see <a href="../furtherinfo/forms/">Validating Forms</a>
 	@see <a href="../furtherinfo/forms/example.shtml">Working example</a>
-	@description Collection of built-in tests that can be added to validate a form field.
+	@description Collection of built-in tests that can be added to any form field as a way of validating that field's value.
 
-	<p>You do not generally need to call these functions directly, their names are passed to the
-	Form {@link glow.forms.Form#addTests addTests} method.</p>
+	<p>You do not need to call these functions directly, the devloper use a test by passing its name to the {@link glow.forms.Form#addTests addTests} method.</p>
 
-	<p>If you want to create your own custom functions, or to see what the parameters these
-	function take, you should refer to the <a href="../furtherinfo/forms/#custom_tests">Creating
+	<p>For more information about tests, how to create your own custom tests, or to see what arguments these tests take, you may refer to the <a href="../furtherinfo/forms/#custom_tests">Creating
 	Custom Tests</a> section of the Validating Forms user guide.</p>
  */
 glow.forms.tests = {
@@ -405,6 +445,9 @@ glow.forms.tests = {
 		@name glow.forms.tests.required
 		@function
 		@description The value must contain at least one non-whitespace character.
+		
+		A text input field that is empty, or contains only spaces for example will fail this test.
+		
 		@example
 		myForm.addTests(
 			"fieldName",
@@ -427,6 +470,9 @@ glow.forms.tests = {
 		@name glow.forms.tests.isNumber
 		@function
 		@description The value must be a valid number.
+		
+		A field that is empty, or contains a value that is not a number like 1 or 3.14 will fail this test.
+		
 		@example
 		myForm.addTests(
 			"fieldName",
@@ -449,6 +495,9 @@ glow.forms.tests = {
 		@name glow.forms.tests.min
 		@function
 		@description The numeric value must be at least the given value.
+		
+		A field whose value, when converted to a number, is not less than the given arg will fail this test.
+		
 		@example
 		myForm.addTests(
 			"fieldName",
@@ -472,6 +521,9 @@ glow.forms.tests = {
 		@name glow.forms.tests.max
 		@function
 		@description The numeric value must be no more than the given value.
+		
+		A field whose value, when converted to a number, is not more than the given arg will fail this test.
+		
 		@example
 		myForm.addTests(
 			"fieldName",
@@ -495,6 +547,9 @@ glow.forms.tests = {
 		@name glow.forms.tests.range
 		@function
 		@description The numeric value must be between x..y.
+		
+		A field whose value, when converted to a number, is not more than x and less than y will fail this test.
+		
 		@example
 		myForm.addTests(
 			"fieldName",
