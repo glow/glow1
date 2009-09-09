@@ -703,21 +703,23 @@ t.test("glow.forms.tests.custom", function() {
 	
 	 t.equals(validateResults.fields[0].result, glow.forms.PASS, "custom passes when value is valid.");
 	 t.equals(validateResults.fields[1].result, glow.forms.FAIL, "custom fails when value is not valid.");
-	
-	//clean up
-	resetFormsTestElement();
-	//myFormElem[0].parentNode.innerHTML = myFormElem[0].parentNode.innerHTML;
+	 
+	 resetFormsTestElement();
 });
 
-t.test("glow.forms.tests.ajax", function() {
-	t.expect(2);
-	t.stop();
-	
-	var myFormElem = glow.dom.get("#register");
+ t.test("glow.forms.tests.ajax", function() {
+ 	t.expect(2);
+ 	t.stop();
+ 	
+ 	var myFormElem = glow.dom.get("#register");
+	var myForm = new glow.forms.Form(myFormElem);
+	var eid = glow.events.addListener(myForm, "validate", function(e) {
+		e.preventDefault(); // don't actually submit the test form
+	});
 	
 	var validateResults;
 	
-	var myForm = new glow.forms.Form(myFormElem);
+ 	
 	
 	myForm.formNode.val({
 		username: "AJ Acks",
@@ -744,30 +746,50 @@ t.test("glow.forms.tests.ajax", function() {
 		}
 	}
 
-	myForm
-	.addTests(
-		"username",
-		["ajax", {arg: handleResponseText, url: "testdata/xhr/basictext.txt?name={username}&age={age}&pals={friend}"}]
-	);
+ 	myForm
+ 	.addTests(
+ 		"username",
+ 		["ajax", {arg: handleResponseText, url: "testdata/xhr/basictext.txt?name={username}&age={age}&pals={friend}"}]
+ 	);
 	
-	myForm.validate('submit');
+ 	myForm.validate('submit');
 });
 
 t.test("glow.forms Bug: Input element named 'submit' throws error", function() {
-	t.expect(3);
+	t.expect(2);
 	
-	var myFormElem = glow.dom.get("#register"),
-		mySubmitElem = document.createElement("INPUT");
+	var submitFailForm = glow.dom.create('<div> \
+		<p id="formTestOutput2" style="border: solid 2px gray; padding: 8px; float: right; width: 40%;"></p> \
+		<form id="submitFail" action="" method="get"> \
+		<fieldset><legend>test form 2</legend><br /> \
+		<label for="submit">username:</label> <input name="submit" id="submit" type="text" value="submit" /><br /> \
+		<input type="reset"><input type="submit"> \
+		</fieldset> \
+		</form> \
+	</div>');
 	
-	glow.dom.get(mySubmitElem).attr("type", "text").attr("value", "foo").attr("name", "submit");
+	submitFailForm.appendTo("body");
+		
+	var myFormElem = glow.dom.get("#submitFail");
+		
+	// input elements are objects but IE6 thinks the submit function is an object too!
+	// see: http://webreflection.blogspot.com/2009/08/isfunction-or-isienativefunction.html
+	// so we have to do more elaborate tests to see what the `submit` property of the form is
+	function isaFunction(f) {
+		return typeof f === "function" // native functions have the type of function (except in IE)
+		||
+		(
+			// do IE faffle-dance here...
+			typeof f.toString == "undefined"
+			&&
+			/^\s*\bfunction\b/.test(f)
+		)
+	};
 	
-	t.equals(typeof myFormElem[0].submit, "function", "The form's submit property was originally a function.");
-	
-	myFormElem.append(mySubmitElem);
-	
-	t.equals(typeof myFormElem[0].submit, "object", "The form's submit property is not now a function.");
+	t.ok(!isaFunction(myFormElem[0].submit), "The form's submit property is not a function.");
 
 	var myForm = new glow.forms.Form(myFormElem);
+	
 	myForm
 	.addTests(
 		"submit",
@@ -775,7 +797,7 @@ t.test("glow.forms Bug: Input element named 'submit' throws error", function() {
 	);
 	
 	try {
-		myForm.validate("submit");
+		myForm.validate('submit');
 	}
 	catch(e) {
 		t.ok(e.message.indexOf("submit function can't be called") > -1, "A meaningful error message is thrown if submit is not a function.");
@@ -878,6 +900,7 @@ t.test("Clean up",
 	function() {
 		t.expect(1);
 		testForm.remove();
+		glow.dom.get("#submitFail").parent().remove();
 		t.ok(true, "Cleaned!");
 	}
 );
