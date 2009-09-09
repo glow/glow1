@@ -78,7 +78,7 @@ t.test("Advanced Querying", function() {
 		} catch(err) {
 			e = err.message;
 		}
-		t.equals(e, "Cannot get Item(s) - point(s) not in the correct scale type.", "itemAt with incorrect point type (" + type + ")");
+		t.ok(e.indexOf("Cannot get Item(s) - point(s) not in the correct scale type.") == 0, "itemAt with incorrect point type (" + type + ")");
 
 		t.equals(bar.itemAt(at0), undefined, "itemAt at empty point (" + type + ")");
 		t.equals(bar.itemAt(at1), "i2", "itemAt at point with several items (" + type + ")");
@@ -320,7 +320,7 @@ t.test("Timetable scale data", function() {
 		numLine.addScale(20, "both", 8, {id: "foo"});
 		t.ok(false, "adding to both with an id");
 	} catch(err) {
-		t.equals(err.message, "Cannot apply an id when adding to both sides of the timetable", "Id error caught");
+		t.ok(err.message.indexOf("Cannot apply an id when adding to both sides of the timetable") === 0, "Id error caught");
 	}
 
 });
@@ -346,7 +346,7 @@ t.test("Timetable scrollbar data", function() {
 		numLine.addScale(20, "both", 8, {id: "foo"});
 		t.ok(false, "adding to both with an id");
 	} catch(err) {
-		t.equals(err.message, "Cannot apply an id when adding to both sides of the timetable", "Id error caught");
+		t.ok(err.message.indexOf("Cannot apply an id when adding to both sides of the timetable") === 0, "Id error caught");
 	}
 
 });
