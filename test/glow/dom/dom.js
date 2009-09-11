@@ -1740,6 +1740,99 @@ t.test("glow.dom.NodeList.replaceWith special cases", function () {
   testDoc.remove();
 });
 
+
+
+t.test("glow.dom.NodeList#wrap", function () {
+	
+	t.expect(6);  
+		
+	var testDoc = glow.dom.create("<p class='gift'><span>Shiny toys</span></p>").appendTo(document.body);
+	var testDoc =  glow.dom.get(".gift").wrap("<div id='giftwrap'><span class='tissuepaper'></span></div>");
+	
+	t.ok(glow.dom.get(".gift").parent().hasClass("tissuepaper"), "Wrapped item has new correct parent");    
+	
+	t.ok(glow.dom.get(".gift").parent().hasClass("tissuepaper"), "Wrapped item has correct new parent");
+	
+	glow.dom.get("#giftwrap").remove();
+	
+	var testDoc = glow.dom.create("<div id='test'><div class='2toys'>two toys: <span class='toy'>toy1</span><span class='toy'>toy2</span></div><div class='1toy'><span class='toy'>toy3</span></div></div>").appendTo(document.body);    
+	var testDoc =  glow.dom.get(".toy").wrap("<div class='giftwrap'><span class='tissuepaper'></span></div>");
+		
+	t.ok(glow.dom.get(".toy").parent().hasClass("tissuepaper"), "Multiple wrapped items have correct new wrapper parents");
+		
+	glow.dom.get("#test").remove();
+		
+	var nodes = glow.dom.create("<div class='inner'>inner</div>").wrap("<div class='outer'></div>");   
+		
+	t.ok(nodes.parent().hasClass("outer"), "Unattached wrapped item has correct new wrapper parent");
+		
+	glow.dom.get(".outer").remove();
+		
+	var wrappernodes = glow.dom.create("<div class='wrappernode'>wrappernode</div>").appendTo(document.body);
+		
+	var towrap = glow.dom.create("<div class='towrap'>wrap1</div><div class='towrap'>wrap2</div><div class='towrap'>wrap3</div>").appendTo(document.body);
+		
+	var nodes = glow.dom.get(".towrap").wrap(wrappernodes);
+		
+	t.ok(nodes.parent().hasClass("wrappernode") && wrappernodes.children().length == '1' && nodes.length == '3', "Three in document wrapper nodes have correct parents and one new child each");
+		
+	glow.dom.get(".wrappernode").remove();
+	glow.dom.get(".towrap").remove();
+		
+	var wrappernodes2 = glow.dom.create("<div class='wrappernode'>wrappernode</div>");    
+		
+	var nodes = glow.dom.create("<div class='towrap'>wrap1</div><div class='towrap'>wrap2</div>").wrap(wrappernodes2);
+		
+	t.ok(nodes.parent().hasClass("wrappernode") && wrappernodes2.children().length == '1' && nodes.length == '2', "Two new unattached wrapped nodes have correct parents and two children");
+		
+	glow.dom.get(".wrappernode").remove();
+   
+    
+});
+
+t.test("glow.dom.NodeList#unwrap", function () {
+    t.expect(4);
+    
+    var testDoc =  glow.dom.create("<div id='giftwrap'><div id='gift'><span>Shiny toys</span></div></div>").appendTo(document.body);
+    var expectedNodes = testDoc.children();    
+    var newDoc = glow.dom.get("#gift").unwrap();           
+    
+    t.ok(glow.dom.get("#gift"), "Unwrapped node exists");
+    
+    t.isSet(newDoc, expectedNodes, "Returned value is new unwrapped nodelist");
+
+    newDoc.remove();
+    testDoc.remove();
+    
+    
+    var testDoc =  glow.dom.create("<div id='box'><div class='tissuepaper'><div class='tissuepaper' id='inner'><span>Shiny toys</span></div></div></div>").appendTo(document.body); 
+    var toUnwrap = glow.dom.get(".tissuepaper")
+    
+    var newDoc = toUnwrap.unwrap();      
+    
+    t.isSet(newDoc, toUnwrap, "Unwraps multiple nodes, and when nested");
+
+    newDoc.remove();
+    testDoc.remove();
+    
+    
+    var testDoc =  glow.dom.create("<div id='box'><div class='tissuepaper'><div class='tissuepaper' id='inner'><span>Shiny toys</span></div></div></div>");
+ 
+    
+    var expectedNodes = glow.dom.get("#inner");
+    
+    var toUnwrap = glow.dom.get(".tissuepaper")
+    
+    var newDoc = toUnwrap.unwrap();   
+    
+    
+    t.isSet(newDoc, toUnwrap, "Removes parents for unattached nodes");
+
+    newDoc.remove();
+    testDoc.remove();
+});
+			
+
 t.module("glow.dom.NodeList XML tests");
 
 var xmlData;

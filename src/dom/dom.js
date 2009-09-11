@@ -202,6 +202,27 @@
 			div.a = 1;
 			nodePropertiesCloned = !!div.cloneNode(true).a;
 		})();
+		
+		/**
+		 @name glow.dom-getFirstChildElm
+		 @private
+		 @description 
+		 @param {Element} 
+		*/
+		function getFirstChildElm(parent) {
+			var i=0,
+			    child;			
+			
+			for (child = parent.firstChild; child; child = child.nextSibling) {
+				if (child.nodeType == 1) {
+					return child;
+				}
+			
+			}
+			
+			return null;
+			
+		}
 
 		/*
 		PrivateMethod: removeClassRegex
@@ -2052,6 +2073,7 @@
 			@name glow.dom.NodeList#parent
 			@function
 			@description Gets the unique parent nodes of each node as a new NodeList.
+			The given nodelist will always be placed in the first element with no child elements.
 
 			@returns {glow.dom.NodeList}
 
@@ -2082,8 +2104,7 @@
 
 			@returns {glow.dom.NodeList}
 
-				Returns a new NodeList containing the ancestor nodes, with
-				duplicates removed
+				Returns NodeList
 
 			@example
 				// get ancestory elements for anchor elements 
@@ -2107,6 +2128,104 @@
 				}
 				
 				return r.get(unique(ret));
+			},
+			
+			
+			/**
+			@name glow.dom.NodeList#wrap
+			@function
+			@description Wraps the given nodeList with the specified element(s).
+			The given nodelist items will always be placed in the first child node that contains no further element nodes.
+			Each item in a given NodeList will be wrapped individually.
+
+			@returns {glow.dom.NodeList}
+
+				Returns the wrapped NodeList
+
+			@example
+				// wrap the given element 
+				glow.dom.get("p").wrap("<div></div>");
+				<div><p></p></div>
+			*/
+			wrap: function(wrapper) {
+				var i = 0,
+					length = this.length,
+					childElm,
+					parent,
+					wrappingNodes;
+					
+				if (typeof wrapper == 'string') {
+					wrappingNodes = r.create(wrapper);
+				}
+				else {
+					wrappingNodes = r.get(wrapper);
+				}
+						
+				while (i < length) {					
+					parent = wrappingNodes[0];
+					
+					while (parent) {					
+						childElm = getFirstChildElm(parent);
+							
+						if (childElm) {					
+							parent = childElm;
+						}
+						else {
+							break;
+						}
+					}							
+					
+					if (this[i].parentNode) {						
+						wrappingNodes.insertBefore(this[i]);													
+					}
+					
+					if (i != length-1) {
+						wrappingNodes = wrappingNodes.clone();
+					}
+					
+					parent.appendChild(this[i]);
+						
+					i++;
+				}
+				
+				return this;
+			},
+			
+			/**
+			@name glow.dom.NodeList#unwrap
+			@function
+			@description Removes the first parent of the supplied NodeList
+
+			@returns {glow.dom.NodeList}
+
+				Returns the unwrapped NodeList
+
+			@example
+				// wrap the given element 
+				glow.dom.get("p").unwrap();
+			*/
+			unwrap: function() {
+				var ret = [],
+					i = 0,
+					parent,
+					toRemove,
+					nodesToRemove = this.parent(),
+					length = nodesToRemove.length;
+					
+				while (i < length) {
+					toRemove = nodesToRemove.slice(i, i+1);
+					if (!toRemove[0].parentNode){
+						toRemove.children().remove();
+						toRemove.destroy();
+					}
+					else {
+						toRemove.children().insertBefore(toRemove);
+						toRemove.destroy();							
+					}
+						
+					i++
+				}
+				return this;
 			},
 
 			/**
