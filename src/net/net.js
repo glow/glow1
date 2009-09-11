@@ -51,7 +51,7 @@
 		function xmlHTTPRequest() {
 			//try IE first. IE7's xmlhttprequest and XMLHTTP6 are broken. Avoid avoid avoid!
 			if (window.ActiveXObject) {
-				return (xmlHTTPRequest = function() { return new ActiveXObject("MSXML2.XMLHTTP"); })();
+				return (xmlHTTPRequest = function() { return new ActiveXObject("Microsoft.XMLHTTP"); })();
 			} else {
 				return (xmlHTTPRequest = function() { return new XMLHttpRequest(); })();
 			}
@@ -588,9 +588,12 @@
 			*/
 			destroy: function() {
 				if (this._callbackIndex !== undefined) {
-					$( scriptElements[this._callbackIndex] ).destroy();
-					scriptElements[this._callbackIndex] = undefined;
-					delete scriptElements[this._callbackIndex];
+					// set timeout is used here to prevent a crash in IE7 (possibly other version) when the script is from the filesystem
+					setTimeout(function() {
+						$( scriptElements[this._callbackIndex] ).destroy();
+						scriptElements[this._callbackIndex] = undefined;
+						delete scriptElements[this._callbackIndex];
+					}, 0);
 				}
 				return this;
 			}
@@ -658,6 +661,21 @@
 				(this.status == 0 && nativeResponse.responseText);
 
 		}
+		
+		/**
+		@name glow.net-shouldParseAsXml
+		@function
+		@description Should the response be treated as xml? This function is used by IE only
+			'this' is the response object
+		@returns {Boolean}
+		*/
+		function shouldParseAsXml() {
+			var contentType = this.header("Content-Type");
+			// IE 6 & 7 fail to recognise Content-Types ending +xml (eg application/rss+xml)
+			// Files from the filesystem don't have a content type, but could be xml files, parse them to be safe
+			return endsPlusXml.test(contentType) || contentType === '';
+		}
+		
 		//don't want to document this inheritance, it'll just confuse the user
 		glow.lang.extend(Response, events.Event, {
 			/**
@@ -681,9 +699,8 @@
 				var nativeResponse = this.nativeResponse;
 				
 				if (
-					// IE 6 & 7 fail to recognise Content-Types ending +xml (eg application/rss+xml)
-					// as XML, so we create an XML object from the text here
-					( glow.env.ie < 8 && endsPlusXml.test(this.header("Content-Type")) )
+					// IE fails to recognise the doc as XML in some cases
+					( glow.env.ie && shouldParseAsXml.call(this) )
 					// If the _forceXml option is set, we need to turn the response text into xml
 					|| ( this._request._forceXml && !this._request.nativeRequest.overrideMimeType && window.ActiveXObject )
 				) {

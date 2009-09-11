@@ -2,9 +2,9 @@ t.module("glow.net");
 
 t.test("glow.net.get async", function() {
 	if (isLocal) {
-		t.expect(5);
+		t.expect(4);
 	} else {
-		t.expect(9);
+		t.expect(8);
 	}
 	
 	t.stop();
@@ -18,8 +18,8 @@ t.test("glow.net.get async", function() {
 				t.ok(response.statusText(), "Status returned: " + response.statusText());
 				t.equals(response.header("Content-Type"), "text/plain", "Content-Type header");
 			}
+			t.ok(this.completed, "Request completed");
 			t.equals(response.text(), "XHR Test Document", "Returned text");
-			t.ok(getRef.completed, "Request completed");
 			t.start();
 		},
 		onError: function() {
@@ -27,7 +27,6 @@ t.test("glow.net.get async", function() {
 			t.start();
 		}
 	});
-	t.ok(!getRef.completed, "Request not completed");
 	
 	t.equals(typeof getRef.abort, "function", "Return object has abort method");
 });
@@ -58,23 +57,23 @@ t.test("glow.net.get sync", function() {
 	
 });
 
-t.test("glow.net.get aync header setting", function() {
+t.test("glow.net.get async header setting", function() {
 	t.expect(4);
 	t.stop();
-	var request = glow.net.get("testdata/xhr/env.shtml", {
+	var request = glow.net.get("testdata/xhr/requestheaderdump.php", {
 		headers: {
 			"Custom-Header": "thisisatest",
 			"Content-Type": "image/png"
 		},
 		onLoad: function(response) {
-			if (/^<!--#printEnv -->/.test(response.text())) {
+			if ( response.text().slice(0, 2) == '<?' ) {
 				t.start();
-				t.skip("This test requires a web server running mod_include in shtml files");	
+				t.skip("This test requires a web server running PHP5"); return;
 			}
 			t.ok(true, "correct callback used");
-			t.ok(/REQUEST_METHOD=GET/.test(response.text()), "Using get method");
-			t.ok(/HTTP_CUSTOM_HEADER=thisisatest/.test(response.text()), "Custom Header Sent");
-			t.ok(/CONTENT_TYPE=image\/png/.test(response.text()), "Content-type Changed");
+			t.ok(/^REQUEST_METHOD: GET/m.test(response.text()), "Using get method");
+			t.ok(/^HTTP_CUSTOM_HEADER: thisisatest/m.test(response.text()), "Custom Header Sent");
+			t.ok(/^CONTENT_TYPE: image\/png/m.test(response.text()), "Content-type Changed");
 			t.start();
 		},
 		onError: function() {
@@ -145,6 +144,12 @@ t.test("glow.net.get async json", function() {
 t.test("glow.net.abort", function() {
 	t.expect(2);
 	
+	// below happens on all current version of IE 6, 7, 8
+	if (glow.env.ie && isLocal) {
+		t.skip('IE completes request too quickly from filesystem');
+		return;
+	}
+	
 	t.stop();
 	var aborted = true;
 	
@@ -168,20 +173,20 @@ t.test("glow.net.abort", function() {
 	}, 1000);
 });
 
-t.test("glow.net.post aync string", function() {
+t.test("glow.net.post async string", function() {
 	t.expect(3);
 	t.stop();
-	var request = glow.net.post("testdata/xhr/env.shtml",
+	var request = glow.net.post("testdata/xhr/requestheaderdump.php",
 		"some=postData&blah=hurrah",
 		{
 			onLoad: function(response) {
-				if (/^<!--#printEnv -->/.test(response.text())) {
+				if ( response.text().slice(0, 2) == '<?' ) {
 					t.start();
-					t.skip("This test requires a web server running mod_include in shtml files");	
+					t.skip("This test requires a web server running PHP5"); return;
 				}
 				t.ok(true, "correct callback used");
-				t.equals(/REQUEST_METHOD=(\w+)/.exec(response.text())[1], "POST", "Using post method");
-				t.equals(/CONTENT_LENGTH=(\d+)/.exec(response.text())[1], "25", "Correct content length");
+				t.equals( (/^REQUEST_METHOD: (\w+)/m.exec(response.text()) || [,,])[1], "POST", "Using post method" );
+				t.equals( (/^CONTENT_LENGTH: (\d+)/m.exec(response.text()) || [,,])[1], "25",   "Correct content length" );
 				t.start();
 			},
 			onError: function() {
@@ -195,17 +200,17 @@ t.test("glow.net.post aync string", function() {
 t.test("glow.net.post aync json", function() {
 	t.expect(3);
 	t.stop();
-	var request = glow.net.post("testdata/xhr/env.shtml",
+	var request = glow.net.post("testdata/xhr/requestheaderdump.php",
 		{some:"postData", blah:["something", "somethingElse"]},
 		{
 			onLoad: function(response) {
-				if (/^<!--#printEnv -->/.test(response.text())) {
+				if ( response.text().slice(0, 2) == '<?' ) {
 					t.start();
-					t.skip("This test requires a web server running mod_include in shtml files");	
+					t.skip("This test requires a web server running PHP5"); return;
 				}
 				t.ok(true, "correct callback used");
-				t.equals(/REQUEST_METHOD=(\w+)/.exec(response.text())[1], "POST", "Using post method");
-				t.equals(/CONTENT_LENGTH=(\d+)/.exec(response.text())[1], "47", "Correct content length");
+				t.equals( (/^REQUEST_METHOD: (\w+)/m.exec(response.text()) || [,,])[1], "POST", "Using post method" );
+				t.equals( (/^CONTENT_LENGTH: (\d+)/m.exec(response.text()) || [,,])[1], "47",   "Correct content length" );
 				t.start();
 			},
 			onError: function() {
@@ -248,6 +253,12 @@ t.test("glow.net.get defering and multiple load events", function() {
 
 t.test("glow.net.get defering and multiple error events", function() {
 	t.expect(2);
+	
+	if (isLocal) {
+		t.skip('Requires web server');
+		return;
+	}
+	
 	t.stop();
 	var errorCallbacks = 0;
 	
@@ -277,24 +288,6 @@ t.test("glow.net.get defering and multiple error events", function() {
 });
 
 
-//the following tests need mod_rewrite and mod_headers. Test for them
-function testForRewriteAndHeaders(successCallback) {
-	glow.net.get("testdata/xhr/testrewrite", {
-		onLoad: function(response) {
-			if (response.header("X-headertest") == "true") {
-				successCallback();
-			} else {
-				t.start();
-				t.skip("mod_headers not enabled");
-			}
-		},
-		onError: function() {
-			t.start();
-			t.skip("mod_rewrite / htaccess not enabled");
-		}
-	});
-}
-
 //test redirects
 for (var i = 1; i < 5; i++) {
 	if (i == 4) i = 7;
@@ -302,20 +295,26 @@ for (var i = 1; i < 5; i++) {
 		t.test("glow.net.get redirect 30" + i, function() {
 			t.expect(2);
 			t.stop();
-			testForRewriteAndHeaders(function() {
-				glow.net.get("testdata/xhr/30" + i, {
-					onLoad: function(response) {
-						t.ok(true, "onLoad called");
-						t.equals(response.text(), "XHR Test Document", "File returned");
+			glow.net.get("testdata/xhr/redirect.php?code=" + i, {
+				onLoad: function(response) {
+					if ( response.text().slice(0,2) == '<?' ) {
 						t.start();
-					},
-					onError: function(response) {
-						t.ok(false, "onLoad called");
-						t.equals(response.text(), "XHR Test Document", "File returned");
-						t.start();
+						t.skip("This test requires a web server running PHP5"); return;
 					}
-				});
-			})
+					t.ok(true, "onLoad called");
+					t.equals(response.text(), "XHR Test Document", "File returned");
+					t.start();
+				},
+				onError: function(response) {
+					if ( response.text().slice(0,2) == '<?' ) {
+						t.start();
+						t.skip("This test requires a web server running PHP5"); return;
+					}
+					t.ok(false, "onLoad called");
+					t.equals(response.text(), "XHR Test Document", "File returned");
+					t.start();
+				}
+			});
 		});
 	})(i);
 }
@@ -343,15 +342,7 @@ t.test("glow.net.get timeout cancelling", function() {
 	}, 3000);
 });
 
-//get rid of all the script elements from end of the page
-function clearScriptsFromEnd() {
-	while (document.body.lastChild.nodeName.toLowerCase() == "script") {
-		document.body.removeChild(document.body.lastChild);
-	}
-}
-
 t.test("glow.net.loadScript general", function() {
-	clearScriptsFromEnd();
 	t.expect(3);
 	t.stop();
 	var timeoutCancelled = true;
@@ -366,15 +357,14 @@ t.test("glow.net.loadScript general", function() {
 		},
 		timeout: 2
 	});
-	
 	window.setTimeout(function () {
 		t.ok(timeoutCancelled, "onError not called")
 		t.start();
 	}, 3000);
+	
 });
 
 t.test("glow.net.loadScript timeout and charset", function() {
-	clearScriptsFromEnd();
 	t.expect(3);
 	t.stop();
 	
@@ -398,7 +388,6 @@ t.test("glow.net.loadScript timeout and charset", function() {
 });
 
 t.test("glow.net.loadScript aborting", function() {
-	clearScriptsFromEnd();
 	t.expect(3);
 	t.stop();
 	var onLoadCalled = false;
@@ -418,7 +407,7 @@ t.test("glow.net.loadScript aborting", function() {
 		timeout: 2
 	});
 	if (request.completed) {
-		t.skip("Request complete, too late to abort");
+		t.skip("Request complete, too late to abort"); return;
 	}
 	request.abort();
 	

@@ -329,7 +329,6 @@ UnitTest.prototype = {
 	skip: function(reason) {
 		reason = reason || "Skipped";
 		this.currentTest.skipped = reason;
-		throw "Test skipped";
 	},	
 	/*
 	Method: ok
@@ -895,7 +894,7 @@ UnitTest.Output.html = function() {
 			ol.childNodes[i].className += i%2 ? " even" : " odd";
 		}
 		//show details by default if test failed, or is todo
-		if ((!a.passed() || a.todo) && !a.skipped) {
+		if (!a.passed() && !a.skipped) {
 			ol.style.display = "block";
 		}
 		li.appendChild(ol);
