@@ -2080,7 +2080,7 @@ t.test("glow.dom.NodeList.css getting", function() {
 	
 	//positioning
 	t.equals(glow.dom.get("#cssTests div.posTest1").css("position"), "absolute", "position");
-	t.equals(glow.dom.get("#cssTests div.posTest1").css("top"), "60px", "top (em val)");
+	t.equals(glow.dom.get("#cssTests div.posTest1").css("top"), "66px", "top (em val)");
 	t.equals(glow.dom.get("#cssTests div.posTest1").css("left"), "30px", "left (px val)");
 	t.equals(glow.dom.get("#cssTests div.posTest1").css("z-index"), "32", "z-index");
 	t.equals(glow.dom.get("#cssTests div.posTest2").css("right"), "60px", "right (em val)");
