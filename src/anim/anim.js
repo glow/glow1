@@ -1052,10 +1052,10 @@
 			
 
 			// make our animations
-			var moveUp = glow.anim.css(myDiv, {
+			var moveUp = glow.anim.css(myDiv, 2, {
 				"top": {to:"0"}
 			});
-			var moveDown = glow.anim.css(myDiv, {
+			var moveDown = glow.anim.css(myDiv, 1, {
 				"top": {to:"100px"}
 			});
 			// string them together
