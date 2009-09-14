@@ -636,7 +636,7 @@
 				}
 				//this returns cascaded values so needs fixing
 				r = String(elmCurrentStyle[toStyleProp(prop)]);
-				if (/^\-?\d+[a-z%]+$/i.test(r) && prop != "font-size") {
+				if (/^-?[\d\.]+(?!px)[%a-z]+$/i.test(r) && prop != "font-size") {
 					r = getPixelValue(elm, r, usesYAxis.test(prop)) + "px";
 				}
 			}
@@ -663,8 +663,6 @@
 			Number
 		*/
 		function getPixelValue(element, value, useYAxis) {
-			if (/\d(px)?$/i.test(value)) { return parseInt(value); }
-			
 			// Remember the original values
 			var axisPos = useYAxis ? "top" : "left",
 				axisPosUpper = useYAxis ? "Top" : "Left",
