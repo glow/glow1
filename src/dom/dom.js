@@ -2235,11 +2235,8 @@
 				var i = 0,
 					length = this.length;
 
-				if (arguments.length) {
-					for (; i < length; i++) {
-						this[i].innerHTML = newHtml;
-					}
-					return this;
+				if (newHtml !== undefined) {
+					return this.empty().append(newHtml);
 				}
 				return this[0] ? this[0].innerHTML : "";
 			},

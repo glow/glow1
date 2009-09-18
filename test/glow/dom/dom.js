@@ -1041,7 +1041,7 @@ t.test("glow.dom.NodeList.clone()", function () {
 });
 
 t.test("glow.dom.NodeList.html()", function () {
-	t.expect(5);
+	t.expect(7);
 
 	var nodes = glow.dom.create("<div><span>first</span></div><div>second</div>");
 
@@ -1064,6 +1064,19 @@ t.test("glow.dom.NodeList.html()", function () {
 	
 	t.equals((new glow.dom.NodeList()).html(), "", "Empty nodelist should return empty string");
 	
+	var tableNode = glow.dom.create("<table class='madetable'></table>").appendTo("body")
+	
+	// add a row
+	tableNode.html("<tr><td>first</td></tr>");
+	
+	t.equals(tableNode.get('tr').length, 1, 'Table row added');
+	
+	// clear table
+	tableNode.html("");
+	
+	t.equals(tableNode.get('tr').length, 0, 'Table contents removed');
+	
+	tableNode.destroy();
 });
 
 t.test("glow.dom.NodeList#append()", function () {
