@@ -16,7 +16,7 @@
 		);
 	// ]]></script>
 	
-	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.data', 'glow.embed'])</script>
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.data', 'glow.dom', 'glow.events', 'glow.embed'])</script>
 </head>
 
 <body>
@@ -46,6 +46,40 @@
 		});
 	</script>
 	
+	<h2>glow.embed.Flash - ExternalInterface</h2>
+	
+	<p>
+		Checking communication between JavaScript &amp; Flash
+	</p>
+	
+	<ul>
+		<li>Click 'Get text from js' in the flash movie below, 'This text is from JavaScript' should display in the Flash movie</li>
+		<li><a href="#" id="setViaJs">Set text via JS</a>, 'This text is set via JavaScript' should display in the Flash movie</li>
+	</ul>
+	
+	<div id="flash2Container">Alternative Content</div>
+	
+	<script type="text/javascript" class="showSrc">
+		var flashEmbed;
+		
+		glow.ready(function() {
+			flashEmbed = new glow.embed.Flash("externalinterface.swf", "#flash2Container", "9", {
+				width: 529,
+				height: 96,
+				message: "Please install Flash 9 to see this content"
+			}).embed();
+		});
+		
+		glow.events.addListener('#setViaJs', 'click', function() {
+			flashEmbed.movie.setText('This text is set via JavaScript');
+			return false;
+		});
+		
+		// this function is called from the Flash movie
+		function getTextFromJs() {
+			return 'This text is from JavaScript';
+		}
+	</script>
 	
 	<script type="text/javascript">manualTests.showSrc();</script>
 	<script type="text/javascript">manualTests.log('Logging enabled');</script>
