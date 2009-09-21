@@ -578,7 +578,7 @@ t.test("glow.forms.tests.isEmail", function() {
 	var myForm = new glow.forms.Form(myFormElem);
 	glow.events.addListener(myForm, "validate", function(results){validateResults = results; return false; });
 	
-	 t.equals(typeof glow.forms.tests.isEmail, "function", "glow.forms.tests.isEmail is a function.");
+	t.equals(typeof glow.forms.tests.isEmail, "function", "glow.forms.tests.isEmail is a function.");
 	
 	myForm
 	.addTests(
@@ -602,15 +602,15 @@ t.test("glow.forms.tests.isEmail", function() {
 		username: "1abc-123@abc.a1-b2.xyz.co.uk",
 		age: "abc@abc@.com",
 		email: "abc123",
-		email_confirm: " abc123@abc.com "
+		email_confirm: " abc123_@abc.com "
 	});
 	
 	myForm.validate('submit');
 	
-	 t.equals(validateResults.fields[0].result, glow.forms.PASS, "isEmail passes when value is valid email.");
-	 t.equals(validateResults.fields[1].result, glow.forms.FAIL, "isEmail fails when value is almost a valid email.");
-	 t.equals(validateResults.fields[2].result, glow.forms.FAIL, "isEmail fails when value is not a valid email.");
-	 t.equals(validateResults.fields[3].result, glow.forms.PASS, "isEmail passes when value is a valid email, but has whitespace padding.");
+	t.equals(validateResults.fields[0].result, glow.forms.PASS, "isEmail passes when value is valid email.");
+	t.equals(validateResults.fields[1].result, glow.forms.FAIL, "isEmail fails when value is almost a valid email.");
+	t.equals(validateResults.fields[2].result, glow.forms.FAIL, "isEmail fails when value is not a valid email.");
+	t.equals(validateResults.fields[3].result, glow.forms.PASS, "isEmail passes when value is a valid email, but has whitespace padding and underscore");
 	
 	//clean up
 	resetFormsTestElement();
