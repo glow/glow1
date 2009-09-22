@@ -288,7 +288,7 @@
 				throw new Error("Carousel opts.step ("+this._opts.step+") cannot be larger than carousel size ("+this._opts.size+").");
 			}
 			
-			// install listeners for optinal event handlers
+			// install listeners for optional event handlers
 			var eventNames = ["addItem","removeItem","scroll","afterScroll","itemClick"],
 				i = eventNames.length,
 				onEventName;
@@ -708,6 +708,10 @@
 				if (!canGo.apply(this, ["prev"])) this._navPrev.addClass("carousel-prev-disabled");
 				else if (!canGo.apply(this, [])) this._navNext.addClass("carousel-next-disabled");
 			}
+		    // need to add back the navigation events on arrows if pageNav is true
+		    if (this._opts.pageNav) {		    
+			addMouseNavEvents.call(this);
+		    }
 
 		}
 		

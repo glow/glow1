@@ -286,6 +286,68 @@
 	</script>
 	
 	
+	<h2>Carousel navigation test for adding or removing items</h2>
+	
+	<ul>
+		<li>Clicking the "remove item" link should remove the first item from the carousel</li>
+		<li>Clicking the "add item" link should add a new item to first position in the carousel</li>
+		<li>The navigation will still work and look correct after adding or removal of an item</li>
+		
+	</ul>
+	
+	<div class="sandbox">
+		<ol id="carousel4">
+			<li><a href="#"><img src="images/1-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/2-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/3-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/4-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/5-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/6-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/7-item.jpg" alt="" width="120" height="90" /></a></li>
+			<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>
+		</ol>
+	</div>
+	<a href="" id="removeitem">remove item</a> <a href="" id="additem">add item</a>
+	<script type="text/javascript" class="showSrc">
+	// <![CDATA[
+	glow.ready(function() {
+		window.carousel4 = new glow.widgets.Carousel(
+			"#carousel4",
+			{
+				size: 5,
+				step: 2,
+				loop: true,
+				vertical: urlOpts.vertical,
+				theme: urlOpts.theme,
+				pageNav: true
+			}
+		);
+		glow.events.addListener(carousel4, "itemClick", function(e) {
+			manualTests.log('carousel4: itemClick, item ' + e.itemIndex + '');
+			return false;
+		});
+		glow.events.addListener(carousel4, "scroll", function(e) {
+			manualTests.log('carousel4: scroll');
+		});
+		glow.events.addListener(carousel4, "afterScroll", function(e) {
+			manualTests.log('carousel4: afterScroll');
+		});
+		glow.events.addListener("#removeitem", "click", function(e) {
+			manualTests.log('carousel4: remove item clicked');
+			carousel4.removeItem(0);
+			return false;
+		});
+		glow.events.addListener("#additem", "click", function(e) {
+			manualTests.log('carousel4: add item clicked');
+			var newitem = glow.dom.create('<li><a href="#"><img src="images/8-item.jpg" alt="" width="120" height="90" /></a></li>');
+			carousel4.addItems(newitem, 0);
+			return false;
+		});
+	});
+	// ]]>
+	</script>
+	
+	
 	<script type="text/javascript">manualTests.showSrc();</script>
 	<script type="text/javascript">manualTests.log('Logging enabled');</script>
 </body>
