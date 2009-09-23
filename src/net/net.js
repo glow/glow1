@@ -147,6 +147,7 @@
 							} else {
 								events.fire(request, "error", response);
 							}
+							req.onreadystatechange = new Function();
 						}
 					};
 					req.send(data);
@@ -374,7 +375,7 @@
 			//different if request came from loadScript
 			if (nativeReq) {
 				//clear listeners
-				nativeReq.onreadystatechange = emptyFunc;
+				nativeReq.onreadystatechange = new Function();
 				nativeReq.abort();
 			} else if (callbackIndex) {
 				//clear callback

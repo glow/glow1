@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>glow.net.get</title>
+	<script type="text/javascript" src="../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
+		);
+	// ]]></script>
+	
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.data', 'glow.net'])</script>
+</head>
+
+<body>
+	<h1>glow.net.get</h1>
+	
+	<h2>Memory Leak Test</h2>
+	
+	<ol>
+		<li><a href="#" id="startTest">Start test</a></li>
+		<li>
+			A file will be fetched every 500ms. Memory usage should not creep up.
+			Logging has been commented out to avoid memory creep caused by adding elements
+			to the logger.
+		</li>
+	</ol>
+	
+	<script type="text/javascript" class="showSrc">
+		document.getElementById('startTest').onclick = function() {
+			setInterval(function() {
+				glow.net.get('file.txt', {
+					onLoad: function() {
+						//manualTests.log('got file');
+					}
+				});
+			}, 500);
+			return false;
+		};
+	</script>
+	
+	
+	<script type="text/javascript">manualTests.showSrc();</script>
+	<script type="text/javascript">manualTests.log('Logging enabled');</script>
+</body>
+</html>
