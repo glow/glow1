@@ -1744,14 +1744,14 @@ t.test("glow.dom.NodeList.replaceWith special cases", function () {
 
 t.test("glow.dom.NodeList#wrap", function () {
 	
-	t.expect(6);  
+	t.expect(5);  
 		
 	var testDoc = glow.dom.create("<p class='gift'><span>Shiny toys</span></p>").appendTo(document.body);
 	var testDoc =  glow.dom.get(".gift").wrap("<div id='giftwrap'><span class='tissuepaper'></span></div>");
 	
+	// Test that the wrapped item has the correct new parent 
 	t.ok(glow.dom.get(".gift").parent().hasClass("tissuepaper"), "Wrapped item has new correct parent");    
 	
-	t.ok(glow.dom.get(".gift").parent().hasClass("tissuepaper"), "Wrapped item has correct new parent");
 	
 	glow.dom.get("#giftwrap").remove();
 	
