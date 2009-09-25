@@ -42,8 +42,6 @@
 					pos: "left",
 					trackToChange: "_trackOnElm",
 					axis: "x",
-					keyIncrement: "RIGHT",
-					keyDecrement: "LEFT",
 					pagePos: "pageX"
 				},
 				{
@@ -53,8 +51,6 @@
 					pos: "top",
 					trackToChange: "_trackOffElm",
 					axis: "y",
-					keyIncrement: "UP",
-					keyDecrement: "DOWN",
 					pagePos: "pageY"
 				}
 			],
@@ -79,12 +75,6 @@
 					'</div>'+
 				'</div>';
 		
-		/*
-			The below is a function that returns false, used in some listeners
-		*/
-		function returnFalse() {
-			return false;
-		}
 		
 		/*
 			Returns the lowest common divisor for all the arguments. Ignores any
@@ -286,8 +276,9 @@
 		*/
 		function handleKeyNav(event) {
 
-			var vocab = getVocab(this)
-				that = this;
+			var vocab = getVocab(this),
+				that = this,
+				nudgeAmount;
 
 			if (lastKeyDown == "prevented") {
 				// this is a repeat of a prevented slideStart, just exit
@@ -301,18 +292,20 @@
 					return false;
 				}
 				
+				nudgeAmount = (event.key == 'UP' || event.key == 'RIGHT') ? 1 : -1;
+				
 				// set up repeating
 				// cancel any existing repeating
 				clearInterval(keyRepeater);
 				
 				keyRepeater = setTimeout(function() {
 					keyRepeater = setInterval(function() {
-						nudge(that, event.key == vocab.keyIncrement /* is true if the user pressed up / right */ ? 1 : -1 );
+						nudge(that, nudgeAmount);
 					}, 40);
 				}, 500);
 				
 				// do the initial nudge
-				nudge(that, event.key == vocab.keyIncrement /* is true if the user pressed up / right */ ? 1 : -1 );
+				nudge(that, nudgeAmount);
 				
 				// we use this to know which keyup to react to
 				lastKeyDown = event.key;
@@ -390,8 +383,9 @@
 		*/
 		function updateSliderUi(slider, val) {
 			var valueAsPixels,
-				vocab = getVocab(slider),
-				val = val === undefined ? slider._val : val;
+				vocab = getVocab(slider);
+			
+			val = val === undefined ? slider._val : val;
 				
 			//calculate the top / left position of the slider handle
 			valueAsPixels = slider._opts.vertical ?
@@ -451,7 +445,7 @@
 			}
 			
 			// we don't need to calculate anything if step is zero
-			if (step == 0) { return val; }
+			if (step === 0) { return val; }
 			// else round to step
 			return Math.round( (val - min) / step ) * step + min;
 		}
@@ -461,9 +455,9 @@
 		  If newVal is undefined it will be looked up (but passing in the value is faster)
 		*/
 		function change(slider, newVal) {
-			var currentVal = slider._val,
-				//calculate value if needed
-				newVal = (newVal === undefined) ? valueForHandlePos(slider) : newVal;
+			var currentVal = slider._val;
+			//calculate value if needed
+			newVal = (newVal === undefined) ? valueForHandlePos(slider) : newVal;
 			
 			//update value
 			slider.element.attr("aria-valuenow", newVal);
@@ -561,9 +555,9 @@
 			
 			//apply the start value
 			if (opts.val != undefined) { //first use the option
-				startVal = opts.val
+				startVal = opts.val;
 			} else if (slider._boundInput[0] && slider._boundInput[0].value != "") { //then the form field
-				startVal = slider._boundInput[0].value
+				startVal = slider._boundInput[0].value;
 			} else { //default to min val
 				startVal = opts.min;
 			}
@@ -922,8 +916,6 @@
 				verticalPaddingHeight,
 				//adjusted size after catering for fitting ticks and steps onto pixels
 				adjustedSize,
-				//key listeners for keyboard nav,
-				keyListeners = [],
 				//'that' for event listeners
 				that = this,
 				//nodelist to the back & fwd buttons
@@ -939,7 +931,7 @@
 				//convert names. Eg "slideStart" to "onSlideStart"
 				onEventName = "on" + eventNames[i].charAt(0).toUpperCase() + eventNames[i].slice(1);
 				if (opts[onEventName]) {
-					events.addListener(this, eventNames[i], opts[onEventName])
+					events.addListener(this, eventNames[i], opts[onEventName]);
 				}
 			}
 			
@@ -962,7 +954,7 @@
 			this._trackOnElm = element.get("div.slider-trackOn");
 			this._trackOffElm = element.get("div.slider-trackOff");
 			this._handleElm = this._trackElm.get("div.slider-handle");
-			this._stateElm = element.get("div.slider-state")
+			this._stateElm = element.get("div.slider-state");
 			
 			// add in the theme
 			element.get("div.slider-theme").addClass("slider-" + opts.theme);
@@ -992,30 +984,53 @@
 					change(that, snappedValue);
 					// using val() to do the UI & value updating results in sanitise being called twice, but saves code
 					that.val(snappedValue);
-				})
+				});
 			}
 			
-			// keyboard nav
+			// focus changes
 			events.addListener(this.element, "focus", function() {
 				if ( !that._disabled ) {
 					that._stateElm.addClass("slider-active");
-					// vocab.keyIncrement is "RIGHT" or "UP"
-					// vocab.keyDecrement is "LEFT" or "DOWN"
-					keyListeners[0] = events.addKeyListener(vocab.keyIncrement, "down", handleKeyNav, that);
-					keyListeners[1] = events.addKeyListener(vocab.keyDecrement, "down", handleKeyNav, that);
-					keyListeners[2] = events.addKeyListener(vocab.keyIncrement, "up", handleKeyNavEnd, that);
-					keyListeners[3] = events.addKeyListener(vocab.keyDecrement, "up", handleKeyNavEnd, that);
-					// the following prevents the arrow keys scrolling in some browsers (such as Opera)
-					keyListeners[4] = events.addKeyListener(vocab.keyIncrement, "press", returnFalse);
-					keyListeners[5] = events.addKeyListener(vocab.keyDecrement, "press", returnFalse);
 				}
 			});
 			
 			events.addListener(this.element, "blur", function() {
 				that._stateElm.removeClass("slider-active");
-				var i = keyListeners.length;
-				while (i--) { events.removeListener(keyListeners[i]) }
-				keyListeners = [];
+			});
+			
+			// keyboard events
+			events.addListener(this.element, 'keydown', function(event) {
+				if (that._disabled) { return; }
+				switch (event.key) {
+					case 'UP':
+					case 'RIGHT':
+					case 'DOWN':
+					case 'LEFT':
+						return handleKeyNav.call(that, event);
+				}
+			});
+			
+			events.addListener(this.element, 'keyup', function(event) {
+				if (that._disabled) { return; }
+				switch (event.key) {
+					case 'UP':
+					case 'RIGHT':
+					case 'DOWN':
+					case 'LEFT':
+						return handleKeyNavEnd.call(that, event);
+				}
+			});
+			
+			// the following prevents the arrow keys scrolling in some browsers (such as Opera)
+			events.addListener(this.element, 'keypress', function(event) {
+				if (that._disabled) { return; }
+				switch (event.key) {
+					case 'UP':
+					case 'RIGHT':
+					case 'DOWN':
+					case 'LEFT':
+						return false;
+				}
 			});
 			
 			// nudge buttons
@@ -1204,7 +1219,7 @@
 					} else if (diffAbs == lowestDiffAbs) {
 						// uh oh, we have two diffs the same. Round up!
 						if (lowestDiff < 0) {
-							lowestDiffAbs = diffAbs
+							lowestDiffAbs = diffAbs;
 							lowestDiff = Number(i) - val;
 							currentLabel = labels[i];
 						}
