@@ -2510,6 +2510,7 @@
 					length = this.length;
 
 				if (newHtml !== undefined) {
+					// not setting innerHTML, doesn't work in IE for elements like <table>
 					return this.empty().append(newHtml);
 				}
 				return this[0] ? this[0].innerHTML : "";

@@ -8,7 +8,10 @@ t.test("Basic requirements", function() {
 
 t.test("Simple DOM Ready testing", function() {
 	t.expect(4);
-	if (glow.isReady) { t.skip("DOM already ready"); return; }
+	if (glow.isReady) {
+		t.skip("DOM already ready");
+		return;
+	}
 	t.stop();
 
 	var firstFired = false;

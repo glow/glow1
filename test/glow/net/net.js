@@ -68,7 +68,8 @@ t.test("glow.net.get async header setting", function() {
 		onLoad: function(response) {
 			if ( response.text().slice(0, 2) == '<?' ) {
 				t.start();
-				t.skip("This test requires a web server running PHP5"); return;
+				t.skip("This test requires a web server running PHP5");
+				return;
 			}
 			t.ok(true, "correct callback used");
 			t.ok(/^REQUEST_METHOD: GET/m.test(response.text()), "Using get method");
@@ -182,7 +183,8 @@ t.test("glow.net.post async string", function() {
 			onLoad: function(response) {
 				if ( response.text().slice(0, 2) == '<?' ) {
 					t.start();
-					t.skip("This test requires a web server running PHP5"); return;
+					t.skip("This test requires a web server running PHP5");
+					return;
 				}
 				t.ok(true, "correct callback used");
 				t.equals( (/^REQUEST_METHOD: (\w+)/m.exec(response.text()) || [,,])[1], "POST", "Using post method" );
@@ -206,7 +208,8 @@ t.test("glow.net.post aync json", function() {
 			onLoad: function(response) {
 				if ( response.text().slice(0, 2) == '<?' ) {
 					t.start();
-					t.skip("This test requires a web server running PHP5"); return;
+					t.skip("This test requires a web server running PHP5");
+					return;
 				}
 				t.ok(true, "correct callback used");
 				t.equals( (/^REQUEST_METHOD: (\w+)/m.exec(response.text()) || [,,])[1], "POST", "Using post method" );
@@ -289,17 +292,19 @@ t.test("glow.net.get defering and multiple error events", function() {
 
 
 //test redirects
-for (var i = 1; i < 5; i++) {
-	if (i == 4) i = 7;
+var redirectCodes = [301, 302, 303, 307];
+
+for (var i = 0, len = redirectCodes.length; i < len; i++) {
 	(function(i) {
-		t.test("glow.net.get redirect 30" + i, function() {
+		t.test("glow.net.get redirect " + redirectCodes[i], function() {
 			t.expect(2);
 			t.stop();
-			glow.net.get("testdata/xhr/redirect.php?code=" + i, {
+			glow.net.get("testdata/xhr/redirect.php?code=" + redirectCodes[i], {
 				onLoad: function(response) {
 					if ( response.text().slice(0,2) == '<?' ) {
 						t.start();
-						t.skip("This test requires a web server running PHP5"); return;
+						t.skip("This test requires a web server running PHP5");
+						return;
 					}
 					t.ok(true, "onLoad called");
 					t.equals(response.text(), "XHR Test Document", "File returned");
@@ -308,7 +313,8 @@ for (var i = 1; i < 5; i++) {
 				onError: function(response) {
 					if ( response.text().slice(0,2) == '<?' ) {
 						t.start();
-						t.skip("This test requires a web server running PHP5"); return;
+						t.skip("This test requires a web server running PHP5");
+						return;
 					}
 					t.ok(false, "onLoad called");
 					t.equals(response.text(), "XHR Test Document", "File returned");
@@ -407,7 +413,8 @@ t.test("glow.net.loadScript aborting", function() {
 		timeout: 2
 	});
 	if (request.completed) {
-		t.skip("Request complete, too late to abort"); return;
+		t.skip("Request complete, too late to abort");
+		return;
 	}
 	request.abort();
 	

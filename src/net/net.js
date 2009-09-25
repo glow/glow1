@@ -147,6 +147,7 @@
 							} else {
 								events.fire(request, "error", response);
 							}
+							// prevent parent scopes leaking (cross-page) in IE
 							req.onreadystatechange = new Function();
 						}
 					};
@@ -375,6 +376,7 @@
 			//different if request came from loadScript
 			if (nativeReq) {
 				//clear listeners
+				// prevent parent scopes leaking (cross-page) in IE
 				nativeReq.onreadystatechange = new Function();
 				nativeReq.abort();
 			} else if (callbackIndex) {
