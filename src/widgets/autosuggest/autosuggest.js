@@ -48,6 +48,7 @@
 				that._pendingRequest = glow.net.get(
 					url,
 					{
+						useCache: that.opts.useCache,
 						onLoad: function(r) {
 							var dataObject = (that.opts.parseData)? that.opts.parseData.apply(that, [r]) : eval(r.text());
 							
@@ -604,6 +605,11 @@
 				single argument, an array of objects corresponding to the objects in
 				your data that are considered to match; expects you to return an array
 				of objects modified as you wish.
+				
+			@param {Boolean} [opts.useCache=false] Allow results to cache when using a url dataSource
+				If false, a random number will be added to the URL to ensure the
+				results do not come from the browser's cache.
+			
 			@param {Function} [opts.onItemSelect] Your own handler for the itemSelect event.
 			@param {Function} [opts.onDataLoad] Your own handler for the dataLoad event.
 			@param {Function} [opts.onDataError] Your own handler for the dataError event.
