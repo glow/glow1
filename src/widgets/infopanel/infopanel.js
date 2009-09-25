@@ -105,7 +105,7 @@
 				Only required for custom templates.
 			@param {Boolean} [opts.modal=false] is the overlay modal?
 				If true then a default Mask will be created if one is not provided.
-			@param {String} [opts.ariaRole="description"] The aria role of the panel.
+			@param {String} [opts.ariaRole="tooltip"] The aria role of the panel.
 				This is used for accessibility purposes,
 				the default is acceptable for panels which provide descriptive
 				content for a page element
@@ -133,7 +133,7 @@
 					b: {x: "50%", y: "100%"},
 					l: {x: 0, y: "50%"}
 				},
-				ariaRole: "description",
+				ariaRole: "tooltip",
 				focusOnShow: true
 				// the default for opts.returnTo is set below
 			}, opts);
@@ -265,7 +265,7 @@
 				var currentContext = this.opts.context;
 				if (currentContext) {
 					//remove aria from current context
-					currentContext.removeAttr("describedby");
+					currentContext.removeAttr("aria-describedby");
 					//change the returnTo value if it's currently refering to the context
 	
 					if ($(this.returnTo)[0] == currentContext[0]) {
@@ -274,7 +274,7 @@
 				}
 				
 				//add aria to new context
-				this.opts.context = $(context).attr("describedby", this.container[0].id);
+				this.opts.context = $(context).attr("aria-describedby", this.container[0].id);
 				if (!this.returnTo) {
 					this.returnTo = this.opts.context;
 				}
