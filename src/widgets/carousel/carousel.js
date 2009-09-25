@@ -708,10 +708,10 @@
 				if (!canGo.apply(this, ["prev"])) this._navPrev.addClass("carousel-prev-disabled");
 				else if (!canGo.apply(this, [])) this._navNext.addClass("carousel-next-disabled");
 			}
-		    // need to add back the navigation events on arrows if pageNav is true
-		    if (this._opts.pageNav) {		    
-			addMouseNavEvents.call(this);
-		    }
+			// need to add back the navigation events on arrows if pageNav is true
+			if (this._opts.pageNav) {		    
+			    addMouseNavEvents.call(this);
+			}
 
 		}
 		

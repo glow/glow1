@@ -206,22 +206,16 @@
 		/**
 		 @name glow.dom-getFirstChildElm
 		 @private
-		 @description 
-		 @param {Element} 
+		 @description Returns the first leaf of a NodeList
+		 @param {NodeList} 
 		*/
-		function getFirstChildElm(parent) {
-			var i=0,
-			    child;			
-			
-			for (child = parent.firstChild; child; child = child.nextSibling) {
+		function getFirstChildElm(parent) {					
+			for (var child = parent.firstChild; child; child = child.nextSibling) {
 				if (child.nodeType == 1) {
 					return child;
-				}
-			
-			}
-			
-			return null;
-			
+				}			
+			}			
+			return null;			
 		}
 
 		/*
@@ -2134,22 +2128,23 @@
 			/**
 			@name glow.dom.NodeList#wrap
 			@function
-			@description Wraps the given nodeList with the specified element(s).
-			The given nodelist items will always be placed in the first child node that contains no further element nodes.
-			Each item in a given NodeList will be wrapped individually.
+			@description Wraps the given NodeList with the specified element(s).
+			
+				The given NodeList items will always be placed in the first child node that contains no further element nodes.
+				
+				Each item in a given NodeList will be wrapped individually.
 
 			@returns {glow.dom.NodeList}
 
-				Returns the wrapped NodeList
+				Returns the NodeList with new wrapper parents
 
 			@example
 				// wrap the given element 
 				glow.dom.get("p").wrap("<div></div>");
-				<div><p></p></div>
+				// <div><p></p></div>
 			*/
 			wrap: function(wrapper) {
-				var i = 0,
-					length = this.length,
+				var length = this.length,
 					childElm,
 					parent,
 					wrappingNodes;
@@ -2161,7 +2156,7 @@
 					wrappingNodes = r.get(wrapper);
 				}
 						
-				while (i < length) {					
+				for (i=0; i < length; i++) {					
 					parent = wrappingNodes[0];
 					
 					while (parent) {					
@@ -2178,14 +2173,13 @@
 					if (this[i].parentNode) {						
 						wrappingNodes.insertBefore(this[i]);													
 					}
-					
+					// If wrapping multiple nodes, we need to take a clean copy of the wrapping nodes
 					if (i != length-1) {
 						wrappingNodes = wrappingNodes.clone();
 					}
 					
 					parent.appendChild(this[i]);
-						
-					i++;
+
 				}
 				
 				return this;
@@ -2194,26 +2188,26 @@
 			/**
 			@name glow.dom.NodeList#unwrap
 			@function
-			@description Removes the first parent of the supplied NodeList
+			@description Removes the first unique parent for each item of a supplied NodeList
 
 			@returns {glow.dom.NodeList}
 
 				Returns the unwrapped NodeList
 
 			@example
-				// wrap the given element 
+				// Before: <div><div><p></p></div></div>
+				// wrap the given element
 				glow.dom.get("p").unwrap();
+				// After: <div><p></p></div>
 			*/
 			unwrap: function() {
-				var ret = [],
-					i = 0,
-					parent,
-					toRemove,
+				var toRemove,
 					nodesToRemove = this.parent(),
 					length = nodesToRemove.length;
-					
-				while (i < length) {
+				
+				for (i=0; i < length; i++) {				
 					toRemove = nodesToRemove.slice(i, i+1);
+					// if the item we're removing has no new parent (i.e. is not in document), then we just remove the child and destroy the old parent
 					if (!toRemove[0].parentNode){
 						toRemove.children().remove();
 						toRemove.destroy();
@@ -2221,9 +2215,8 @@
 					else {
 						toRemove.children().insertBefore(toRemove);
 						toRemove.destroy();							
-					}
-						
-					i++
+					}						
+
 				}
 				return this;
 			},

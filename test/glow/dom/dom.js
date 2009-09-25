@@ -1791,7 +1791,7 @@ t.test("glow.dom.NodeList#wrap", function () {
 });
 
 t.test("glow.dom.NodeList#unwrap", function () {
-    t.expect(4);
+    t.expect(6);
     
     var testDoc =  glow.dom.create("<div id='giftwrap'><div id='gift'><span>Shiny toys</span></div></div>").appendTo(document.body);
     var expectedNodes = testDoc.children();    
@@ -1805,7 +1805,9 @@ t.test("glow.dom.NodeList#unwrap", function () {
     testDoc.remove();
     
     
-    var testDoc =  glow.dom.create("<div id='box'><div class='tissuepaper'><div class='tissuepaper' id='inner'><span>Shiny toys</span></div></div></div>").appendTo(document.body); 
+    var testDoc =  glow.dom.create("<div id='box'>"
+								   + "<div class='tissuepaper'><div class='tissuepaper' id='inner'><span>Shiny toys</span>"
+								   + "</div></div></div>").appendTo(document.body); 
     var toUnwrap = glow.dom.get(".tissuepaper")
     
     var newDoc = toUnwrap.unwrap();      
@@ -1816,7 +1818,9 @@ t.test("glow.dom.NodeList#unwrap", function () {
     testDoc.remove();
     
     
-    var testDoc =  glow.dom.create("<div id='box'><div class='tissuepaper'><div class='tissuepaper' id='inner'><span>Shiny toys</span></div></div></div>");
+    var testDoc =  glow.dom.create("<div id='box'>"
+								   + "<div class='tissuepaper'><div class='tissuepaper' id='inner'><span>Shiny toys</span>"
+								   + "</div></div></div>");
  
     
     var expectedNodes = glow.dom.get("#inner");
@@ -1830,6 +1834,28 @@ t.test("glow.dom.NodeList#unwrap", function () {
 
     newDoc.remove();
     testDoc.remove();
+	
+	
+	var testDoc =  glow.dom.create("<div id='gift'><span>Shiny toys</span></div>");
+    var expectedNodes = testDoc.children();    
+    var newDoc = glow.dom.get("#gift").unwrap();           
+    
+    t.ok(glow.dom.get("#gift"), "Orphaned unwrap item returns");
+
+    newDoc.remove();
+    testDoc.remove();
+	
+	var testDoc =  glow.dom.create("<div id='giftwrap'><div class='gift'><span>Shiny toys</span></div><div class='gift'><span>Shiny toys</span></div></div>").appendTo(document.body);
+    var toUnwrap = glow.dom.get(".gift")
+    
+    var newDoc = toUnwrap.unwrap();      
+    
+    t.isSet(newDoc, toUnwrap, "Removes only one parent for multiple to-unwrap nodes that share same parent");
+
+    newDoc.remove();
+    testDoc.remove();
+	
+	
 });
 			
 
