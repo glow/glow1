@@ -406,64 +406,60 @@
 				ignoreInUp = false;
 				repeating.ondown++;
 				
-				if (e.key == 'DOWN') {
-					if (isVisible(that)) {
-						ignoreInUp = true; 
-						nextItem(that);
-						return false; // on some systems this moves the carat around
-					}
-					
-				}
-				else if (e.key == 'UP') {
-					if (isVisible(that)) {
-						ignoreInUp = true;
-						prevItem(that);
+				switch (e.key) {
+					case 'DOWN':
+						if (isVisible(that)) {
+							ignoreInUp = true; 
+							nextItem(that);
+							return false; // on some systems this moves the carat around
+						}
+						break;
+					case 'UP':
+						if (isVisible(that)) {
+							ignoreInUp = true;
+							prevItem(that);
+							return false;
+						}
+						break;
+					case 'LEFT':
+					case 'RIGHT':
+						if (isVisible(that)) {
+							// user accepts the highlighted text
+							that._value = that.inputElement.val();
+							valueChanged(that, true);
+						}
+						break;
+					case 'ESC':
+						// return to the value originally entered by the user
+						that.inputElement.val(that._original);
+						that._value = that._original;
+						valueChanged(that, true);
+						that.hide();
 						return false;
-					}
-				}
-				else if (e.key == 'LEFT') {
-					if (isVisible(that)) {
-						// user accepts the hilited text
-						that._value = that.inputElement.val();
-						valueChanged(that, true);
+					case 'DEL':
+					case 'BACKSPACE':
 						that.hide();
-					}
-				}
-				else if (e.key == 'RIGHT') {
-					if (isVisible(that)) {
-						// user accepts the hilited text
-						that._value = that.inputElement.val();
-						valueChanged(that, true);
-						that.hide();
-					}
-				}
-				else if (e.key == 'ESC') { // bail
-					// return to the value originally entered by the user
-					that.inputElement.val(that._original);
-					that._value = that._original;
-					valueChanged(that, true);
-					that.hide();
-					return false;
-				}
-				else if (e.key == 'DEL' || e.key == 'BACKSPACE') {
-					that.hide();
-				}
-				else if (e.key == 'ENTER') { // a result item was picked?
-					if (isVisible(that)) ignoreInUp = true;
-					else return true; // no: the results aren't visible so just do the default thing
-					
-					var selectedOffset = that.getSelectedOffset();
-					if (selectedOffset == -1) { // no: there isn't any result item selected
-						that.hide();
-						return true; // do the default thing
-					}
-					
-					// yes: fire the itemSelect event
-					var e = new events.Event();
-					e.source = $(that.overlay.container).get('.active');
-					e.selectedItem = that._found[selectedOffset];
-					events.fire(that, 'itemSelect', e);
-					return false; // return false to prevent form submitting?
+						break;
+					case 'ENTER':
+						if (isVisible(that)) {
+							ignoreInUp = true;
+						}
+						else {
+							return true; // no: the results aren't visible so just do the default thing
+						}
+						
+						var selectedOffset = that.getSelectedOffset();
+						if (selectedOffset == -1) { // no: there isn't any result item selected
+							that.hide();
+							return true; // do the default thing
+						}
+						
+						// yes: fire the itemSelect event
+						var e = new events.Event();
+						e.source = $(that.overlay.container).get('.active');
+						e.selectedItem = that._found[selectedOffset];
+						events.fire(that, 'itemSelect', e);
+						return false; // return false to prevent form submitting?
 				}
 				
 				// if we're still here...
