@@ -213,7 +213,7 @@ t.test("check correct defaults for missing parameters", function() {
 		//not using getAttribute for the first two as some browsers give empty strings while others give null
 		t.ok(embed.id != "","Movie has auto-generated ID");
 		
-		var hasName = embed.name != "" || embed.name != undefined;
+		var hasName = embed.name != "" && embed.name != undefined;
 		
 		t.ok( !hasName, "no name by default" );
 		if (glow.env.ie) {
