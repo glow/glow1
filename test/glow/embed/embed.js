@@ -36,7 +36,8 @@ t.test("Test Embedding", function() {
 	
 	if (!movie.movie) {
 		flashHolder.destroy();
-		t.skip("Flash 9 or greater required"); return;
+		t.skip("Flash 9 or greater required");
+		return;
 	}
 	
 	t.ok(movie.movie.nodeName.toLowerCase() == embed_tag, "Movie property references Flash")
@@ -147,7 +148,8 @@ t.test("check that supplied attributes are set correctly", function() {
 	
 	if (!movie.movie) {
 		flashHolder.destroy();
-		t.skip("Flash 6 or greater required"); return;
+		t.skip("Flash 6 or greater required");
+		return;
 	}
 	
 	t.ok($("#testFlash")[0].tagName.toLowerCase() == embed_tag,"set id");
@@ -181,7 +183,8 @@ t.test("Shortcut attribute setting", function() {
   
 	if (!myFlash.movie) {
 		flashHolder.destroy();
-		t.skip("Flash 6 or greater required"); return;
+		t.skip("Flash 6 or greater required");
+		return;
 	}
 	
 	t.equals(myFlash.movie.id, "newIdValue", "ID");
@@ -202,13 +205,17 @@ t.test("check correct defaults for missing parameters", function() {
 	
 	if (!movie.movie) {
 		flashHolder.destroy();
-		t.skip("Flash 6 or greater required"); return;
+		t.skip("Flash 6 or greater required");
+		return;
 	}
 	
 	try {
 		//not using getAttribute for the first two as some browsers give empty strings while others give null
 		t.ok(embed.id != "","Movie has auto-generated ID");
-		t.ok(embed.name == "" || embed.name == undefined,"no name by default");
+		
+		var hasName = embed.name != "" || embed.name != undefined;
+		
+		t.ok( !hasName, "no name by default" );
 		if (glow.env.ie) {
 		  t.ok($(embed).children().filter(function() { return this.name == "allowscriptaccess" }).attr("value") == "always", "allowscriptaccess:always");
 		} else {
