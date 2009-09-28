@@ -516,7 +516,7 @@
 		 */
 		function rebuild() { /*debug*///console.log("Carousel-rebuild()");
 			var that = this; // used in callbacks to refer to myself
-			
+    
 			this.items = this._content.children();
 			var padCount;
 
@@ -1031,20 +1031,24 @@
 				alert(myCarousel.items); //returns array with a length of 4
 		*/
 		Carousel.prototype.removeItem = function(indexToRemove) { /*debug*///console.log("Carousel#removeItem("+indexToRemove+")");
-			var removingItem = this.items.slice(indexToRemove, indexToRemove + 1),
-				e = {
-					item: removingItem,
-					itemIndex: indexToRemove
-				};
+				// check if it's the last item in the carousel and prevent removal if so
+				if(this.items.length > 1){
+				    var removingItem = this.items.slice(indexToRemove, indexToRemove + 1),
+					    e = {
+						    item: removingItem,
+						    itemIndex: indexToRemove
+					    };
+					    
+				    if ( events.fire(this, "removeItem", e).defaultPrevented() ) {
+					    return removingItem;
+				    }
+	
+				    this._content.get(".carousel-added").remove(); // trim away added pads and clones
+				    removingItem.remove();			    
+				    
+				    rebuild.apply(this);
+				}
 				
-			if ( events.fire(this, "removeItem", e).defaultPrevented() ) {
-				return removingItem;
-			}
-			
-			this._content.get(".carousel-added").remove(); // trim away added pads and clones
-			removingItem.remove();
-			rebuild.apply(this);
-
 			return removingItem;
 		}
 		

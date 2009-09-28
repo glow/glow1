@@ -1774,7 +1774,7 @@ t.test("glow.dom.NodeList#wrap", function () {
 		
 	var nodes = glow.dom.get(".towrap").wrap(wrappernodes);
 		
-	t.ok(nodes.parent().hasClass("wrappernode") && wrappernodes.children().length == '1' && nodes.length == '3', "Three in document wrapper nodes have correct parents and one new child each");
+	t.ok(nodes.parent().hasClass("wrappernode") && wrappernodes.children().length == 1 && nodes.length == 3, "Three in document wrapper nodes have correct parents and one new child each");
 		
 	glow.dom.get(".wrappernode").remove();
 	glow.dom.get(".towrap").remove();
@@ -1783,7 +1783,7 @@ t.test("glow.dom.NodeList#wrap", function () {
 		
 	var nodes = glow.dom.create("<div class='towrap'>wrap1</div><div class='towrap'>wrap2</div>").wrap(wrappernodes2);
 		
-	t.ok(nodes.parent().hasClass("wrappernode") && wrappernodes2.children().length == '1' && nodes.length == '2', "Two new unattached wrapped nodes have correct parents and two children");
+	t.ok(nodes.parent().hasClass("wrappernode") && wrappernodes2.children().length == 1 && nodes.length == 2, "Two new unattached wrapped nodes have correct parents and two children");
 		
 	glow.dom.get(".wrappernode").remove();
    
