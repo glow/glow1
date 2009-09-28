@@ -1,5 +1,32 @@
 Glow Changelog
 
+1.7.0
+
+New:
+* glow.lang.interpolate - Added option to escape HTML from data object
+* glow.net.get / post - Added 'forceXml' option to treat any file as XML
+* glow.dom.create - Added option to escape HTML from interpolated data object
+* glow.dom.NodeList#ancestors - New method to get all ancestors of a NodeList
+* glow.dom.NodeList#data / removeData - New methods to associate data with nodes
+* glow.dom.NodeList#scrollLeft / scrollTop - New methods to get / set scroll position of document / nodes
+* glow.dom.NodeList#wrap / unwrap - New methods to wrap elements inside another
+* glow.widgets.Overlay - Prevent focus going to other elements while modal overlay is shown
+* glow.widgets.Editor - Added ordered & unordered lists
+* glow.widgets.Editor - Added heading dropdown
+* glow.widgets.AutoSuggest - Added 'useCache' option to cache results from the server
+
+Fixes:
+* glow.net.get / post - Fixed IE issues when fetching file from local filesystem
+* glow.dom.NodeList#css - Fixing IE issues with relative CSS values
+* glow.dom.NodeList#html - Fixing IE issues with some elements (eg tables)
+* glow.forms.Form - Allowing email address to end in underscore, eg blah_@blah.co.uk
+* glow.widgets.Carousel - Fixed pageNav after adding / removing items
+* glow.widgets.Carousel - Preventing user creating an empty carousel (rather than erroring)
+* glow.widgets.AutoSuggest - Preventing suggestions hiding when left / right arrow keys are pressed
+* glow.widgets.InfoPanel - Improving ARIA support
+* glow.widgets.Slider - Allowing left / right arrow keys to navigate vertical slider (recommendation from ARIA spec)
+
+
 1.6.1
 
 * glow.widgets.Sortable - Fixed negative margin issue
