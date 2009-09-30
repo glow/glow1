@@ -25,7 +25,7 @@ Fixes:
 * glow.widgets.AutoSuggest - Preventing suggestions hiding when left / right arrow keys are pressed
 * glow.widgets.InfoPanel - Improving ARIA support
 * glow.widgets.Slider - Allowing left / right arrow keys to navigate vertical slider (recommendation from ARIA spec)
-
+* glow.widgets.AutoSuggest - Fixed minor bugs affecting suggestions list display.
 
 1.6.1
 

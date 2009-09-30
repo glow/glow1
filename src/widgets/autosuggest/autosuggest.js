@@ -527,8 +527,12 @@
 			/*debug*///console.log("oldValue is '"+that._oldValue+"'; currentValue is '"+currentValue+"';");
 
 			var skipFind = false;
-			if (currentValue.toLowerCase() == that._oldValue.toLowerCase()) {
-				var skipFind = true;
+			if (currentValue == '') {
+				skipFind = true; // in case user has deleted last remaining character
+				that.hide(); // in case user has used keyboard to cut out all characters in the input item
+			}
+			else if (currentValue.toLowerCase() == that._oldValue.toLowerCase()) {
+				skipFind = true;
 			}
 		
 			that._oldValue = currentValue;
@@ -541,7 +545,7 @@
 					e.value = currentValue;
 					glow.events.fire(that, 'inputChange', e);
 					
-					activateItemOffset(that, 0);
+					if (that.opts.activeOnShow !== false) { activateItemOffset(that, 0); }
 
 					if (!e.defaultPrevented()) { // user can cancel the find in their handler
 						if (typeof that.dataSource != 'object') that.loadData(); // urls and functions are always reloaded
