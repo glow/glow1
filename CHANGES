@@ -1,5 +1,7 @@
 Glow Changelog
 
+* glow.widgets.AutoSuggest - Fixed minor bugs.
+
 1.6.1
 
 * glow.widgets.Sortable - Fixed negative margin issue
