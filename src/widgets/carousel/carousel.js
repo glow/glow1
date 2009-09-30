@@ -1032,15 +1032,15 @@
 		*/
 		Carousel.prototype.removeItem = function(indexToRemove) { /*debug*///console.log("Carousel#removeItem("+indexToRemove+")");
 				// check if it's the last item in the carousel and prevent removal if so
-				if(this.items.length > 1){
+				if (this.items.length > 1) {
 				    var removingItem = this.items.slice(indexToRemove, indexToRemove + 1),
-					    e = {
-						    item: removingItem,
-						    itemIndex: indexToRemove
-					    };
+					e = {
+						item: removingItem,
+						itemIndex: indexToRemove
+					};
 					    
 				    if ( events.fire(this, "removeItem", e).defaultPrevented() ) {
-					    return removingItem;
+					return removingItem;
 				    }
 	
 				    this._content.get(".carousel-added").remove(); // trim away added pads and clones
