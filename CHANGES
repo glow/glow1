@@ -1,6 +1,6 @@
 Glow Changelog
 
-1.7.0
+1.7.0-rc1
 
 New:
 * glow.lang.interpolate - Added option to escape HTML from data object
