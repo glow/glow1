@@ -1874,7 +1874,7 @@ Idler.prototype._stop = function() {
 			this.editor.commit();
 			// Update Toolbar
 			var currentDomPath = this._domPath();
-			if (currentDomPath != this.editor._lastDomPath) {
+			if (currentDomPath && currentDomPath != this.editor._lastDomPath) {
 				this.editor._lastDomPath = currentDomPath;
 				var e = glow.events.fire(this, 'domPathChange', {
 					domPath: currentDomPath
@@ -1975,6 +1975,8 @@ Idler.prototype._stop = function() {
 			var elmBody = glow.dom.get(this.editor.editArea.contentWindow.document).get('body').item(0);
 			var trail = "";
 			
+			if (elm === null) return null;
+			
 			while (elm.nodeName.toUpperCase() != elmBody.nodeName.toUpperCase()) {
 				trail = '<' + elm.nodeName.toLowerCase() + ((elm.getAttribute('style'))? ' style="'+elm.getAttribute('style')+'"' : '') + '>' + trail;
 				elm = elm.parentNode;
@@ -1995,8 +1997,13 @@ Idler.prototype._stop = function() {
 			@returns {HTML node}
 		 */
 		glow.widgets.Editor.EditArea.prototype._getSelectedNode = function() { 
+			var selected = this._getSelected();
+			
 			if (!glow.env.ie) {
-				selectedNode = this._getSelected().getRangeAt(0).commonAncestorContainer;
+				if (selected && selected.rangeCount === 0) {
+					return null; // selection is not in the editor, can't get any selected node!
+				}
+				selectedNode = selected.getRangeAt(0).commonAncestorContainer;
 				if (selectedNode.nodeType === 3) {
 					return selectedNode.parentNode;
 				}
@@ -2005,7 +2012,7 @@ Idler.prototype._stop = function() {
 				}
 			}
 			else { // ie 6
-				return this._getSelected().createRange().parentElement();
+				return selected.createRange().parentElement();
 			}
 		}
 		
