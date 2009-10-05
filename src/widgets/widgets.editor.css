@@ -1,5 +1,8 @@
 /* EDITOR */
-		.glowCSSVERSION-editor {border: 1px solid #000;}
+		.glowCSSVERSION-editor {
+			border: 1px solid #000;
+			font-size: medium;
+		}
 
 		.glowCSSVERSION-editor .editor-toolbar
 		{
@@ -8,7 +11,6 @@
 			margin: 0;
 			padding: 0;
 			background-color: #EFEFEF;
-			/*height: 28px;*/
 		}
 
 		.glowCSSVERSION-editor .editor-toolbar legend { display: none; }
@@ -28,8 +30,6 @@
 			list-style: none;
 			float: left;
 			display: block;
-			width: 26px;
-			/*height: 28px;*/
 			margin: 0 !important;
 			padding: 0 !important;
 		}
@@ -39,8 +39,6 @@
 			display: block;
 			margin: 0;
 			padding: 0;
-			width: 26px;
-			/*height: 28px;*/
 			overflow: hidden;
 		}
 
@@ -63,45 +61,118 @@
 			width: 1px;
 		}
 
-		.glowCSSVERSION-editor .editor-toolbar-icon span		{			display: block;			height: 1px;			overflow: hidden;			width: 1px;		}							.glowCSSVERSION-editor .editor-toolbar-item .bold-button { background-image: url(images/editor/button-bold.png); }
-		.glowCSSVERSION-editor .editor-toolbar-item .default  .bold-button { background-position: 0px 0px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .disabled .bold-button { background-position: 0px -28px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .active   .bold-button { background-position: 0px -85px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .hover    .bold-button { background-position: 0px -56px; }
+		.glowCSSVERSION-editor .editor-toolbar-icon span { display: block; height: 1px; overflow: hidden; width: 1px; }
 
+		.glowCSSVERSION-editor .editor-toolbar-item .bold-button { background-image: url(images/editor/button-bold.png); }
 		.glowCSSVERSION-editor .editor-toolbar-item .italics-button { background-image: url(images/editor/button-italics.png); }
-		.glowCSSVERSION-editor .editor-toolbar-item .default  .italics-button { background-position: 0px 0px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .disabled .italics-button { background-position: 0px -28px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .active   .italics-button { background-position: 0px -85px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .hover    .italics-button { background-position: 0px -56px; }
-
 		.glowCSSVERSION-editor .editor-toolbar-item .strike-button { background-image: url(images/editor/button-strike.png); }
-		.glowCSSVERSION-editor .editor-toolbar-item .default  .strike-button { background-position: 0px 0px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .disabled .strike-button { background-position: 0px -28px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .active   .strike-button { background-position: 0px -85px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .hover    .strike-button { background-position: 0px -56px; }
-		
 		.glowCSSVERSION-editor .editor-toolbar-item .blockquote-button { background-image: url(images/editor/button-blockquote.png); }
-		.glowCSSVERSION-editor .editor-toolbar-item .default  .blockquote-button { background-position: 0px 0px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .disabled .blockquote-button { background-position: 0px -28px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .active   .blockquote-button { background-position: 0px -85px; }
-		.glowCSSVERSION-editor .editor-toolbar-item .hover    .blockquote-button { background-position: 0px -56px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .unorderedlist-button { background-image: url(images/editor/button-unorderedlist.png); }
+		.glowCSSVERSION-editor .editor-toolbar-item .orderedlist-button { background-image: url(images/editor/button-orderedlist.png); }
 
-		.glowCSSVERSION-editor .glowCSSVERSION-hidden {position: absolute; left: -2500px; width: 1px;}
+		.glowCSSVERSION-editor .editor-toolbar-item .default  .editor-toolbar-icon { background-position: 0px 0px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .disabled .editor-toolbar-icon { background-position: 0px -28px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .active   .editor-toolbar-icon { background-position: 0px -85px; }
+		.glowCSSVERSION-editor .editor-toolbar-item .hover    .editor-toolbar-icon { background-position: 0px -56px; }
 
+		/* DROPDOWN */
+		
+		.glowCSSVERSION-editor .editor-toolbar-dropdown {
+			display: block;
+			width: 84px;
+			margin: 0 3px 0 3px;
+		}
+		
+		.glowCSSVERSION-editor .editor-toolbar-dropdown a {
+			color: black;
+			text-decoration: none;
+			font: 0.75em arial;
+		}
+		.glowCSSVERSION-editor .editor-toolbar-dropdown span span {
+			display: block;
+			padding: 1px 16px 1px 4px;
+			border: 1px solid #ccc;
+			height: 16px;
+			line-height: 16px;
+			margin: 3px 0 0 2px;
+			background: #fff url(images/editor/menuarrow.png) no-repeat right 8px;
+			
+			overflow: hidden;
+		}
+		.glowCSSVERSION-editor .editor-toolbar-dropdown .disabled span {
+			background: #aaa url(images/editor/menuarrow.png) no-repeat right -10px;
+		}
+		.glowCSSVERSION-editor .editor-toolbar-dropdown .hover span {
+			background: #fff url(images/editor/menuarrow.png) no-repeat right 8px;
+		}
+		.glowCSSVERSION-editor .editor-toolbar-dropdown .active span span {
+			border: 1px solid #aaa;
+		}
+		.glowCSSVERSION-editor .editor-toolbar-dropdown .active span {
+			background: #ccc url(images/editor/menuarrow.png) no-repeat right 8px;
+		}
+
+		.glowCSSVERSION-overlay.overlayMenu {
+			background: #ccc; border: 1px solid #b1b1b1;
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: medium;
+		}
+		
+		.glowCSSVERSION-overlay.overlayMenu ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+		
+		.glowCSSVERSION-overlay.overlayMenu ul li {
+			padding: 2px 4px 2px 4px;
+			outline: none;
+		}
+		
+		.glowCSSVERSION-overlay.overlayMenu li.highlighted { background: #999; cursor: pointer; }
+		.glowCSSVERSION-overlay.overlayMenu .heading1 { font-size: 1.2em; }
+		.glowCSSVERSION-overlay.overlayMenu .heading2 { font-size: 1.1em; }
+		.glowCSSVERSION-overlay.overlayMenu .heading3 { font-size: 1.0em; }
+		.glowCSSVERSION-overlay.overlayMenu .normal   { font-size: 0.9em; }
+		
+		/* DROPDOWN DARK */
+		
+		.glowCSSVERSION-editor .editor-dark .editor-toolbar-dropdown span span {
+			border: 1px solid #666;
+			background: transparent url(images/editor/menuarrow.png) no-repeat scroll right -12px;
+			color: #fff;
+		}
+		
+		.glowCSSVERSION-editor .editor-dark .editor-toolbar-dropdown .hover span span {
+			border: 1px solid #ccc;
+		}
+		
+		.glowCSSVERSION-editor .editor-toolbar-dropdown .hover span span {
+			border: 1px solid #999;
+		}
+
+		.glowCSSVERSION-overlay.overlayMenu-dark {
+			background: #333; border: 1px solid #ccc;
+			color: #fff;
+		}
+		.glowCSSVERSION-overlay.overlayMenu-dark ul li.highlighted { background: #000; }
+
+		.glowCSSVERSION-editor .glowCSSVERSION-hidden { position: absolute; left: -2500px; width: 1px; }
 
 		/* without images */
 		.glowCSSVERSION-basic .glowCSSVERSION-editor .editor-toolbar-icon span { border: none; height: auto; overflow: normal; width: auto; }
-		.glowCSSVERSION-basic .glowCSSVERSION-editor .editor-toolbar-item .hover span span {border: 1px solid #000;}
+		.glowCSSVERSION-basic .glowCSSVERSION-editor .editor-toolbar-item .hover span span { border: 1px solid #000; }
 
-		.glowCSSVERSION-editor iframe {border: 0; margin: 0; padding: 0; width: 100%;}
+		.glowCSSVERSION-editor iframe { border: 0; margin: 0; padding: 0; width: 100%; }
 
 		/* dark theme */
-		.editor-dark .editor-toolbar {background: #333; color: #fff;}
-		.editor-dark .editor-toolbar-item .bold-button { background-image: url(images/editor/dark-button-bold.png); }
-		.editor-dark .editor-toolbar-item .italics-button { background-image: url(images/editor/dark-button-italics.png); }
-		.editor-dark .editor-toolbar-item .strike-button { background-image: url(images/editor/dark-button-strike.png); }
-		.editor-dark .editor-toolbar-item .blockquote-button { background-image: url(images/editor/dark-button-blockquote.png); }
-
+		.glowCSSVERSION-editor .editor-dark .editor-toolbar { background: #333; color: #fff; }
+		.glowCSSVERSION-editor .editor-dark .editor-toolbar-item .bold-button { background-image: url(images/editor/dark-button-bold.png); }
+		.glowCSSVERSION-editor .editor-dark .editor-toolbar-item .italics-button { background-image: url(images/editor/dark-button-italics.png); }
+		.glowCSSVERSION-editor .editor-dark .editor-toolbar-item .strike-button { background-image: url(images/editor/dark-button-strike.png); }
+		.glowCSSVERSION-editor .editor-dark .editor-toolbar-item .blockquote-button { background-image: url(images/editor/dark-button-blockquote.png); }
+		.glowCSSVERSION-editor .editor-dark .editor-toolbar-item .blockquote-button { background-image: url(images/editor/dark-button-blockquote.png); }
+		.glowCSSVERSION-editor .editor-dark .editor-toolbar-item .unorderedlist-button { background-image: url(images/editor/dark-button-unorderedlist.png); }
+		.glowCSSVERSION-editor .editor-dark .editor-toolbar-item .orderedlist-button { background-image: url(images/editor/dark-button-orderedlist.png); }
 
 /* END EDITOR */

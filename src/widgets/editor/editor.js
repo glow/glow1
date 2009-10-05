@@ -6,7 +6,8 @@
 		'glow.dom',
 		'glow.events',
 		'glow.widgets',
-		'glow.i18n'
+		'glow.i18n',
+		'glow.widgets.Overlay'
 	]],
 	
 	builder: function(glow) {
@@ -26,11 +27,26 @@
 			ITALICS_LABEL : "I",
 
 			STRIKE_TITLE : "Strikethrough",
-			STRIKE_LABEL : "Strike"
+			STRIKE_LABEL : "Strike",
+			
+			UNORDERED_TITLE : "Unordered list",
+			UNORDERED_LABEL : "unordered list",
+			
+			ORDERED_TITLE : "Ordered list",
+			ORDERED_LABEL : "ordered list",
+			
+			FORMATBLOCK_TITLE : "Text style",
+			FORMATBLOCK_LABEL : "text style",
+			
+			HEADINGLEVELONE_TITLE : "Heading 1",
+			HEADINGLEVELTWO_TITLE : "Heading 2",
+			HEADINGLEVELTHREE_TITLE : "Heading 3",
+			NORMAL_TITLE : "Normal"
+
 			
 		/*
 			BLOCK_TITLE : "Blockquote",
-			BLOCK_LABEL : "blockquote",
+			BLOCK_LABEL : "blockquote"
 
 			HEADING1_TITLE : "Heading1",
 			HEADING1_LABEL : "Heading1",
@@ -93,7 +109,7 @@
 			this.toolbar = new glow.widgets.Editor.Toolbar(this);
 			
 			if (this._opts.toolset == "basic") {
-				this.toolbar._addToolset("italics", "bold", "strike"/*, "blockquote"*/);
+				this.toolbar._addToolset("italics", "bold", "strike", "formatBlock", /*"blockquote",*/ "unorderedlist", "orderedlist");
 			}
 			else throw new Exception("Unknown toolset name.");
 			
@@ -291,7 +307,7 @@ Idler.prototype._stop = function() {
 
 			this.opts = opts || {};
 			
-			this.whitelist = ["em", "strong", "strike", "p", "br", "blockquote"]; // TODO: support tags.attributes
+			this.whitelist = ["em", "strong", "strike", "p", "br", /*"blockquote",*/ "ul", "ol", "li", "h1", "h2", "h3"]; // TODO: support tags.attributes
 		}
 		
 		// runs before clean
@@ -447,7 +463,7 @@ Idler.prototype._stop = function() {
 		}
 		
 		TagCleaner.Tag = function(tagText) { /*debug*///console.log("new TagCleaner.Tag("+tagText+")");
-			/^<(\/?)([a-zA-Z]+)\b(.*)( ?\/)?>$/.exec(tagText);
+			/^<(\/?)([a-zA-Z1-6]+)\b(.*)( ?\/)?>$/.exec(tagText);
 			this.closing = !!RegExp.$1;
 			this.opening = !this.closing;
 			this.unary = !!RegExp.$4;
@@ -513,12 +529,13 @@ Idler.prototype._stop = function() {
 				myToolbar._addToolset("Bold", "Italics")
 				.addButton("MyCustomButton", opts); // will be chainable
 		 */
-		 glow.widgets.Editor.Toolbar.prototype._addToolset = function() {
+		 glow.widgets.Editor.Toolbar.prototype._addToolset = function(/*arguments*/) {
 		 	var toolToAdd;
+		 	
 		 	for (var i = 0, l = arguments.length; i < l; i++) {
 		 		if ( (toolToAdd = this.editor._tools[arguments[i]]) ) {
-					var newTool = new glow.widgets.Editor.Toolbar.Button(toolToAdd.name, toolToAdd.opts);
-					addTool.call(this, newTool);
+		 			toolToAdd.opts.theme = this.editor._opts.theme; // tools inherit theme from associated editor theme
+					addTool.call(this, glow.widgets.Editor.Toolbar.prototype._toolFactory(toolToAdd));
 				}
 		 	}
 		 	
@@ -527,6 +544,28 @@ Idler.prototype._stop = function() {
 			addToolbarIntoTabIndex.apply(this);
 
 		 	return this;
+		 }
+		
+		 /**
+		     @ignore
+		     @private
+			 @name glow.widgets.Editor.Toolbar#_toolFactory
+			 @description Factory for building different kinds of toolbar tools.
+			 @function
+			 @param {this.editor._tools} 
+			 @returns {glow.widgets.Editor.Toolbar.tool} this
+		 */
+		 glow.widgets.Editor.Toolbar.prototype._toolFactory = function(toolToAdd, editorRef) {
+			var newTool;
+			switch(toolToAdd.type) {
+				case "button":
+					newTool = new glow.widgets.Editor.Toolbar.Button(toolToAdd.name, toolToAdd.opts);
+					break;
+				case "dropDown":
+					newTool = new glow.widgets.Editor.Toolbar.DropDown(toolToAdd.name, toolToAdd.opts);
+					break;
+			}
+			return newTool;
 		 }
 		
 		// modifies HTML in place, while preserving the cursor position
@@ -545,9 +584,9 @@ Idler.prototype._stop = function() {
 			OBJECT:		true,
 			EMBED:		true,
 			SELECT:     true,
-			H1:         true,
-			H2:         true,
-			H3:         true,
+//			H1:         true,
+//			H2:         true,
+//			H3:         true,
 			H4:         true,
 			H5:         true,
 			H6:         true,
@@ -558,9 +597,9 @@ Idler.prototype._stop = function() {
 			PRE:        true,
 			CODE:       true,
 			A:          true,
-			UL:         true,
-			OL:         true,
-			LI:         true,
+//			UL:         true,
+//			OL:         true,
+//			LI:         true,
 			DL:         true,
 			DT:         true,
 			DD:         true,
@@ -693,7 +732,21 @@ Idler.prototype._stop = function() {
 		glow.widgets.Editor.Toolbar.prototype._update = function(domPath) { /*debug*///console.log("glow.widgets.Editor.Toolbar.prototype._update("+domPath+")")
 		 	var handled = false;
 		 	for (var i = 0, l = this._tools.length; i < l; i++) {
-		 		if (domPath.indexOf("|"+this._tools[i].tag+"|") > -1) {
+				// ***
+				// The dropdown has multilple tag values, so we need to do things a bit different...
+				// MAYBE WE SHOULD MOVE THIS INTO THE DROPDOWN OBJECT?
+				if(this._tools[i].type == "dropdown") {
+					var regex = new RegExp("/\|(" + this._tools[i].tag + ")\|/"),
+						domPathMatches = domPath.match(regex);
+					if (domPathMatches != null) {
+						this._tools[i].label( this._tools[i].overlayMenu.getTitleFromTag(domPathMatches[0]) );
+					}
+					else {
+						this._tools[i].label( "Normal" );
+					}
+					
+				}
+				else if (domPath.indexOf("|"+this._tools[i].tag+"|") > -1) {
 		 			this._tools[i].activate();
 		 			handled = true;
 		 		}
@@ -757,7 +810,7 @@ Idler.prototype._stop = function() {
 			@description
 			@function
 		 */
-		 glow.widgets.Editor.Toolbar.Tool.prototype.activate = function() {
+		 glow.widgets.Editor.Toolbar.Tool.prototype.activate = function() { /*debug*///console.log(this.type+".activate()");
 			this.isActive = true;
 			glow.events.fire(this, 'activate');
 		}
@@ -769,7 +822,7 @@ Idler.prototype._stop = function() {
 			@description
 			@function
 		 */
-		glow.widgets.Editor.Toolbar.Tool.prototype.deactivate = function() {
+		glow.widgets.Editor.Toolbar.Tool.prototype.deactivate = function() { /*debug*///console.log(this.type+".deactivate()");
 			this.isActive = false;
 			glow.events.fire(this, 'deactivate');
 		}
@@ -808,7 +861,7 @@ Idler.prototype._stop = function() {
 		glow.widgets.Editor.Toolbar.Tool.prototype.press = function() {
 			if (this.isEnabled) {
 				this.action.call(this);
-				if (!this.isActive) this.activate();
+				if (!this.isActive && this.type == "button") this.activate();
 				else this.deactivate();
 				this.editor._lastDomPath = null; // invalidate the current dom path (this is required on some browsers that "wrap" selections) to force ondompathchange to fire when the user clicks away from the current selection
 			}
@@ -827,6 +880,10 @@ Idler.prototype._stop = function() {
 			this.Base = arguments.callee.base; this.base = this.Base.prototype;
 			this.Base.apply(this, arguments);
 			
+
+			this.type = "button";
+
+			
 			// a button's CSS classname is defined here 
 			var buttonClass = name.toLowerCase() + "-button";
 			this.element = glow.dom.create('<li class="editor-toolbar-item"><span class="editor-toolbar-button"><a href="#" title="'+(opts.title || name)+'" tabindex="-1"><span class="editor-toolbar-icon '+buttonClass+'"><span>'+(opts.label || name)+'<\/span><\/span><\/a><\/span><\/li>');
@@ -838,12 +895,12 @@ Idler.prototype._stop = function() {
 			var key_listener;
 
  			glow.events.addListener(this.icon, "mouseover", function() { if (this.isEnabled && !this.isActive) toolLink.addClass("hover"); }, this);
-			glow.events.addListener(toolLink, "focus", function() { if (this.isEnabled) toolLink.addClass("hover"); key_listener = enable_key_listener(this); }, this);
+			glow.events.addListener(toolLink, "focus", function() { if (this.isEnabled) {toolLink.addClass("hover"); key_listener = enable_key_listener(this);} }, this);
  			glow.events.addListener(this.icon, "mouseout",  function() { toolLink.removeClass("hover"); }, this);
 			glow.events.addListener(toolLink, "blur",  function() { toolLink.removeClass("hover"); glow.events.removeListener(key_listener);}, this);
  			glow.events.addListener(this, "disable", function() { toolLink.addClass("disabled"); }, this);
  			glow.events.addListener(this, "enable", function() { toolLink.removeClass("disabled"); }, this);
- 			glow.events.addListener(this, "activate", function() { if (this.isEnabled) toolLink.addClass("active"); }, this);
+ 			glow.events.addListener(this, "activate", function() { if (this.isEnabled) {toolLink.addClass("active");} }, this);
  			glow.events.addListener(this, "deactivate", function() { toolLink.removeClass("active"); }, this);
 
  			var that = this;
@@ -853,6 +910,377 @@ Idler.prototype._stop = function() {
 		
 		glow.lang.extend(glow.widgets.Editor.Toolbar.Button, glow.widgets.Editor.Toolbar.Tool);
 		
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar.DropDown
+			@constructor
+			@extends glow.widgets.Editor.Toolbar.Tool
+		 */
+		glow.widgets.Editor.Toolbar.DropDown = function(name, opts) { /*debug*///console.log("new glow.widgets.Editor.Toolbar.DropDown("+name+", "+opts.toSource()+")")
+			
+			// this is at the begining of all the objects that extend glow.widgets.editor.toolbar.tool - is this the right way to do it?
+			this.Base = arguments.callee.base;
+			this.base = this.Base.prototype;
+			this.Base.apply(this, arguments);
+
+			this.type = "dropdown";
+			
+			this._opts = {
+				title: opts.title || name,
+				label: opts.lable || name,
+				theme: opts.theme || 'light'
+			};
+
+			// create dropdown tool-link element
+			var buttonClass = name.toLowerCase() + "-dropDown"; // like: formatblock-dropDown
+			this.element = glow.dom.create('<li class="editor-toolbar-item"><span class="editor-toolbar-dropdown"><a href="#" title="'+this._opts.title+'" tabindex="-1"><span class="'+buttonClass+'"><span>'+this._opts.label+'<\/span><\/span><\/a><\/span><\/li>');
+
+ 			// shortcuts
+ 			var that = this,
+				toolLink = this.element.get("a");
+ 				this.icon = this.element.get(".editor-toolbar-dropdown"); 
+ 
+			// create overlaymenu child obect - this is used as the menu when the drop-down tool-link is clicked on
+			this.overlayMenu = new glow.widgets.Editor.Toolbar.OverlayMenu(
+				this,
+				{
+					menuItems: opts.menuItems,
+					onClick: function(e) {
+						
+						// change the dropdown tool-link label
+						that.label(that.overlayMenu.menuItems[that.overlayMenu.selected].title);
+	
+						// fire tool-link - again, this is done from the overlayMenu because the tool-link isn't being interacted with
+						//events.fire(that, "activate");
+						that.press();
+						//events.fire(that, "deactivate");
+						//that.deactivate();
+						
+						if (glow.env.ie) {
+							that.editor.editArea.contentWindow.focus();
+						}
+						
+					}
+				}
+			);
+
+			// getter/setter for the label of the tool-link
+			this.label = function(newLabel) {
+				if (typeof newLabel != "undefined") {	
+					that.element.get("a span span").html(newLabel);
+					return this;
+				}
+				else {
+					return that.element.get("a span span").html();
+				}
+			}
+
+
+			// set the label to be the last text entry (normal text) in the overlaymenu
+			this.label(this.overlayMenu.menuItems[this.overlayMenu.selected].title);
+
+
+			// ***
+			// mouse events
+			// clicking on the tool-link opens the overlaymenu (closing the overlaymenu handled inside overlaymenu object)
+			glow.events.addListener(that.element.get("a"), "click", function() {
+				_openOverlayMenu();
+				return false;
+			});
+			glow.events.addListener(this.element.get("a"), "mousedown", function() { return false; });
+			// ***
+
+
+			// ***
+			// roll over events
+			glow.events.addListener(that.icon, "mouseover", function() {
+				if (this.isEnabled && !this.isActive) {
+					toolLink.addClass("hover");
+				}
+			}, this);
+			glow.events.addListener(toolLink, "focus", function() {
+				if (this.isEnabled) {
+					toolLink.addClass("hover");
+				}
+			}, this);
+			glow.events.addListener(this.icon, "mouseout",  function() {
+				toolLink.removeClass("hover");
+			}, this);
+			glow.events.addListener(toolLink, "blur",  function() {
+				toolLink.removeClass("hover");
+			}, this);
+			// ***
+
+
+			// ***
+			// enable/disable events
+			glow.events.addListener(this, "disable", function() {
+				toolLink.addClass("disabled");
+			}, this);
+ 			glow.events.addListener(this, "enable", function() {
+				toolLink.removeClass("disabled");
+			}, this);
+			// ***
+ 			
+			
+			// ***
+			// activate/deactivate events
+			glow.events.addListener(this, "activate", function() { /*debug*///console.log("activate");
+				if (this.isEnabled) {
+					toolLink.addClass("active");
+				}
+			}, this);
+ 			glow.events.addListener(this, "deactivate", function() {/*debug*///console.log("deactivate");
+				toolLink.removeClass("active");
+			}, this);
+			// ***
+			
+			
+			// ***
+			// keypress events
+			glow.events.addListener(toolLink, "keydown", function(e) {
+
+				// Open the overlayMenu
+				if(e.key == "DOWN") {
+					// Open the overlay
+					_openOverlayMenu();
+					
+					// Always hightlight the item in the dropDown that is currently displayed in the tool
+					var toolText = $(this).text();
+					that.overlayMenu.container.get("li").each(function(i){
+						var li = $(this);
+						if(li.text() == toolText) {
+							li[0].tabIndex = 0;
+							li[0].focus();
+						}
+					});
+					
+					return false;
+				}
+				// Close the overlayMenu
+				if(
+					   (e.key == "LEFT")
+					|| (e.key == "RIGHT")
+				) {
+					_closeOverlayMenu.call(that);
+					return false;
+				}
+			});
+
+			// opens the overlaymenu and sets it to appear below the dropdown toollink
+			function _openOverlayMenu() { /*debug*///console.log("_openOverlayMenu()");
+				that.activate();
+				that.overlayMenu.show();
+				var inputOffset = that.element.offset();
+				that.overlayMenu.container
+					.css("left", (inputOffset.left + 5))
+					.css("top", (inputOffset.top + that.element[0].offsetHeight + 2));
+			}		
+		}
+
+		function _closeOverlayMenu() { /*debug*///console.log("_closeOverlayMenu()");
+			this.deactivate();
+			this.overlayMenu.hide();
+		}
+		
+		glow.lang.extend(glow.widgets.Editor.Toolbar.DropDown, glow.widgets.Editor.Toolbar.Tool);
+
+		/**
+			@ignore
+			@private
+			@name glow.widgets.Editor.Toolbar.OverlayMenu
+			@constructor
+			@param {Object} opts Options object
+				@param {Array} [opts.menuItems] Array of objects with values to set the menu items to
+					Expects the following structure - menuItems: [{title: 'foo', tag: 'bar'}]
+				@param (Function) [opts.onClick] Shortcut to attach an event listener that is called when the user clicks on the overlayMenu.
+		 */
+		/**
+			@name glow.widgets.Editor.Toolbar.OverlayMenu#menuItems
+			@type Array
+			@description Array of items that are on the overlayMenu.
+		*/
+		/**
+			@name glow.widgets.Editor.Toolbar.OverlayMenu#selected
+			@type Number
+			@description Indicates index value of selected menu item
+		*/
+		glow.widgets.Editor.Toolbar.OverlayMenu = function(dropDown, opts) { /*debug*///console.log("new glow.widgets.Editor.Toolbar.OverlayMenu("+opts+", "+dropDown+")");
+
+			var overlayMenuContents = glow.dom.create('<ul></ul>'), // html for the overlay
+				overlayMenu,
+				that = this;
+
+			// default function requires a glow.dom.nodeList passed in, will return the html of the nodeList
+			// This param allows you to customise how each menuItem looks
+			// DON'T THINK WE NEED THIS?
+			opts.formatItem = opts.formatItem || function(o) { return o.html(); };
+						
+			// default empty function for onclick
+			opts.onClick = opts.onClick || function() {};
+
+			// create an overlay that we will use for the menu
+			overlayMenu = new glow.widgets.Overlay(overlayMenuContents, {
+				className: 'overlayMenu',
+				mask: new glow.widgets.Mask({
+					opacity: 0
+				}),
+				modal: true,
+				closeOnEsc: true,
+				autoPosition: false
+			});
+			
+			// inherit the theme of the dropdown we are associated with
+			if (dropDown._opts.theme) {
+				overlayMenu.container.addClass('overlayMenu-' + dropDown._opts.theme);
+			}
+
+			// Add opts.menuItems onto the overlayMenu. This make
+			overlayMenu.menuItems = opts.menuItems;
+			
+			// param to tell user the index value of the selected menuItem.
+			// default value is null as nothing has been selected yet.
+			overlayMenu.selected = null;
+			
+			// add menuItems onto overlayMenu HTML as <li>s
+			var z = 0;
+			for (menuItem in overlayMenu.menuItems) {
+				// shortcut
+				menuItem = overlayMenu.menuItems[menuItem];
+				// create and add the html to the overlayMenuContents
+				overlayMenuContents.append(glow.lang.interpolate(menuItem.template, {title: menuItem.title}));
+				// if menuItem.selected == true then set overlayMenu.selected to the index value
+				menuItem.selected = menuItem.selected || false;
+				if (menuItem.selected == true) {
+					overlayMenu.selected = z;
+				}
+				z++;
+			}
+			
+			// when the overlayMenu is hidden by clicking on the mask then deactivate the dropDown tool-link
+			events.addListener(overlayMenu, 'hide', function(){
+				if (dropDown.isActive == true) {
+					events.fire(dropDown, 'deactivate');
+					dropDown.isActive = false;
+				}
+			});
+			
+			// pass in a tag, and if the tag matches one of the tags in the menuItems return the matching menuItem's title
+			overlayMenu.getTitleFromTag = function(tag) {
+				for (menuItem in overlayMenu.menuItems) {
+					menuItem = overlayMenu.menuItems[menuItem];
+					if (menuItem.tag == tag) {
+						return menuItem.title;
+					}
+				}
+				// return null if no tag matches
+				return null;
+			}
+			
+			var arrLi = overlayMenu.container.get("li");
+			events.addListener(overlayMenuContents, "mouseover", function(e) {
+				_highlightMenuItem($(e.source), arrLi);
+				e.source.focus();
+			});
+			events.addListener(overlayMenuContents, "mouseout", function(e) {
+				_disableTabIndex(e.source);
+			});
+			events.addListener(overlayMenuContents, "focus", function(e) {
+				_highlightMenuItem($(e.source), arrLi);
+			});
+			events.addListener(overlayMenuContents, "blur", function(e) {
+				_disableTabIndex(e.source);
+			});
+			events.addListener(overlayMenuContents, "mousedown", function(e) {
+				_menuItemClick(e);
+				return false
+			});
+
+			events.addListener(overlayMenuContents, "keydown", function(e) {
+
+				var toolLink = dropDown.element.get("a");
+				switch(e.key) {
+					case "UP":
+						moveFocusLeft(e, arrLi);
+						break;
+					case "DOWN":
+						moveFocusRight(e, arrLi);
+						break;
+					case "ESC":
+						_closeOverlayMenu.call(dropDown);
+						// If keyboard access is being used then we want to throw the focus at the toollink
+						toolLink[0].focus();
+						break;
+					case "LEFT":
+						// Fake a LEFT ARROW key press on the dropDown tool in the editor toolbar
+						toolLink[0].focus();
+						moveFocusLeft(new events.Event({source: toolLink[0]}), dropDown.editor.toolbar.element.get("a"));
+						_closeOverlayMenu.call(dropDown);
+						break;
+					case "RIGHT":
+						// Fake a RIGHT ARROW key press on the dropDown tool in the editor toolbar
+						toolLink[0].focus();
+						moveFocusRight(new events.Event({source: toolLink[0]}), dropDown.editor.toolbar.element.get("a"));
+						_closeOverlayMenu.call(dropDown);
+						break;
+					case "ENTER":
+						_menuItemClick(e);
+				}
+
+				return false;
+			});
+			// keypress event needs to return false so Opera doesn't delete the selection in the iframe
+			events.addListener(overlayMenuContents, "keypress", function(e){
+				e.preventDefault();
+				return false;
+			});
+			// Internal click function.  Calls user defined click event
+			function _menuItemClick(e) {
+				var source = $(e.source);
+
+				// Remove highlighted class
+				source.removeClass("highlighted");
+
+				// set the selected index
+				overlayMenu.selected = _findPositionInNodelist(source);
+
+				// close overlay
+				_closeOverlayMenu.call(dropDown);
+
+				// Call user defined click event
+				opts.onClick(e);
+			}
+			
+			return overlayMenu;
+		}
+		
+		// Pass in an element, and this function will return the index value of its position amongst its siblings
+		function _findPositionInNodelist(elm) {
+			var siblings = $(elm).parent().children(),
+				r = 0;
+			siblings.each(function(y) {
+				if (this == elm.item(0)) {
+					r = y;
+				}
+			});
+			return r;
+		}
+		
+		function _highlightMenuItem(li, arrLi) {
+			arrLi.each(function(q) {
+				$(arrLi[q]).removeClass("highlighted");
+			});
+			li.addClass("highlighted");
+		}
+		
+		// Disables (sets to -1) the tabIndex of the passed in element
+		function _disableTabIndex(elm){
+			elm.tabIndex = -1;
+		}
+
+		
+
 // TODO: all these would be better handled by onWhatever event handlers passed into the Tool constructor call
 		glow.widgets.Editor.Toolbar.Button.prototype.activate = function() {
 			this.base.activate.apply(this, arguments);
@@ -898,6 +1326,7 @@ Idler.prototype._stop = function() {
 			return {
 				bold: {
 					name : "bold",
+					type : "button",
 					opts : {
 						title:      localeModule.BOLD_TITLE,
 						label:      localeModule.BOLD_LABEL,
@@ -909,6 +1338,7 @@ Idler.prototype._stop = function() {
 				},
 				italics: {
 					name : "italics",
+					type : "button",
 					opts : {
 						title:      localeModule.ITALICS_TITLE,
 						label:      localeModule.ITALICS_LABEL,
@@ -920,6 +1350,7 @@ Idler.prototype._stop = function() {
 				},
 				strike: {
 					name : "strike", 
+					type : "button", 
 					opts : {
 						title:      localeModule.STRIKE_TITLE,
 						label:      localeModule.STRIKE_LABEL,
@@ -927,19 +1358,80 @@ Idler.prototype._stop = function() {
 						command:    "strikethrough",
 						action:     function() { tag.call(this.editor.editArea, this.command); return false; }
 					}
-				}
-				/* tag.call(this.editor.editArea, this.command)
-				,
-				blockquote: {
+				},
+
+ 				/*blockquote: {
 					name : "blockquote", 
+					type : "button", 
 					opts : {
 						title:      localeModule.BLOCK_TITLE,
 						label:      localeModule.BLOCK_LABEL,
-						tag:		"blockquote",
-						command:    "formatblock",
-						action:     function() { tag.call(this.editor.editArea, this.command, 'blockquote'); return false; }
+						tag:		"formatblock",
+						command:    "<h1>",
+						action:     function() { tag.call(this.editor.editArea, this.tag, this.command); return false; }
+					}
+				},*/
+
+				unorderedlist: {
+					name : "unorderedlist",
+					type : "button", 
+					opts : {
+						title:      localeModule.UNORDERED_TITLE,
+						label:      localeModule.UNORDERED_LABEL,
+						tag:		"ul",
+						command:    "insertunorderedlist",
+						action:     function() { tag.call(this.editor.editArea, this.command); return false; }
 					}
 				},
+				orderedlist: {
+					name : "orderedlist",
+					type : "button", 
+					opts : {
+						title:      localeModule.ORDERED_TITLE,
+						label:      localeModule.ORDERED_LABEL,
+						tag:		"ol",
+						command:    "insertorderedlist",
+						action:     function() { tag.call(this.editor.editArea, this.command); return false; }
+					}
+				},
+				formatBlock: {
+					name : "formatBlock",
+					type : "dropDown", 
+					opts : {
+						title:      localeModule.FORMATBLOCK_TITLE,
+						label:      localeModule.FORMATBLOCK_LABEL,
+						tag:		'h1|h2|h3|p',
+						action: function() {
+							tag.call(this.editor.editArea, "formatblock", "<" + this.overlayMenu.menuItems[this.overlayMenu.selected].tag + ">");
+						},
+						menuItems: [
+							{
+								title:      localeModule.HEADINGLEVELONE_TITLE,
+								template:	'<li class="heading1">{title}</li>',
+								tag:		'h1'
+
+							},
+							{
+								title:      localeModule.HEADINGLEVELTWO_TITLE,
+								template:	'<li class="heading2">{title}</li>',
+								tag:		'h2'
+							},
+							{
+								title:      localeModule.HEADINGLEVELTHREE_TITLE,
+								template:	'<li class="heading3">{title}</li>',
+								tag:		'h3'
+							},
+							{
+								title:      localeModule.NORMAL_TITLE,
+								template:	'<li class="normal">{title}</li>',
+								tag:		'p',
+								selected:	true
+							}
+						]
+					}
+				}
+				/* tag.call(this.editor.editArea, this.command)
+				,
 				heading1:{
 					name : "heading1", 
 					opts : {
@@ -1258,8 +1750,8 @@ Idler.prototype._stop = function() {
 			@name moveCursorLeft
 			@description Receives left arrow key down event, passes the previous sibling of the element source to moveCursor function.
 		 */
-		function moveFocusLeft(event) {
-			moveFocus( getDistantSibling( glow.dom.get(event.source), -1) );
+		function moveFocusLeft(event, siblingLinks) {
+			moveFocus( getDistantSibling( glow.dom.get(event.source), -1, siblingLinks) );
 		}
 
 		/**
@@ -1268,8 +1760,8 @@ Idler.prototype._stop = function() {
 			@name moveCursorRight
 			@description Receives right arrow key down event, passes the next sibling of the element source to moveCursor function.
 		 */
-		function moveFocusRight(event) {
-			moveFocus( getDistantSibling( glow.dom.get(event.source), 1) );
+		function moveFocusRight(event, siblingLinks) {
+			moveFocus( getDistantSibling( glow.dom.get(event.source), 1, siblingLinks) );
 		}
 
 		/**
@@ -1279,9 +1771,13 @@ Idler.prototype._stop = function() {
 			@description  Builds an array of the hyperlinks in the toolbar, sets all their tabIndexes to -1 and then returns either 
 			              the next or previous element in the array based on the element passed in as a param
 		 */
-		function getDistantSibling(elm, move) { // console.log('changing the toolbar');
+		function getDistantSibling(elm, move, arrLinks) { // console.log('changing the toolbar');
+			arrLinks = arrLinks || getAncestor(glow.dom.get(elm), "ul").get('a');
+			//arrLinks = arrLinks || glow.dom.get(elm).parent().parent().parent().get('a');
+			
+			//feedback(arrLinks.html());
+			
 			var itemIndexToFocus = 0,
-				arrLinks         = glow.dom.get(elm).parent().parent().parent().get('a'),
 				trueArrayLength  = (arrLinks.length-1);
 
 			// Loop through array...
@@ -1296,8 +1792,22 @@ Idler.prototype._stop = function() {
 			if (itemIndexToFocus < 0) itemIndexToFocus = 0;
 			if (itemIndexToFocus > trueArrayLength) itemIndexToFocus = trueArrayLength;
 
-			// Return either the next or previous item compared the the element passed in via 'elm' param
+			// Return either the next or previous item compared to the element passed in via 'elm' param
 			return arrLinks.item(itemIndexToFocus);
+		}
+
+		function getAncestor(elm, typeToFind) {
+			var x = false;
+			while(x == false) {
+				if (
+					   (elm[0].nodeName.toUpperCase() == typeToFind.toUpperCase())
+					|| (elm[0].nodeName == "HTML")
+				) {
+					x = true;
+				}
+				elm = elm.parent();
+			}
+			return elm;			
 		}
 
 		/**
@@ -1307,6 +1817,7 @@ Idler.prototype._stop = function() {
 			@description Moves the focus from the focused element, to one of its siblings.  Also manages the tabindex of the toolbar
 		 */
 		function moveFocus(item) {
+
 			if (typeof item != 'undefined') {
 				// Set the tab index of the item that is to gain focus to 0 and give it focus.
 				item.tabIndex = 0;
@@ -1329,7 +1840,7 @@ Idler.prototype._stop = function() {
 			}
 			else {
 				this._domPath();
-				this.contentWindow.document.execCommand(tagName, false, null);
+				this.contentWindow.document.execCommand(tagName, false, attr);
 			}
 			this.contentWindow.focus();
 			updateArea.call(this);
