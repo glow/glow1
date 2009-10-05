@@ -1505,8 +1505,10 @@ Idler.prototype._stop = function() {
 					// see Webkit bug related to onbeforeunload and iframes 
 					// https://bugs.webkit.org/show_bug.cgi?id=21699
 					// http://code.google.com/p/chromium/issues/detail?id=5773
-					events.addListener(that.element[0].contentWindow, 'beforeunload', function () { that.editor.commit(); return true; } );
-					events.addListener(window, 'beforeunload', function () { that.editor.commit(); return true; } );
+					if (glow.env.webkit) {
+						events.addListener(that.element[0].contentWindow, 'beforeunload', function () { that.editor.commit(); return true; } );
+						events.addListener(window, 'beforeunload', function () { that.editor.commit(); return true; } );
+					}
 					
 					// Give the toolbar one focusable button
 					// Boolean that we use to make sure we only do this once
