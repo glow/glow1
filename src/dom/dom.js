@@ -492,11 +492,10 @@
 
 			}
 			else if (elm.getElementById) { // is document
+				// we previously checked offsetWidth & clientWidth here
+				// but they returned values too large in IE6 scrollWidth seems enough
 				r = Math.max(
 					docBody["scroll" + cssPropCaps],
-					docBody["offset" + cssPropCaps],
-					docElm["client" + cssPropCaps],
-					docElm["offset" + cssPropCaps],
 					docElm["scroll" + cssPropCaps]
 				)
 			}
