@@ -158,8 +158,14 @@
 				}
 
 				function resizeMask() {
-					// hide the mask so our measurement doesn't include the mask
-					that.maskElement.hide();
+					
+					// hiding the mask in IE6 (and sometimes 7) causes IE to get itself
+					// into a resize event loop (keeps firing resize) which freezes the browser.
+					// It's ok, hiding the mask for IE didn't update measurements anyway.
+					if ( !(glow.env.ie < 8) ) {
+						// hide the mask so our measurement doesn't include the mask
+						that.maskElement.hide();
+					}
 					
 					// the new height should be the size of the window or the size of the document, whatever's biggest
 					var newHeight = that.opts.disableScroll ? noScrollContainer.height() : Math.max( win.height(), doc.height() ),
