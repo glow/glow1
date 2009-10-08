@@ -379,8 +379,8 @@
 
 			/**
 			 @name glow.embed.Flash#movie
-			 @type Shockwave.Flash
-			 @description A reference to the actual Flash movie, for direct script access.
+			 @type Element
+			 @description A reference to the actual Flash movie element, for direct script access.
 			 @example
 				myFlash.movie.exposedFlashMethod();
 			 */
@@ -388,6 +388,18 @@
 
 			this._displayErrorMessage = typeof opts.message == "function" ? opts.message : function(){return opts.message};
 
+			/**
+			 @name glow.embed.Flash#isSupported
+			 @type Boolean
+			 @description Does the user have the correct version of Flash?
+				This will be false if the user has an earler version of Flash
+				installed than this movie requires, or the user doesn't have
+				any version of Flash instaled.
+			 @example
+				if ( !myFlash.isSupported ) {
+					alert('Please download the latest version of Flash');
+				}
+			*/
 			this.isSupported;
 
 			// Check that the min version requirement is satisfied and store this status, so we don't later try to embed the thing
