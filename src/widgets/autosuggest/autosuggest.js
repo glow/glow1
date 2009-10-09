@@ -186,6 +186,7 @@
 				else { // move selection up off of suggestion list, back into the input element
 					that.val(that._original);
 					deactivateItem(that, currItem);
+					that._lastActive = -1;
 				}
 			}
 		}
