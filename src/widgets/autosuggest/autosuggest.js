@@ -98,8 +98,8 @@
 			var inputOffset = that.inputElement.offset();
 
 			that.overlay.container
-			.css('left', parseInt(inputOffset.left) + 'px')
-			.css('top', parseInt(inputOffset.top + that.inputElement[0].offsetHeight-1) + 'px')
+			.css('left', inputOffset.left + 'px')
+			.css('top', inputOffset.top + that.inputElement[0].offsetHeight + 'px')
 			.css('width', ((that.opts.width)? that.opts.width : that.inputElement[0].offsetWidth + 'px'));
 		}
 		
