@@ -610,6 +610,7 @@
 			@param {Boolean} [opts.useCache=false] Allow results to cache when using a url dataSource
 				If false, a random number will be added to the URL to ensure the
 				results do not come from the browser's cache.
+			@param {Boolean} [opts.selectCompletedText=true] Set to false to prevent the widget from highlighting the completed text in the input element by selecting it.
 			
 			@param {Function} [opts.onItemSelect] Your own handler for the itemSelect event.
 			@param {Function} [opts.onDataLoad] Your own handler for the dataLoad event.
@@ -746,6 +747,9 @@
 					}
 				);
 			}
+			
+			this.opts.selectCompletedText =
+				(opts.selectCompletedText === undefined)? true : opts.selectCompletedText;
 		}
 
 /* public fields *************************************************************/
@@ -988,7 +992,9 @@
 			var value = appendTag(currentValue, delim, suggested);
 			this.inputElement.val(value);
 
-			selectRange(this.inputElement[0], {start: (this._value || '').length, end: this.inputElement.val().length}); //currentValue.length+suggested.length})
+			if (this.opts.selectCompletedText) {
+				selectRange(this.inputElement[0], {start: (this._value || '').length, end: this.inputElement.val().length}); //currentValue.length+suggested.length})
+			}
 		}
 		
 		/**
