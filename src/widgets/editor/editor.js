@@ -1097,11 +1097,15 @@ Idler.prototype._stop = function() {
 				@param (Function) [opts.onClick] Shortcut to attach an event listener that is called when the user clicks on the overlayMenu.
 		 */
 		/**
+			@ignore
+			@private
 			@name glow.widgets.Editor.Toolbar.OverlayMenu#menuItems
 			@type Array
 			@description Array of items that are on the overlayMenu.
 		*/
 		/**
+			@ignore
+			@private
 			@name glow.widgets.Editor.Toolbar.OverlayMenu#selected
 			@type Number
 			@description Indicates index value of selected menu item

@@ -2100,7 +2100,7 @@
 				Returns NodeList
 
 			@example
-				// get ancestory elements for anchor elements 
+				// get ancestor elements for anchor elements 
 				var ancestors = glow.dom.get("a").ancestors();
 			*/
 			ancestors: function() {
@@ -2195,7 +2195,7 @@
 
 			@example
 				// Before: <div><div><p></p></div></div>
-				// wrap the given element
+				// unwrap the given element
 				glow.dom.get("p").unwrap();
 				// After: <div><p></p></div>
 			*/

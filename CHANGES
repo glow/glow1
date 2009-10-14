@@ -1,5 +1,13 @@
 Glow Changelog
 
+1.7.0
+
+* glow.widgets.Autosuggest - Fixed bug that sometimes caused the suggestion list to be position off by 1 pixel
+* glow.widgets.Autosuggest - Added option to turn off selection of the completed text in the input element
+* glow.widgets.Mask - Fixed issue that causes IE6 to get into a resize event loop 
+* glow.dom - Changing method for getting document size to correct IE issue
+* glow.embed - Added documentation for isSupported
+
 1.7.0-rc1
 
 New:
