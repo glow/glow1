@@ -366,6 +366,8 @@
 		@function
 		@param {String | glow.dom.NodeList} element Element to animate. CSS Selector can be used.
 		@param {Number} duration Animation duration in seconds.
+		@param {String} action Either "down", "up" or "toggle" for the direction of the slide
+		@param {Object} [opts] Options object
 		@param {Function} [opts.tween=easeBoth tween] The way the value moves through time. See {@link glow.tweens}.
 		@param {Function} [opts.onStart] The function to be called when the first element in the NodeList starts the animation.  
 		@param {Function} [opts.onComplete] The function to be called when the first element in the NodeList completes the animation.
@@ -400,7 +402,7 @@
 					fromHeight = element.slice(i, i+1).height();
 				} else if (action == "down" || (action == "toggle" && element.slice(i, i+1).height() == 0)) {
 					fromHeight = element.slice(i, i+1).height();
-					element[i].style.height = "auto";
+					element[i].style.height = '';
 					completeHeight = element.slice(i, i+1).height();
 					element[i].style.height = fromHeight + "px";
 				}
@@ -420,8 +422,8 @@
 			events.addListener(timeline, "complete", function() {
 				// return heights to "auto" for slide down
 				element.each(function() {
-					if (this.style.height != "0px") {
-						this.style.height = "auto";
+					if (this.style.height.slice(0,1) != "0") {
+						this.style.height = '';
 					}
 				})
 			});
