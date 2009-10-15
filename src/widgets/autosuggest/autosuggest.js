@@ -749,7 +749,7 @@
 			}
 			
 			this.opts.selectCompletedText =
-				(opts.selectCompletedText === undefined)? true : opts.selectCompletedText;
+				(this.opts.selectCompletedText === undefined)? true : this.opts.selectCompletedText;
 		}
 
 /* public fields *************************************************************/
