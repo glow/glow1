@@ -539,7 +539,6 @@
 				}
 			}
 
-
 			// the number of pads needed differs if we're looping or not
 			if (this._opts.loop) {
 				// pad items to an even step, prevents carousel getting out of step
@@ -559,6 +558,17 @@
 			pad.removeAttr("id");
 			pad.addClass("carousel-added");
 			pad.addClass("carousel-pad");
+			
+			// in order to set visibility of text nodes to hidden they must be wrapped in an element
+			for (var i = pad[0].childNodes.length-1; i >= 0; i--) {
+				var padChild = pad[0].childNodes[i];
+				if (padChild.nodeType === 3) { // is it a text node?
+					var wrappedPadChild = document.createElement('span');
+					wrappedPadChild.innerHTML = padChild.nodeValue;
+					pad[0].replaceChild(wrappedPadChild, padChild);
+				}
+			}
+			
 			/*debug*///pad.html("PAD");
 			pad.children().css("visibility", "hidden"); // keep the same dimensions as the model, but don't display anything
 				
