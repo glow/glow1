@@ -153,7 +153,7 @@ t.test("glow.anim.SlideUp SlideUp", function() {
 	glow.anim.slideUp(elm, 0.1, {
 		onStart: function(){ 
 			t.ok(true, "Start fired");
-			t.equals(elm.css("height"), "28px", "Start height");
+			t.equals(elm.css("height"), "100px", "Start height");
 		}, 
 		onComplete: function(){ 
 			t.ok(true, "Complete fired");
@@ -164,9 +164,12 @@ t.test("glow.anim.SlideUp SlideUp", function() {
 });
 
 t.test("glow.anim.SlideDown SlideDown", function() {
-	t.expect(3);
-	
+	t.expect(4);
+	// we need the test to be visible to get correct height readings
+	var animTests = glow.dom.get('#animTests').css('display', 'block');
 	var elm = glow.dom.get("#slidedown");
+	var openHeight = elm.css("height");
+	
 	elm.css("height", 0).css("overflow", "hidden");
 	t.stop();
 
@@ -177,6 +180,8 @@ t.test("glow.anim.SlideDown SlideDown", function() {
 		}, 
 		onComplete: function(){ 
 			t.ok(true, "Complete fired");
+			t.equals(elm.css("height"), openHeight, "End height");
+			animTests.css('display', 'none');
 			t.start();
 		} 
 	});
