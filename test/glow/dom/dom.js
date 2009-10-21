@@ -1094,8 +1094,8 @@ t.test("glow.dom.NodeList.clone()", function () {
 	t.equals(clone[1].innerText, nodes[1].innerText, "clone duplicates text nodes");
 });
 
-t.test("glow.dom.NodeList.html()", function () {
-	t.expect(7);
+t.test("glow.dom.NodeList#html()", function () {
+	t.expect(8);
 
 	var nodes = glow.dom.create("<div><span>first</span></div><div>second</div>");
 
@@ -1131,6 +1131,12 @@ t.test("glow.dom.NodeList.html()", function () {
 	t.equals(tableNode.get('tr').length, 0, 'Table contents removed');
 	
 	tableNode.destroy();
+	
+	// adding a number - should convert it to a string
+	var div = glow.dom.create('<div></div>');
+	div.html(1);
+	t.equals(div.html(), '1', 'Contents of div set');
+	div.destroy();
 });
 
 t.test("glow.dom.NodeList#append()", function () {

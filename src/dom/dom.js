@@ -2503,7 +2503,7 @@
 
 				if (newHtml !== undefined) {
 					// not setting innerHTML, doesn't work in IE for elements like <table>
-					return this.empty().append(newHtml);
+					return this.empty().append( newHtml.toString() );
 				}
 				return this[0] ? this[0].innerHTML : "";
 			},
