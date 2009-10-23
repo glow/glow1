@@ -734,7 +734,7 @@
 				that.container.attr("aria-hidden", "true");
 				//move the focus if applicable
 				if (returnTo[0]) {
-					returnNodeName = returnTo[0].nodeName;
+					returnNodeName = returnTo[0].nodeName.toLowerCase();
 
 					//give the element a tab index if it needs one
 					if (returnTo[0].tabindex == undefined ||
