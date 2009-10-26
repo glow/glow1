@@ -957,7 +957,7 @@
 			/**
 			@name glow.anim.Animation#destroy
 			@function
-			@description Destroys the animation & detatches references to DOM nodes
+			@description Destroys the animation & detaches references to DOM nodes
 				Call this on animations you no longer need to free memory.
 			@returns {glow.anim.Animation}
 			*/
