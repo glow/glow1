@@ -58,7 +58,7 @@ t.test("glow.net.get sync", function() {
 });
 
 t.test("glow.net.get async header setting", function() {
-	t.expect(4);
+	t.expect(5);
 	t.stop();
 	var request = glow.net.get("testdata/xhr/requestheaderdump.php", {
 		headers: {
@@ -74,6 +74,7 @@ t.test("glow.net.get async header setting", function() {
 			t.ok(true, "correct callback used");
 			t.ok(/^REQUEST_METHOD: GET/m.test(response.text()), "Using get method");
 			t.ok(/^HTTP_CUSTOM_HEADER: thisisatest/m.test(response.text()), "Custom Header Sent");
+			t.ok(/^HTTP_X_REQUESTED_WITH: XMLHttpRequest/m.test(response.text()), "X-Requested-With default set");
 			t.ok(/^CONTENT_TYPE: image\/png/m.test(response.text()), "Content-type Changed");
 			t.start();
 		},

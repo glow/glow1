@@ -66,20 +66,23 @@
 		 * @returns Object
 		 */
 		function populateOptions(opts) {
-			return glow.lang.apply(
-				{
-					onLoad: emptyFunc,
-					onError: emptyFunc,
-					onAbort: emptyFunc,
-					headers: {},
-					async: true,
-					useCache: false,
-					data: null,
-					defer: false,
-					forceXml: false
-				},
-				opts || {}
-			);
+			var newOpts = glow.lang.apply({
+				onLoad: emptyFunc,
+				onError: emptyFunc,
+				onAbort: emptyFunc,
+				headers: {},
+				async: true,
+				useCache: false,
+				data: null,
+				defer: false,
+				forceXml: false
+			}, opts || {} );
+			
+			// add requested with header if one hasn't been added
+			if ( !('X-Requested-With' in newOpts.headers) ) {
+				newOpts.headers['X-Requested-With'] = 'XMLHttpRequest';
+			}
+			return newOpts;
 		}
 
 		/*
