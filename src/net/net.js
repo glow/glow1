@@ -593,12 +593,14 @@
 			 @returns this
 			*/
 			destroy: function() {
+				var that = this;
+				
 				if (this._callbackIndex !== undefined) {
-					// set timeout is used here to prevent a crash in IE7 (possibly other version) when the script is from the filesystem
+					// set timeout is used here to prevent a crash in IE7 (possibly other versions) when the script is from the filesystem
 					setTimeout(function() {
-						$( scriptElements[this._callbackIndex] ).destroy();
-						scriptElements[this._callbackIndex] = undefined;
-						delete scriptElements[this._callbackIndex];
+						$( scriptElements[that._callbackIndex] ).destroy();
+						scriptElements[that._callbackIndex] = undefined;
+						delete scriptElements[that._callbackIndex];
 					}, 0);
 				}
 				return this;
