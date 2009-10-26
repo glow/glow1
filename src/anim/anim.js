@@ -731,7 +731,7 @@
 		@class
 		@description Controls modifying values over time.
 
-			You can create an animtion instance using the constructor, or use
+			You can create an animation instance using the constructor, or use
 			one of the helper methods in {@link glow.anim}.
 
 			Once you have created your animation instance, you can use
@@ -812,7 +812,7 @@
 		@description Fired when the animation is stopped before its end.
 
 			If your listener prevents the default action (for instance,
-			by returning false) the animtion will not be stopped.
+			by returning false) the animation will not be stopped.
 		
 		@param {glow.events.Event} event Event Object
 		*/
@@ -900,7 +900,7 @@
 			@name glow.anim.Animation#value
 			@type Number
 			@default 0
-			@description Current tweened value of the animtion, usually between 0 & 1.
+			@description Current tweened value of the animation, usually between 0 & 1.
 				The value may become greater than 1 or less than 0 depending
 				on the tween used.
 				
