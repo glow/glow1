@@ -1269,7 +1269,7 @@
 			},
 
 			/**
-			@name glow.widgets.Timetable.Item#getHeader
+			@name glow.widgets.Timetable.Track#getHeader
 			@function
 			@description Gets the actual content of if the Track header (if any) for the Timetable to display
 			@returns glow.dom.NodeList
@@ -1279,7 +1279,7 @@
 			},
 
 			/**
-			@name glow.widgets.Timetable.Item#getFooter
+			@name glow.widgets.Timetable.Track#getFooter
 			@function
 			@description Gets the actual content of if the Track footer (if any) for the Timetable to display
 			@returns glow.dom.NodeList
