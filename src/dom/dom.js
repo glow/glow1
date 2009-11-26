@@ -2426,13 +2426,17 @@
 				// get a copy of all anchor elements with 
 				var myAnchors = glow.dom.get("a").clone(true);
 			*/
-			clone: function (cloneListeners) {
+			clone: function (cloneListeners) {				
 				var ret = [],
 					i = this.length,
 					allCloneElms,
 					allBaseElms
 					eventIdProp = '__eventId' + glow.UID;
-
+				
+				if (i === 0) {
+					return new r.NodeList();
+				}
+				
 				while (i--) {
 					ret[i] = this[i].cloneNode(true);
 				}

@@ -1077,7 +1077,7 @@ t.test("glow.dom.NodeList#destroy", function() {
 })
 
 t.test("glow.dom.NodeList.clone()", function () {
-	t.expect(5);
+	t.expect(6);
 
 	var nodes = glow.dom.create("<div><span>first</span></div><div>second</div>");	
 
@@ -1092,6 +1092,12 @@ t.test("glow.dom.NodeList.clone()", function () {
 	t.equals(clone[0].firstChild.nodeName, nodes[0].firstChild.nodeName, "clone duplicates child elements");
 
 	t.equals(clone[1].innerText, nodes[1].innerText, "clone duplicates text nodes");
+	
+	var emptyNodeList = new glow.dom.NodeList(),
+		emptyClone = emptyNodeList.clone();
+		
+	t.equals(emptyClone.length, 0, "Clone works on empty nodelists");
+
 });
 
 t.test("glow.dom.NodeList#html()", function () {
