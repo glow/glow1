@@ -611,6 +611,12 @@
 				If false, a random number will be added to the URL to ensure the
 				results do not come from the browser's cache.
 			@param {Boolean} [opts.selectCompletedText=true] Set to false to prevent the widget from highlighting the completed text in the input element by selecting it.
+			@param {String} [opts.id] ID for the AutoSuggest's container element.
+				This (or className) should be used if you're going to restyle the output,
+				to ensure your restyling only changes the autosuggests you want to restyle.
+			@param {String} [opts.className] Class names for the AutoSuggest's container element.
+				This (or id) should be used if you're going to restyle the output,
+				to ensure your restyling only changes the autosuggests you want to restyle.
 			
 			@param {Function} [opts.onItemSelect] Your own handler for the itemSelect event.
 			@param {Function} [opts.onDataLoad] Your own handler for the dataLoad event.
@@ -708,7 +714,9 @@
 				glow.dom.create('<div class="glowCSSVERSION-autoSuggest"><ul></ul></div>'),
 				{
 					autoPosition: false,
-					anim: (this.opts.anim)? this.opts.anim : null
+					anim: (this.opts.anim)? this.opts.anim : null,
+					id: opts.id,
+					className: opts.className
 				}
 			);
 		
