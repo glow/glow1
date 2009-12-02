@@ -670,7 +670,7 @@
 
 		}
 		
-		/**
+		/* (hidden from jsdoc as it appeared in output docs)
 		@name glow.net-shouldParseAsXml
 		@function
 		@description Should the response be treated as xml? This function is used by IE only
