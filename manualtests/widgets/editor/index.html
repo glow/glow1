@@ -88,21 +88,22 @@
 	</p>
 	
 	<script type="text/javascript" class="showSrc">
-	// <![CDATA[
-	glow.ready(function() {
-		window.editor1 = new glow.widgets.Editor("#editor1Field", {
-			theme: urlOpts.theme
-		});
+		// this once broke editor, leaving it in to test regressions
+		Array.prototype.blahblahblahblah = function() {};
 		
-		glow.events.addListener(editor1, 'commit', function() {
-			manualTests.log('editor1: commit');
+		glow.ready(function() {
+			window.editor1 = new glow.widgets.Editor("#editor1Field", {
+				theme: urlOpts.theme
+			});
+			
+			glow.events.addListener(editor1, 'commit', function() {
+				manualTests.log('editor1: commit');
+			});
+			glow.events.addListener('#getFormVals1', 'click', function() {
+				manualTests.log( 'editor1 val: ' + glow.dom.get('#editor1Field').val() );
+				return false;
+			});
 		});
-		glow.events.addListener('#getFormVals1', 'click', function() {
-			manualTests.log( 'editor1 val: ' + glow.dom.get('#editor1Field').val() );
-			return false;
-		});
-	});
-	// ]]>
 	</script>
 	
 	

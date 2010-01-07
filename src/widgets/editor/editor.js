@@ -1149,9 +1149,9 @@ Idler.prototype._stop = function() {
 			
 			// add menuItems onto overlayMenu HTML as <li>s
 			var z = 0;
-			for (menuItem in overlayMenu.menuItems) {
+			for (var i = 0, leni = overlayMenu.menuItems.length; i<leni; i++) {
 				// shortcut
-				menuItem = overlayMenu.menuItems[menuItem];
+				menuItem = overlayMenu.menuItems[i];
 				// create and add the html to the overlayMenuContents
 				overlayMenuContents.append(glow.lang.interpolate(menuItem.template, {title: menuItem.title}));
 				// if menuItem.selected == true then set overlayMenu.selected to the index value
@@ -1172,8 +1172,9 @@ Idler.prototype._stop = function() {
 			
 			// pass in a tag, and if the tag matches one of the tags in the menuItems return the matching menuItem's title
 			overlayMenu.getTitleFromTag = function(tag) {
-				for (menuItem in overlayMenu.menuItems) {
-					menuItem = overlayMenu.menuItems[menuItem];
+				var menuItem;
+				for (var i = 0, leni = overlayMenu.menuItems.length; i<len; i++) {
+					menuItem = overlayMenu.menuItems[i];
 					if (menuItem.tag == tag) {
 						return menuItem.title;
 					}
