@@ -1,5 +1,17 @@
 Glow Changelog
 
+1.7.1
+
+* glow.widgets.AutoSuggest - Handle missing opts
+* glow.widgets.AutoSuggest - Adding "id" & "classname" options
+* glow.widgets.Carousel - Handle text in first item
+* glow.widgets.Editor - Bad loop fix
+* glow.widgets.Overlay - returnTo() fix
+* glow.anim - slideDown() fix
+* glow.dom - html() param as number, clone() empty NodeList IE fix
+* glow.net - loadScript() memory usage regression fix 
+* glow.net - Adding Header X-Requested-With: XmlHttpRequest to requests
+
 1.7.0
 
 * glow.widgets.Autosuggest - Fixed bug that sometimes caused the suggestion list to be position off by 1 pixel
