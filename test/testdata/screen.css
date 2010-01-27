@@ -361,5 +361,10 @@ ul.unitTests span.testStats span {
 		height: 100px;
 		overflow: hidden;
 	}
+	#slidedown2 {
+		width: 100px;
+		height: 0;
+		overflow: hidden;
+	}
 /* end */
 /* END */

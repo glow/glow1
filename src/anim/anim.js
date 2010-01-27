@@ -404,6 +404,11 @@
 					fromHeight = element.slice(i, i+1).height();
 					element[i].style.height = '';
 					completeHeight = element.slice(i, i+1).height();
+					// what if the height is set to 0 in the CSS?
+					if (completeHeight === 0) {
+						element[i].style.height = 'auto';
+						completeHeight = element.slice(i, i+1).height();
+					}
 					element[i].style.height = fromHeight + "px";
 				}
 
@@ -424,6 +429,9 @@
 				element.each(function() {
 					if (this.style.height.slice(0,1) != "0") {
 						this.style.height = '';
+						if ( glow.dom.get(this).height() === 0 ) {
+							this.style.height = 'auto';
+						}
 					}
 				})
 			});
