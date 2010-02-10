@@ -47,14 +47,11 @@ glow.forms = {};
 	@param {Object} [opts]
 	@param {Function} [opts.onValidate] Handles the 'validate' event when all tests are complete. Default is glow.forms.feedback.defaultFeedback.
 	@example
-	myForm = new glow.forms.Form(
-		glow.dom.get("#htmlFormId"),
-		{
-			onValidate: function(results) {
-				// ...
-			}
+	myForm = new glow.forms.Form("#htmlFormId" ,{
+		onValidate: function(results) {
+			// ...
 		}
-	);
+	});
  */
 glow.forms.Form = function(formNode, opts) { /*debug*///console.log("glow.forms.Form#new("+formNode+", "+opts+")");
 	/**
