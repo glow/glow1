@@ -10,6 +10,7 @@ t.test("Load DOM", function() {
 });
 
 t.test("broken", function() {
+	console.log('testing whether it works');
 	t.expect(7);
 	try {
 		glow.dom.get("[");

@@ -266,6 +266,78 @@
 		};
 
 		/**
+		@name glow.net.put
+		@function
+		@description Makes an HTTP PUT request to a given url
+
+		@param {String} url
+			Url to make the request to. This can be a relative path. You cannot make requests
+			for files on other domains, to do that you must put your data in a javascript
+			file and use {@link glow.net.loadScript} to fetch it.
+		@param {Object|String} data
+			Data to put, either as a JSON-style object or a urlEncoded string
+		@param {Object} opts
+			Same options as {@link glow.net.get}
+
+		@returns {Number|glow.net.Response}
+			An integer identifying the async request, or the response object for sync requests
+
+		@example
+			var postRef = glow.net.put("myFile.html",
+				{key:"value", otherkey:["value1", "value2"]},
+				{
+					onLoad: function(response) {
+						alert("Got file:\n\n" + response.text());
+					},
+					onError: function(response) {
+						alert("Error getting file: " + response.statusText());
+					}
+				}
+			);
+		*/
+		r.put = function(url, data, o) {
+			o = populateOptions(o);
+			o.data = data;
+			if (!o.headers["Content-Type"]) {
+				o.headers["Content-Type"] = STR.POST_DEFAULT_CONTENT_TYPE;
+			}
+			return makeXhrRequest('PUT', url, o);
+		};
+
+		/**
+		@name glow.net.del
+		@function
+		@description Makes an HTTP DELETE request to a given url
+			we can't use glow.net.delete as it is a reserved keyword
+
+		@param {String} url
+			Url to make the request to. This can be a relative path. You cannot make requests
+			for files on other domains, to do that you must put your data in a javascript
+			file and use {@link glow.net.loadScript} to fetch it.
+		@param {Object} opts
+			Same options as {@link glow.net.get}
+
+		@returns {Number|glow.net.Response}
+			An integer identifying the async request, or the response object for sync requests
+
+		@example
+			var postRef = glow.net.del("myFile.html",
+				{
+					onLoad: function(response) {
+						alert("Got file:\n\n" + response.text());
+					},
+					onError: function(response) {
+						alert("Error getting file: " + response.statusText());
+					}
+				}
+			);
+		*/
+		r.del = function(url, o) {
+			o = populateOptions(o);
+			return makeXhrRequest('DELETE', url, o);
+		};
+
+		/**
 		@name glow.net.loadScript
 		@function
 		@description Loads data by adding a script element to the end of the page

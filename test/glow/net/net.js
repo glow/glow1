@@ -426,3 +426,50 @@ t.test("glow.net.loadScript aborting", function() {
 		t.start();
 	}, 3000);
 })
+
+t.test("glow.net.put aync json", function() {
+	t.expect(2);
+	t.stop();
+	var request = glow.net.put("testdata/xhr/put.php",
+		{some:"putData", blah:["something", "somethingElse"]},
+		{
+			onLoad: function(response) {
+				if ( response.text().slice(0, 2) == '<?' ) {
+					t.start();
+					t.skip("This test requires a web server running PHP5");
+					return;
+				}
+				t.ok(true, "correct callback used");
+				t.equals( response.text(), "PUT: putData", "Using put method" );
+				t.start();
+			},
+			onError: function() {
+				t.ok(false, "correct callback used");
+				t.start();
+			}
+		}
+	);
+});
+
+t.test("glow.net.del aync", function() {
+	t.expect(2);
+	t.stop();
+	var request = glow.net.del("testdata/xhr/delete.php",
+		{
+			onLoad: function(response) {
+				if ( response.text().slice(0, 2) == '<?' ) {
+					t.start();
+					t.skip("This test requires a web server running PHP5");
+					return;
+				}
+				t.ok(true, "correct callback used");
+				t.equals( response.text(), "DELETE request", "Using delete method" );
+				t.start();
+			},
+			onError: function() {
+				t.ok(false, "correct callback used");
+				t.start();
+			}
+		}
+	);
+});
