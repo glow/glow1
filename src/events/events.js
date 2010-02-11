@@ -372,7 +372,7 @@
 			<dl>
 				<dt>mouseenter</dt>
 				<dd>Fires when the mouse enters this element specifically, does not bubble</dd>
-				<dt>mouseleave/dt>
+				<dt>mouseleave</dt>
 				<dd>Fires when the mouse leaves this element specifically, does not bubble</dd>
 			</dl>
 		
