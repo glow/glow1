@@ -264,6 +264,47 @@
 		};
 
 		/**
+		@name glow.net.send
+		@function
+		@description Makes a custom HTTP request to a given url
+			Not all HTTP verbs work cross-browser. Use {@link glow.net.get get},
+			{@link glow.net.post post}, {@link glow.net.put put} or
+			{@link glow.net.del del} for 'safe' methods.
+
+		@param {String} method
+			The HTTP method to use for the request. Methods are case sensitive
+			in some browsers.
+		@param {String} url
+			Url to make the request to. This can be a relative path. You cannot make requests
+			for files on other domains, to do that you must put your data in a javascript
+			file and use {@link glow.net.loadScript} to fetch it.
+		@param {Object|String} [data]
+			Data to post, either as a JSON-style object or a urlEncoded string
+		@param {Object} opts
+			Same options as {@link glow.net.get}
+
+		@returns {glow.net.Request|glow.net.Response}
+			A response object for non-defered sync requests, otherwise a
+			request object is returned
+
+		@example
+			glow.net.send('HEAD', 'myFile.html', null, {
+				onLoad: function(response) {
+					// ...
+				}
+			});
+		*/
+		r.send = function(method, url, data, o) {
+			// Ensure that an empty body does not cause a 411 error.
+			data = data || '';
+
+			o = populateOptions(o);
+			o.data = data;
+
+			return makeXhrRequest(method, url, o);
+		};
+
+		/**
 		@name glow.net.put
 		@function
 		@description Makes an HTTP PUT request to a given url
@@ -839,4 +880,5 @@
 		glow.net = r;
 	}
 });
+
 

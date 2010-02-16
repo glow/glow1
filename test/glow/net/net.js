@@ -473,3 +473,24 @@ t.test("glow.net.del aync", function() {
 		}
 	);
 });
+
+t.test("glow.net.send", function() {
+	t.expect(2);
+	t.stop();
+	var request = glow.net.send('OPTIONS', "testdata/xhr/verb.php", 'hello=world', {
+		onLoad: function(response) {
+			if ( response.text().slice(0, 2) == '<?' ) {
+				t.start();
+				t.skip("This test requires a web server running PHP5");
+				return;
+			}
+			t.ok(true, "correct callback used");
+			t.equals( response.text(), "OPTIONS: world", "Using put method" );
+			t.start();
+		},
+		onError: function() {
+			t.ok(false, "correct callback used");
+			t.start();
+		}
+	});
+});
