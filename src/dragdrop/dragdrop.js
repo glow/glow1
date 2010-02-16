@@ -863,6 +863,7 @@
 			if (opts.onEnter) listeners[i++] = addListener(this, 'enter', this._opts.onEnter, this);
 			if (opts.onLeave) listeners[i++] = addListener(this, 'leave', this._opts.onLeave, this);
 			if (opts.onDrop)  listeners[i++] = addListener(this, 'drop',  this._opts.onDrop,  this);
+			if (opts.onAfterDrop)  listeners[i++] = addListener(this, 'afterDrop',  this._opts.onAfterDrop,  this);
 
 			this._dragListener = addListener(this._handle, 'mousedown', this._startDragMouse, this);
 
