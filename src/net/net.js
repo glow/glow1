@@ -240,21 +240,19 @@
 		@param {Object} opts
 			Same options as {@link glow.net.get}
 
-		@returns {Number|glow.net.Response}
-			An integer identifying the async request, or the response object for sync requests
+		@returns {glow.net.Request|glow.net.Response}
+			A response object for non-defered sync requests, otherwise a
+			request object is returned
 
 		@example
-			var postRef = glow.net.post("myFile.html",
-				{key:"value", otherkey:["value1", "value2"]},
-				{
-					onLoad: function(response) {
-						alert("Got file:\n\n" + response.text());
-					},
-					onError: function(response) {
-						alert("Error getting file: " + response.statusText());
-					}
+			glow.net.post("myFile.html", {key:"value", otherkey:["value1", "value2"]}, {
+				onLoad: function(response) {
+					alert("Got file:\n\n" + response.text());
+				},
+				onError: function(response) {
+					alert("Error getting file: " + response.statusText());
 				}
-			);
+			});
 		*/
 		r.post = function(url, data, o) {
 			o = populateOptions(o);
@@ -279,21 +277,19 @@
 		@param {Object} opts
 			Same options as {@link glow.net.get}
 
-		@returns {Number|glow.net.Response}
-			An integer identifying the async request, or the response object for sync requests
+		@returns {glow.net.Request|glow.net.Response}
+			A response object for non-defered sync requests, otherwise a
+			request object is returned
 
 		@example
-			var postRef = glow.net.put("myFile.html",
-				{key:"value", otherkey:["value1", "value2"]},
-				{
-					onLoad: function(response) {
-						alert("Got file:\n\n" + response.text());
-					},
-					onError: function(response) {
-						alert("Error getting file: " + response.statusText());
-					}
+			glow.net.put("myFile.html", {key:"value", otherkey:["value1", "value2"]}, {
+				onLoad: function(response) {
+					alert("Got file:\n\n" + response.text());
+				},
+				onError: function(response) {
+					alert("Error getting file: " + response.statusText());
 				}
-			);
+			});
 		*/
 		r.put = function(url, data, o) {
 			o = populateOptions(o);
@@ -308,7 +304,6 @@
 		@name glow.net.del
 		@function
 		@description Makes an HTTP DELETE request to a given url
-			we can't use glow.net.delete as it is a reserved keyword
 
 		@param {String} url
 			Url to make the request to. This can be a relative path. You cannot make requests
@@ -317,20 +312,19 @@
 		@param {Object} opts
 			Same options as {@link glow.net.get}
 
-		@returns {Number|glow.net.Response}
-			An integer identifying the async request, or the response object for sync requests
+		@returns {glow.net.Request|glow.net.Response}
+			A response object for non-defered sync requests, otherwise a
+			request object is returned
 
 		@example
-			var postRef = glow.net.del("myFile.html",
-				{
-					onLoad: function(response) {
-						alert("Got file:\n\n" + response.text());
-					},
-					onError: function(response) {
-						alert("Error getting file: " + response.statusText());
-					}
+			glow.net.del("myFile.html", {
+				onLoad: function(response) {
+					alert("Got file:\n\n" + response.text());
+				},
+				onError: function(response) {
+					alert("Error getting file: " + response.statusText());
 				}
-			);
+			});
 		*/
 		r.del = function(url, o) {
 			o = populateOptions(o);
