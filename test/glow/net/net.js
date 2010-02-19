@@ -425,7 +425,22 @@ t.test("glow.net.loadScript aborting", function() {
 		t.ok(onAbortCalled, "onAbort called");
 		t.start();
 	}, 3000);
-})
+});
+
+t.test("glow.net.xDomainRequest", function () {
+    t.expect(1);
+	t.stop();
+
+    glow.net.xDomainGet('testdata/xdomain/windowdotname.html?search', {
+        onLoad: function (res) {
+            t.equals(res, 'test response', 'get xDomainResponse');
+            t.start();
+        },
+        _fullBlankUrl: 'testdata/xdomain/blank.html'
+    });
+
+
+});
 
 t.test("glow.net.put aync json", function() {
 	t.expect(2);

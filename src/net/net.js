@@ -39,7 +39,8 @@
 			globalObjectName = "_" + glow.UID + "loadScriptCbs",
 			$ = glow.dom.get,
 			events = glow.events,
-			emptyFunc = function(){};
+			emptyFunc = function(){},
+			idCount = 1;
 
 		/**
 		 * @name glow.net.xmlHTTPRequest
@@ -820,7 +821,7 @@
 					|| ( this._request._forceXml && !this._request.nativeRequest.overrideMimeType && window.ActiveXObject )
 				) {
 					var doc = new ActiveXObject("Microsoft.XMLDOM");
-                    doc.loadXML( nativeResponse.responseText );
+					doc.loadXML( nativeResponse.responseText );
 					return doc;
 				}
 				else {
@@ -876,6 +877,326 @@
 				return this.timedOut ? "Request Timeout" : this.nativeResponse.statusText;
 			}
 		})
+
+		// Private (x-domain request)
+
+		/**
+		@name XDomainRequest
+		@private
+		@class
+		@description A request made via a form submission in a hidden iframe, with the result being communicated
+					 via the name attribute of the iframe's window.
+
+		@param {String} url
+				the URL to post the data to.
+		@param {Object} data
+				the data to post. This should be keys with String values (or values that will be converted to
+				strings) or Array values where more than one value should be sent for a single key.
+		@param {Object} opts
+				an Object containing the same options as passed to glow.net.xDomainPost.
+		*/
+		var XDomainRequest = function (url, data, isGet, opts) {
+			this.url  = url;
+			this.data = data;
+			this.isGet = isGet;
+			this.opts = opts;
+		};
+
+
+		XDomainRequest.prototype = {
+			/**
+			@name XDomainRequest#send
+			@private
+			@function
+			@description Send the request
+			*/
+			send: function () {
+				this.addIframe();
+				this.addForm();
+				this.addTimeout();
+				this.onLoad = this.handleResponse;
+				this.submitForm();
+			},
+
+			/**
+			@name XDomainRequest#setupGlobalCallback
+			@private
+			@function
+			@description Make a globally accessible callback
+			*/
+			setupGlobalCallback: function () {
+				this.globalCallbackId = glow.UID + (idCount++);
+				if (! window.glowNetXDomainCallbacksglowNetXDomainCallbacks) window.glowNetXDomainCallbacks = {};
+				var request = this;
+				window.glowNetXDomainCallbacks[this.globalCallbackId] = function () {
+					if (request.onLoad) request.onLoad();
+				};
+				return this.globalCallbackId;
+			},
+
+			/**
+			@name XDomainRequest#addIframe
+			@private
+			@function
+			@description Add a hidden iframe for posting the request
+			*/
+			addIframe: function () {
+				this.iframe = glow.dom.create(
+					'<iframe style="visibility: hidden; position: absolute; height: 0;"' +
+					' onload="window.glowNetXDomainCallbacks.' + this.setupGlobalCallback() + '();"' +
+					'></iframe>'
+				);
+				$('body').append(this.iframe);
+			},
+		
+			/**
+			@name XDomainRequest#addForm
+			@private
+			@function
+			@description Add the form to the iframe for posting the request
+			*/
+			addForm: function () {
+				var doc = this.window().document;
+
+				// IE needs an empty document to be written to written to the iframe
+				if (glow.env.ie) {
+					doc.open();
+					doc.write('<html><body></body></html>');
+					doc.close();
+				}
+
+				var form = this.form = doc.createElement('form');
+				form.setAttribute('action', this.url);
+				form.setAttribute('method', this.isGet ? 'GET' : 'POST');
+
+				var body = doc.getElementsByTagName('body')[0];
+				body.appendChild(form);
+				this.addFormData();
+			},
+
+			/**
+			@name XDomainRequest#addFormData
+			@private
+			@function
+			@description Add the data to the form
+			*/
+			addFormData: function () {
+				for (var i in this.data) {
+					if (! this.data.hasOwnProperty(i)) continue;
+					if (typeof(this.data[i]) instanceof Array) {
+						var l = this.data[i].length;
+						for (var j = 0; j < l; j++) {
+							this.addHiddenInput(i, this.data[i][j]);
+						 }
+					}
+					else {
+						this.addHiddenInput(i, this.data[i]);
+					}
+				}
+			},
+
+			/**
+			@name XDomainRequest#addHiddenInput
+			@private
+			@function
+			@description Add a hidden input to the form for a piece of data
+			*/
+			addHiddenInput: function (name, value) {
+				var input = this.window().document.createElement('input');
+				input.type = 'hidden';
+				input.name = name;
+				input.value = value;
+				this.form.appendChild(input);
+			},
+
+			/**
+			@name XDomainRequest#window
+			@private
+			@function
+			@description Get the window for the hidden iframe
+			*/
+			window: function () {
+				var iframe = this.iframe[0];
+				if (iframe.contentWindow)
+					return iframe.contentWindow;
+				throw new Error('could not get contentWindow from iframe');
+
+				// this code was here to work around a browser quirk, but I don't know which for...
+				// I have tested in recent Safari, Chrome, Firefox, Opera and IE 6, 7, 8
+				// If the above error shows up, then this is the thing to try
+
+				// if (iframe.contentDocument && iframe.contentDocument.parentWindow)
+				//	return iframe.contentDocument.parentWindow;
+			},
+
+			/**
+			@name XDomainRequest#addTimeout
+			@private
+			@function
+			@description Add a timeout to cancel the request if it takes too long
+			*/
+			addTimeout: function () {
+				var request = this;
+				this.timeout = setTimeout(function () {
+					var err;
+					if (request.opts.hasOwnProperty('onTimeout')) {
+						try {
+							request.opts.onTimeout();
+						}
+						catch (e) {
+							err = e;
+						}
+					}
+					request.cleanup();
+					if (err) throw new Error('error in xDomainPost onTimeout callback: ' + err);
+				}, (this.opts.timeout || 10) * 1000); /* 10 second default */
+			},
+
+			/**
+			@name XDomainRequest#handleResponse
+			@private
+			@function
+			@description Callback for load event in the hidden iframe
+			*/
+			handleResponse: function () {
+				var err, href, win = this.window();
+				try {
+					href = win.location.href;
+				}
+				catch (e) {
+					err  = e;
+				}
+				if (href != 'about:blank' || err) {
+					clearTimeout(this.timeout);
+					this.onLoad = this.readHandler;
+					// this is just here for the tests, normally always want it to be in the same origin
+					if ('_fullBlankUrl' in this.opts) {
+						win.location = this.opts._fullBlankUrl;
+					}
+					else {
+						win.location = window.location.protocol + '//' + window.location.host + (this.opts.blankUrl || '/includes/blank/');
+					}
+				}
+			},
+
+			/**
+			@name XDomainRequest#readHandler
+			@private
+			@function
+			@description Callback for load event of blank page in same origin
+			*/
+			readHandler: function () {
+				var err;
+				if (this.opts.hasOwnProperty('onLoad')) {
+					try {
+						this.opts.onLoad(this.window().name);
+					}
+					catch (e) {
+						err = e;
+					}
+				}
+				this.cleanup();
+				if (err)
+					throw new Error('error in xDomainPost onLoad callback: ' + err);
+			},
+
+			/**
+			@name XDomainRequest#cleanup
+			@private
+			@function
+			@description Removes the iframe and any event listeners
+			*/
+			cleanup: function () {
+				glow.events.removeListener(this.listener);
+				this.iframe.remove();
+				if (this.globalCallbackId) {
+					delete window.glowNetXDomainCallbacks[this.globalCallbackId];
+				}
+			},
+
+			/**
+			@name XDomainRequest#submitForm
+			@private
+			@function
+			@description Submit the form to make the post request
+			*/
+			submitForm : function () {
+				var request = this;
+				// the set timeout is here to make the form submit in the context of the iframe
+				this.window().setTimeout(function () { request.form.submit() }, 0);
+			}
+		};
+
+		// public (x-domain request)
+
+		/**
+		@name glow.net.xDomainPost
+		@function
+		@description Send a post request via a form submission in a hidden iframe.
+					 The result is returned by the recipient of the form submission setting the iframe's
+					 window.name property.
+
+					 The URL that's requested should respond with a blank html page containing JavaScript
+					 that assigns the result to window.name as a string:
+
+					 <script type="text/javascript">
+					 window.name = '{ "success": true }';
+					 </script>
+		
+		@param {String} url
+				the URL to post the data to.
+		@param {Object} data
+				the data to post. This should be keys with String values (or values that will be converted to
+				strings) or Array values where more than one value should be sent for a single key.
+		@param {Object} opts
+				Zero or more of the following as properties of an object:
+				@param {Function} onLoad
+						a callback that is called when the response to the post is recieved. The function is passed
+						a single parameter containing the value of window.name set by the response to the post.
+				@param {Number} timeout
+						the request timeout in seconds (default 10 seconds)
+				@param {Function} onTimeout
+						a callback that is called when the request times out
+				@param {String} blankUrl
+						the path of a blank URL on the same domain as the caller (default '/includes/blank/')	   
+		*/
+		r.xDomainPost = function (url, data, opts) {
+			var request = new XDomainRequest(url, data, false, opts);
+			request.send();
+		};
+
+		/**
+		@name glow.net.xDomainGet
+		@function
+		@description Send a get request via a form submission in a hidden iframe.
+					 The result is returned by the recipient of the form submission setting the iframe's
+					 window.name property.
+
+					 The URL that's requested should respond with a blank html page containing JavaScript
+					 that assigns the result to window.name as a string:
+
+					 <script type="text/javascript">
+					 window.name = '{ "success": true }';
+					 </script>
+		
+		@param {String} url
+				the URL to perform the get request on.
+		@param {Object} opts
+				Zero or more of the following as properties of an object:
+				@param {Function} onLoad
+						a callback that is called when the response to the post is recieved. The function is passed
+						a single parameter containing the value of window.name set by the response to the post.
+				@param {Number} timeout
+						the request timeout in seconds (default 10 seconds)
+				@param {Function} onTimeout
+						a callback that is called when the request times out
+				@param {String} blankUrl
+						the path of a blank URL on the same domain as the caller (default '/includes/blank/')	   
+		*/
+		r.xDomainGet = function (url, opts) {
+			var request = new XDomainRequest(url, {}, true, opts);
+			request.send();
+		};
 
 		glow.net = r;
 	}
