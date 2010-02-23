@@ -1209,7 +1209,7 @@
 
 				If nodespec is a NodeList, then the its first node will be used.
 
-			@returns {glow.dom.NodeList}
+			@returns {Boolean} True if all NodeList elements are within nodespec
 
 			@example
 				var myNodeList = glow.dom.get("input");
