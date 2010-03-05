@@ -514,8 +514,11 @@
 		@function
 		@description Removes a listener created with addListener
 
-		@param {Number} ident An identifier returned from {@link glow.events.addListener}.
-	
+		@param {Number|Array} ident An identifier or array of identifiers
+			returned from {@link glow.events.addListener}. 
+
+			if it is an array of identifiers, each listener specified will be removed
+
 		@returns {Boolean}
 		
 		@example
