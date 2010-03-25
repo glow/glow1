@@ -1150,14 +1150,14 @@
 				strings) or Array values where more than one value should be sent for a single key.
 		@param {Object} opts
 				Zero or more of the following as properties of an object:
-				@param {Function} onLoad
+				@param {Function} [onLoad]
 						a callback that is called when the response to the post is recieved. The function is passed
 						a single parameter containing the value of window.name set by the response to the post.
-				@param {Number} timeout
+				@param {Number} [timeout=10]
 						the request timeout in seconds (default 10 seconds)
-				@param {Function} onTimeout
+				@param {Function} [onTimeout]
 						a callback that is called when the request times out
-				@param {String} blankUrl
+				@param {String} [blankUrl='/includes/blank']
 						the path of a blank URL on the same domain as the caller (default '/includes/blank/')	   
 		*/
 		r.xDomainPost = function (url, data, opts) {
@@ -1183,14 +1183,14 @@
 				the URL to perform the get request on.
 		@param {Object} opts
 				Zero or more of the following as properties of an object:
-				@param {Function} onLoad
+				@param {Function} [onLoad]
 						a callback that is called when the response to the post is recieved. The function is passed
 						a single parameter containing the value of window.name set by the response to the post.
-				@param {Number} timeout
+				@param {Number} [timeout=10]
 						the request timeout in seconds (default 10 seconds)
-				@param {Function} onTimeout
+				@param {Function} [onTimeout]
 						a callback that is called when the request times out
-				@param {String} blankUrl
+				@param {String} [blankUrl='/about/blank/']
 						the path of a blank URL on the same domain as the caller (default '/includes/blank/')	   
 		*/
 		r.xDomainGet = function (url, opts) {
