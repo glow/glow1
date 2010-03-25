@@ -977,7 +977,7 @@
 			_addFormData: function () {
 				for (var i in this.data) {
 					if (! this.data.hasOwnProperty(i)) continue;
-					if (typeof(this.data[i]) instanceof Array) {
+					if (this.data[i] instanceof Array) {
 						var l = this.data[i].length;
 						for (var j = 0; j < l; j++) {
 							this._addHiddenInput(i, this.data[i][j]);
