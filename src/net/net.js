@@ -1068,7 +1068,7 @@
 						win.location = this.opts._fullBlankUrl;
 					}
 					else {
-						win.location = window.location.protocol + '//' + window.location.host + (this.opts.blankUrl || '/includes/blank/');
+						win.location = window.location.protocol + '//' + window.location.host + (this.opts.blankUrl || '/favicon.ico');
 					}
 				}
 			},
@@ -1148,8 +1148,8 @@
 						the request timeout in seconds (default 10 seconds)
 				@param {Function} [onTimeout] callback called when request times out
 						a callback that is called when the requested url takes longer than the timeout to respond
-				@param {String} [blankUrl='/includes/blank'] url to load after main request
-						the path of a blank URL on the same domain as the caller (default '/includes/blank/')	   
+				@param {String} [blankUrl='/favicon.ico'] url to load after main request
+						the path of a blank URL on the same domain as the caller (default '/favicon.ico')	   
 		*/
 		r.xDomainPost = function (url, data, opts) {
 			var request = new _XDomainRequest(url, data, false, opts);
@@ -1181,8 +1181,8 @@
 						the request timeout in seconds (default 10 seconds)
 				@param {Function} [onTimeout] callback called when request times out
 						a callback that is called when the requested url takes longer than the timeout to respond
-				@param {String} [blankUrl='/about/blank/'] url to load after main request
-						the path of a blank URL on the same domain as the caller (default '/includes/blank/')	   
+				@param {String} [blankUrl='/favicon.ico'] url to load after main request
+						the path of a blank URL on the same domain as the caller (default '/favicon.ico')	   
 		*/
 		r.xDomainGet = function (url, opts) {
 			var request = new _XDomainRequest(url, {}, true, opts);
