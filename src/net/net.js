@@ -1101,7 +1101,6 @@
 			@description Removes the iframe and any event listeners
 			*/
 			_cleanup: function () {
-				glow.events.removeListener(this.listener);
 				this.iframe.remove();
 			},
 
