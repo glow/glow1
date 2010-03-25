@@ -905,12 +905,12 @@
 
 		_XDomainRequest.prototype = {
 			/**
-			@name _XDomainRequest#send
+			@name _XDomainRequest#_send
 			@private
 			@function
 			@description Send the request
 			*/
-			send: function () {
+			_send: function () {
 				this._addIframe();
 				this._addForm();
 				this._addTimeout();
@@ -928,8 +928,6 @@
 				this.iframe = glow.dom.create(
 					'<iframe style="visibility: hidden; position: absolute; height: 0;"></iframe>'
 				);
-				$('body').append(this.iframe);
-
 				var iframe   = this.iframe[0],
 					request  = this,
 					callback = function () {
@@ -941,6 +939,7 @@
 				} else {
 					iframe.onload = callback;
 				}
+				$('body').append(this.iframe);
 			},
 		
 			/**
