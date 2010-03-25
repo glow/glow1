@@ -919,22 +919,6 @@
 			},
 
 			/**
-			@name _XDomainRequest#_setupGlobalCallback
-			@private
-			@function
-			@description Make a globally accessible callback
-			*/
-			_setupGlobalCallback: function () {
-				this.globalCallbackId = glow.UID + (idCount++);
-				if (! window.glowNetXDomainCallbacksglowNetXDomainCallbacks) window.glowNetXDomainCallbacks = {};
-				var request = this;
-				window.glowNetXDomainCallbacks[this.globalCallbackId] = function () {
-					if (request.onLoad) request.onLoad();
-				};
-				return this.globalCallbackId;
-			},
-
-			/**
 			@name _XDomainRequest#_addIframe
 			@private
 			@function
@@ -942,11 +926,21 @@
 			*/
 			_addIframe: function () {
 				this.iframe = glow.dom.create(
-					'<iframe style="visibility: hidden; position: absolute; height: 0;"' +
-					' onload="window.glowNetXDomainCallbacks.' + this._setupGlobalCallback() + '();"' +
-					'></iframe>'
+					'<iframe style="visibility: hidden; position: absolute; height: 0;"></iframe>'
 				);
 				$('body').append(this.iframe);
+
+				var iframe   = this.iframe[0],
+                    request  = this,                    
+                    callback = function () {
+                        if (request.onLoad) request.onLoad();
+                    };
+
+                if (iframe.attachEvent) {
+                    iframe.attachEvent('onload', callback);
+                } else {
+                    iframe.onload = callback;
+                }
 			},
 		
 			/**
@@ -1109,9 +1103,6 @@
 			_cleanup: function () {
 				glow.events.removeListener(this.listener);
 				this.iframe.remove();
-				if (this.globalCallbackId) {
-					delete window.glowNetXDomainCallbacks[this.globalCallbackId];
-				}
 			},
 
 			/**
