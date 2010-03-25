@@ -1143,21 +1143,21 @@
 					 window.name = '{ "success": true }';
 					 </script>
 		
-		@param {String} url
+		@param {String} url url to perform the request on
 				the URL to post the data to.
 		@param {Object} data
 				the data to post. This should be keys with String values (or values that will be converted to
 				strings) or Array values where more than one value should be sent for a single key.
 		@param {Object} opts
 				Zero or more of the following as properties of an object:
-				@param {Function} [onLoad]
+				@param {Function} [onLoad] callback called when the request completes
 						a callback that is called when the response to the post is recieved. The function is passed
 						a single parameter containing the value of window.name set by the response to the post.
-				@param {Number} [timeout=10]
+				@param {Number} [timeout=10] request timeout
 						the request timeout in seconds (default 10 seconds)
-				@param {Function} [onTimeout]
-						a callback that is called when the request times out
-				@param {String} [blankUrl='/includes/blank']
+				@param {Function} [onTimeout] callback called when request times out
+						a callback that is called when the requested url takes longer than the timeout to respond
+				@param {String} [blankUrl='/includes/blank'] url to load after main request
 						the path of a blank URL on the same domain as the caller (default '/includes/blank/')	   
 		*/
 		r.xDomainPost = function (url, data, opts) {
@@ -1179,18 +1179,18 @@
 					 window.name = '{ "success": true }';
 					 </script>
 		
-		@param {String} url
-				the URL to perform the get request on.
+		@param {String} url url to perform the request on
+				The address that the GET request should be sent to.
 		@param {Object} opts
 				Zero or more of the following as properties of an object:
-				@param {Function} [onLoad]
+				@param {Function} [onLoad] callback called when the request completes
 						a callback that is called when the response to the post is recieved. The function is passed
 						a single parameter containing the value of window.name set by the response to the post.
-				@param {Number} [timeout=10]
+				@param {Number} [timeout=10] request timeout
 						the request timeout in seconds (default 10 seconds)
-				@param {Function} [onTimeout]
-						a callback that is called when the request times out
-				@param {String} [blankUrl='/about/blank/']
+				@param {Function} [onTimeout] callback called when request times out
+						a callback that is called when the requested url takes longer than the timeout to respond
+				@param {String} [blankUrl='/about/blank/'] url to load after main request
 						the path of a blank URL on the same domain as the caller (default '/includes/blank/')	   
 		*/
 		r.xDomainGet = function (url, opts) {
