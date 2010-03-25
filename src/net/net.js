@@ -931,16 +931,16 @@
 				$('body').append(this.iframe);
 
 				var iframe   = this.iframe[0],
-                    request  = this,                    
-                    callback = function () {
-                        if (request.onLoad) request.onLoad();
-                    };
+					request  = this,
+					callback = function () {
+						if (request.onLoad) request.onLoad();
+					};
 
-                if (iframe.attachEvent) {
-                    iframe.attachEvent('onload', callback);
-                } else {
-                    iframe.onload = callback;
-                }
+				if (iframe.attachEvent) {
+					iframe.attachEvent('onload', callback);
+				} else {
+					iframe.onload = callback;
+				}
 			},
 		
 			/**
