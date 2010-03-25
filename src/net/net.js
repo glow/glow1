@@ -881,7 +881,7 @@
 		// Private (x-domain request)
 
 		/**
-		@name XDomainRequest
+		@name _XDomainRequest
 		@private
 		@class
 		@description A request made via a form submission in a hidden iframe, with the result being communicated
@@ -895,7 +895,7 @@
 		@param {Object} opts
 				an Object containing the same options as passed to glow.net.xDomainPost.
 		*/
-		var XDomainRequest = function (url, data, isGet, opts) {
+		var _XDomainRequest = function (url, data, isGet, opts) {
 			this.url  = url;
 			this.data = data;
 			this.isGet = isGet;
@@ -903,28 +903,28 @@
 		};
 
 
-		XDomainRequest.prototype = {
+		_XDomainRequest.prototype = {
 			/**
-			@name XDomainRequest#send
+			@name _XDomainRequest#send
 			@private
 			@function
 			@description Send the request
 			*/
 			send: function () {
-				this.addIframe();
-				this.addForm();
-				this.addTimeout();
-				this.onLoad = this.handleResponse;
-				this.submitForm();
+				this._addIframe();
+				this._addForm();
+				this._addTimeout();
+				this.onLoad = this._handleResponse;
+				this._submitForm();
 			},
 
 			/**
-			@name XDomainRequest#setupGlobalCallback
+			@name _XDomainRequest#_setupGlobalCallback
 			@private
 			@function
 			@description Make a globally accessible callback
 			*/
-			setupGlobalCallback: function () {
+			_setupGlobalCallback: function () {
 				this.globalCallbackId = glow.UID + (idCount++);
 				if (! window.glowNetXDomainCallbacksglowNetXDomainCallbacks) window.glowNetXDomainCallbacks = {};
 				var request = this;
@@ -935,28 +935,28 @@
 			},
 
 			/**
-			@name XDomainRequest#addIframe
+			@name _XDomainRequest#_addIframe
 			@private
 			@function
 			@description Add a hidden iframe for posting the request
 			*/
-			addIframe: function () {
+			_addIframe: function () {
 				this.iframe = glow.dom.create(
 					'<iframe style="visibility: hidden; position: absolute; height: 0;"' +
-					' onload="window.glowNetXDomainCallbacks.' + this.setupGlobalCallback() + '();"' +
+					' onload="window.glowNetXDomainCallbacks.' + this._setupGlobalCallback() + '();"' +
 					'></iframe>'
 				);
 				$('body').append(this.iframe);
 			},
 		
 			/**
-			@name XDomainRequest#addForm
+			@name _XDomainRequest#_addForm
 			@private
 			@function
 			@description Add the form to the iframe for posting the request
 			*/
-			addForm: function () {
-				var doc = this.window().document;
+			_addForm: function () {
+				var doc = this._window().document;
 
 				// IE needs an empty document to be written to written to the iframe
 				if (glow.env.ie) {
@@ -971,38 +971,38 @@
 
 				var body = doc.getElementsByTagName('body')[0];
 				body.appendChild(form);
-				this.addFormData();
+				this._addFormData();
 			},
 
 			/**
-			@name XDomainRequest#addFormData
+			@name _XDomainRequest#_addFormData
 			@private
 			@function
 			@description Add the data to the form
 			*/
-			addFormData: function () {
+			_addFormData: function () {
 				for (var i in this.data) {
 					if (! this.data.hasOwnProperty(i)) continue;
 					if (typeof(this.data[i]) instanceof Array) {
 						var l = this.data[i].length;
 						for (var j = 0; j < l; j++) {
-							this.addHiddenInput(i, this.data[i][j]);
+							this._addHiddenInput(i, this.data[i][j]);
 						 }
 					}
 					else {
-						this.addHiddenInput(i, this.data[i]);
+						this._addHiddenInput(i, this.data[i]);
 					}
 				}
 			},
 
 			/**
-			@name XDomainRequest#addHiddenInput
+			@name _XDomainRequest#_addHiddenInput
 			@private
 			@function
 			@description Add a hidden input to the form for a piece of data
 			*/
-			addHiddenInput: function (name, value) {
-				var input = this.window().document.createElement('input');
+			_addHiddenInput: function (name, value) {
+				var input = this._window().document.createElement('input');
 				input.type = 'hidden';
 				input.name = name;
 				input.value = value;
@@ -1010,12 +1010,12 @@
 			},
 
 			/**
-			@name XDomainRequest#window
+			@name _XDomainRequest#window
 			@private
 			@function
 			@description Get the window for the hidden iframe
 			*/
-			window: function () {
+			_window: function () {
 				var iframe = this.iframe[0];
 				if (iframe.contentWindow)
 					return iframe.contentWindow;
@@ -1030,12 +1030,12 @@
 			},
 
 			/**
-			@name XDomainRequest#addTimeout
+			@name _XDomainRequest#_addTimeout
 			@private
 			@function
 			@description Add a timeout to cancel the request if it takes too long
 			*/
-			addTimeout: function () {
+			_addTimeout: function () {
 				var request = this;
 				this.timeout = setTimeout(function () {
 					var err;
@@ -1047,19 +1047,19 @@
 							err = e;
 						}
 					}
-					request.cleanup();
+					request._cleanup();
 					if (err) throw new Error('error in xDomainPost onTimeout callback: ' + err);
 				}, (this.opts.timeout || 10) * 1000); /* 10 second default */
 			},
 
 			/**
-			@name XDomainRequest#handleResponse
+			@name _XDomainRequest#_handleResponse
 			@private
 			@function
 			@description Callback for load event in the hidden iframe
 			*/
-			handleResponse: function () {
-				var err, href, win = this.window();
+			_handleResponse: function () {
+				var err, href, win = this._window();
 				try {
 					href = win.location.href;
 				}
@@ -1068,7 +1068,7 @@
 				}
 				if (href != 'about:blank' || err) {
 					clearTimeout(this.timeout);
-					this.onLoad = this.readHandler;
+					this.onLoad = this._readHandler;
 					// this is just here for the tests, normally always want it to be in the same origin
 					if ('_fullBlankUrl' in this.opts) {
 						win.location = this.opts._fullBlankUrl;
@@ -1080,33 +1080,33 @@
 			},
 
 			/**
-			@name XDomainRequest#readHandler
+			@name _XDomainRequest#_readHandler
 			@private
 			@function
 			@description Callback for load event of blank page in same origin
 			*/
-			readHandler: function () {
+			_readHandler: function () {
 				var err;
 				if (this.opts.hasOwnProperty('onLoad')) {
 					try {
-						this.opts.onLoad(this.window().name);
+						this.opts.onLoad(this._window().name);
 					}
 					catch (e) {
 						err = e;
 					}
 				}
-				this.cleanup();
+				this._cleanup();
 				if (err)
 					throw new Error('error in xDomainPost onLoad callback: ' + err);
 			},
 
 			/**
-			@name XDomainRequest#cleanup
+			@name _XDomainRequest#_cleanup
 			@private
 			@function
 			@description Removes the iframe and any event listeners
 			*/
-			cleanup: function () {
+			_cleanup: function () {
 				glow.events.removeListener(this.listener);
 				this.iframe.remove();
 				if (this.globalCallbackId) {
@@ -1115,15 +1115,15 @@
 			},
 
 			/**
-			@name XDomainRequest#submitForm
+			@name _XDomainRequest#_submitForm
 			@private
 			@function
 			@description Submit the form to make the post request
 			*/
-			submitForm : function () {
+			_submitForm : function () {
 				var request = this;
 				// the set timeout is here to make the form submit in the context of the iframe
-				this.window().setTimeout(function () { request.form.submit() }, 0);
+				this._window().setTimeout(function () { request.form.submit() }, 0);
 			}
 		};
 
@@ -1161,8 +1161,8 @@
 						the path of a blank URL on the same domain as the caller (default '/includes/blank/')	   
 		*/
 		r.xDomainPost = function (url, data, opts) {
-			var request = new XDomainRequest(url, data, false, opts);
-			request.send();
+			var request = new _XDomainRequest(url, data, false, opts);
+			request._send();
 		};
 
 		/**
@@ -1194,8 +1194,8 @@
 						the path of a blank URL on the same domain as the caller (default '/includes/blank/')	   
 		*/
 		r.xDomainGet = function (url, opts) {
-			var request = new XDomainRequest(url, {}, true, opts);
-			request.send();
+			var request = new _XDomainRequest(url, {}, true, opts);
+			request._send();
 		};
 
 		glow.net = r;
