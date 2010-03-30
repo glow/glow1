@@ -591,7 +591,7 @@
 		 		 
 		**/
 		r.fadeIn = function(element, duration, opts){
-			r.fadeTo(element, 1, duration, opts);
+			return r.fadeTo(element, 1, duration, opts);
         };
 		
 		/**
