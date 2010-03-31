@@ -286,12 +286,11 @@
 				glow._removeReadyBlock("widgetsCss");
 			*/
 			_addReadyBlock: function(name) {
-				if (name in glow._readyBlockers) {
-					throw new Error("Blocker '" + name +"' already exists");
+				if ( !glow._readyBlockers[name] ) {
+					glow._readyBlockers[name] = true;
+					glow.isReady = false;
+					blockersActive++;
 				}
-				glow._readyBlockers[name] = true;
-				glow.isReady = false;
-				blockersActive++;
 				return glow;
 			},
 			
