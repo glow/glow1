@@ -46,8 +46,9 @@
 		(function() {
 			var queue = [], //running animations
 				queueLen = 0,
-				intervalTime = 1, //ms between intervals
+				intervalTime = 13, //ms between intervals
 				interval; //holds the number for the interval
+				
 			manager = {
 				/**
 				@name glow.anim-manager.addToQueue
