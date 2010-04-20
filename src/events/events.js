@@ -372,7 +372,7 @@
 			<dl>
 				<dt>mouseenter</dt>
 				<dd>Fires when the mouse enters this element specifically, does not bubble</dd>
-				<dt>mouseleave/dt>
+				<dt>mouseleave</dt>
 				<dd>Fires when the mouse leaves this element specifically, does not bubble</dd>
 			</dl>
 		
@@ -512,10 +512,13 @@
 		/**
 		@name glow.events.removeListener 
 		@function
-		@description Removes a listener created with addListener
+		@description Removes listener(s) created with addListener
 
-		@param {Number} ident An identifier returned from {@link glow.events.addListener}.
-	
+		@param {Number|Number[]} ident An identifier or array of identifiers.
+			Idenftifiers are returned from {@link glow.events.addListener}. 
+
+			If array of identifiers is provided, each listener specified will be removed.
+
 		@returns {Boolean}
 		
 		@example
