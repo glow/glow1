@@ -1,5 +1,14 @@
 Glow Changelog
 
+1.7.3
+
+* glow - Fixed issue with two instances of Glow clashing
+* glow.net - Added x-domain request support (thanks to Tom Yandell)
+* glow.net - Added PUT & DELETE support (thanks to Gilles Ruppert & Max Noé)
+* glow.widgets.Draggable - Fixed constructor onAfterDrop shortcut
+* glow.widgets.AutoSuggest - Made options object truly optional
+* glow.anim - Corrected return value for fadeOut()
+
 1.7.2
 
 * glow.anim - slideDown() regression fix
