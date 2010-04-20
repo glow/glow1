@@ -1121,16 +1121,15 @@
 		/**
 		@name glow.net.xDomainPost
 		@function
-		@description Send a post request via a form submission in a hidden iframe.
-					 The result is returned by the recipient of the form submission setting the iframe's
-					 window.name property.
+		@description Makes a cross-domain POST request.
+					 A form is constructed in a hidden iframe to make the request.
 
 					 The URL that's requested should respond with a blank html page containing JavaScript
-					 that assigns the result to window.name as a string:
+					 that assigns the result data to window.name as a string, for example:
 
-					 <script type="text/javascript">
+					 &lt;script type="text/javascript">
 					 window.name = '{ "success": true }';
-					 </script>
+					 &lt;/script>
 		
 		@param {String} url url to perform the request on
 				the URL to post the data to.
@@ -1139,14 +1138,14 @@
 				strings) or Array values where more than one value should be sent for a single key.
 		@param {Object} opts
 				Zero or more of the following as properties of an object:
-				@param {Function} [onLoad] callback called when the request completes
+				@param {Function} [opts.onLoad] callback called when the request completes
 						a callback that is called when the response to the post is recieved. The function is passed
 						a single parameter containing the value of window.name set by the response to the post.
-				@param {Number} [timeout=10] request timeout
+				@param {Number} [opts.timeout=10] request timeout
 						the request timeout in seconds (default 10 seconds)
-				@param {Function} [onTimeout] callback called when request times out
+				@param {Function} [opts.onTimeout] callback called when request times out
 						a callback that is called when the requested url takes longer than the timeout to respond
-				@param {String} [blankUrl='/favicon.ico'] url to load after main request
+				@param {String} [opts.blankUrl='/favicon.ico'] url to load after main request
 						the path of a blank URL on the same domain as the caller (default '/favicon.ico')	   
 		*/
 		r.xDomainPost = function (url, data, opts) {
@@ -1157,29 +1156,28 @@
 		/**
 		@name glow.net.xDomainGet
 		@function
-		@description Send a get request via a form submission in a hidden iframe.
-					 The result is returned by the recipient of the form submission setting the iframe's
-					 window.name property.
+		@description Makes a cross-domain GET request.
+					 A form is constructed in a hidden iframe to make the request.
 
 					 The URL that's requested should respond with a blank html page containing JavaScript
-					 that assigns the result to window.name as a string:
+					 that assigns the result data to window.name as a string, for example:
 
-					 <script type="text/javascript">
+					 &lt;script type="text/javascript">
 					 window.name = '{ "success": true }';
-					 </script>
+					 &lt;/script>
 		
 		@param {String} url url to perform the request on
 				The address that the GET request should be sent to.
 		@param {Object} opts
 				Zero or more of the following as properties of an object:
-				@param {Function} [onLoad] callback called when the request completes
+				@param {Function} [opts.onLoad] callback called when the request completes
 						a callback that is called when the response to the post is recieved. The function is passed
 						a single parameter containing the value of window.name set by the response to the post.
-				@param {Number} [timeout=10] request timeout
+				@param {Number} [opts.timeout=10] request timeout
 						the request timeout in seconds (default 10 seconds)
-				@param {Function} [onTimeout] callback called when request times out
+				@param {Function} [opts.onTimeout] callback called when request times out
 						a callback that is called when the requested url takes longer than the timeout to respond
-				@param {String} [blankUrl='/favicon.ico'] url to load after main request
+				@param {String} [opts.blankUrl='/favicon.ico'] url to load after main request
 						the path of a blank URL on the same domain as the caller (default '/favicon.ico')	   
 		*/
 		r.xDomainGet = function (url, opts) {
