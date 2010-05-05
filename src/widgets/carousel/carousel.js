@@ -114,7 +114,8 @@
 				clicked.
 			
 			@param {glow.events.Event} event Event Object
-			@param {glow.dom.NodeList} event.item Represents the item clicked
+			@param {HTMLElement} event.item Represents the item clicked.
+				Conver this to a nodelist using {@link glow.dom.get}.
 			@param {Number} event.itemIndex Index of the item clicked
 			
 		*/
