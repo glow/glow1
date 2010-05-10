@@ -3,6 +3,8 @@
 	display: none;
 	overflow: hidden;
 	position: absolute;
+	/* Stops IE putting the overlay in WEIRD places */
+	left: 0;
 }
 
 /* stop the dotted line around the overlay focal point when it has focus */
