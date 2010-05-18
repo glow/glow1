@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>glow.anim</title>
+	<script type="text/javascript" src="../includes/manualtests.js"></script>
+	<!-- loading gloader, to change the location of gloader, edit manualtests.js -->
+	<script type="text/javascript">// <![CDATA[
+		document.write(
+			'<script type="text/javascript" src="' + manualTests.config.gloaderPath + '"> \
+				gloader.use("glow", { \
+					$map:  manualTests.config.mapPath, \
+					$base: manualTests.config.basePath \
+				}); \
+			<' + '/script>'
+		);
+	// ]]></script>
+	
+	<script type="text/javascript">gloader.load(['glow', '@VERSION@', 'glow.data', 'glow.dom', 'glow.events', 'glow.anim'])</script>
+	
+	<style type="text/css">
+		#carousel1,
+		#carousel2,
+		#carousel3,
+		#carousel4 {
+			position: relative;
+			overflow: hidden;
+			width: 610px;
+			height: 200px;
+			background: #2954cf;
+			margin-bottom: 10px;
+		}
+		#carousel1 ol,
+		#carousel3 ol {
+			position: absolute;
+			top: 0;
+			left: 0;
+			margin: 0; padding: 0;
+		}
+		#carousel1 li,
+		#carousel2 li,
+		#carousel3 li,
+		#carousel4 li {
+			width: 190px;
+			height: 180px;
+			background: url(bg.png);
+			display: block;
+			list-style: none;
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			padding: 0; margin: 0;
+			overflow: hidden;
+			font-size: 126px;
+			text-align: center;
+			color: #fff;
+		}
+		#carousel2 ol,
+		#carousel4 ol {
+			position: relative;
+			margin: 0; padding: 0;
+		}
+		#carousel1 span,
+		#carousel2 span,
+		#carousel3 span,
+		#carousel4 span {
+			width: 20px;
+			height: 20px;
+			position: absolute;
+			top: 0;
+			left: 0;
+			background: #2954cf;
+		}
+		#carousel1 .tr,
+		#carousel2 .tr,
+		#carousel3 .tr,
+		#carousel4 .tr {
+			left: auto;
+			right: 0;
+		}
+		#carousel1 .bl,
+		#carousel2 .bl,
+		#carousel3 .bl,
+		#carousel4 .bl {
+			top: auto;
+			bottom: 0;
+		}
+		#carousel1 .br,
+		#carousel2 .br,
+		#carousel3 .br,
+		#carousel4 .br {
+			top: auto;
+			bottom: 0;
+			left: auto;
+			right: 0;
+		}
+		
+		#carousel4 .win {
+			position: relative;
+			overflow: hidden;
+			width: 610px;
+			height: 200px;
+		}
+		
+		#carousel3 .next,
+		#carousel4 .next {
+			width: 192px;
+			height: 200px;
+			position: absolute;
+			right: 0;
+			top: 0;
+			background: url(next.png);
+			z-index: 2;
+		}
+		
+		#carousel3 .prev,
+		#carousel4 .prev {
+			width: 192px;
+			height: 200px;
+			position: absolute;
+			left: 0;
+			top: 0;
+			background: url(prev.png);
+			z-index: 2;
+		}
+		
+		#carousel1 div.text,
+		#carousel2 div.text,
+		#carousel3 div.text,
+		#carousel4 div.text {
+			position: absolute;
+			bottom: 29px;
+			left: 10px;
+			width: 170px;
+			height: 24px;
+			opacity: 0.2;
+			background: #000;
+			color: #fff;
+			font-size: 14px;
+		}
+		
+	</style>
+</head>
+
+<body>
+	<h1>glow.anim</h1>
+	
+	<div id="carousel1">
+		<ol>
+			<li style="left:10px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>1<div class="text">Text</div></li>
+			<li style="left:210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>2<div class="text">Text</div></li>
+			<li style="left:410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>3<div class="text">Text</div></li>
+			<li style="left:610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>4<div class="text">Text</div></li>
+			<li style="left:810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>5<div class="text">Text</div></li>
+			<li style="left:1010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>6<div class="text">Text</div></li>
+			<li style="left:1210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>7<div class="text">Text</div></li>
+			<li style="left:1410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>8<div class="text">Text</div></li>
+			<li style="left:1610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>9<div class="text">Text</div></li>
+			<li style="left:1810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>10<div class="text">Text</div></li>
+			<li style="left:2010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>11<div class="text">Text</div></li>
+			<li style="left:2210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>12<div class="text">Text</div></li>
+			<li style="left:2410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>13<div class="text">Text</div></li>
+			<li style="left:2610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>14<div class="text">Text</div></li>
+			<li style="left:2810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>15<div class="text">Text</div></li>
+			<li style="left:3010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>16<div class="text">Text</div></li>
+			<li style="left:3210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>17<div class="text">Text</div></li>
+			<li style="left:3410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>18<div class="text">Text</div></li>
+			<li style="left:3610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>19<div class="text">Text</div></li>
+			<li style="left:3810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>20<div class="text">Text</div></li>
+		</ol>
+	</div>
+	
+	<div id="carousel2">
+		<ol>
+			<li style="left:10px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>1<div class="text">Text</div></li>
+			<li style="left:210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>2<div class="text">Text</div></li>
+			<li style="left:410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>3<div class="text">Text</div></li>
+			<li style="left:610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>4<div class="text">Text</div></li>
+			<li style="left:810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>5<div class="text">Text</div></li>
+			<li style="left:1010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>6<div class="text">Text</div></li>
+			<li style="left:1210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>7<div class="text">Text</div></li>
+			<li style="left:1410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>8<div class="text">Text</div></li>
+			<li style="left:1610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>9<div class="text">Text</div></li>
+			<li style="left:1810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>10<div class="text">Text</div></li>
+			<li style="left:2010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>11<div class="text">Text</div></li>
+			<li style="left:2210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>12<div class="text">Text</div></li>
+			<li style="left:2410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>13<div class="text">Text</div></li>
+			<li style="left:2610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>14<div class="text">Text</div></li>
+			<li style="left:2810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>15<div class="text">Text</div></li>
+			<li style="left:3010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>16<div class="text">Text</div></li>
+			<li style="left:3210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>17<div class="text">Text</div></li>
+			<li style="left:3410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>18<div class="text">Text</div></li>
+			<li style="left:3610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>19<div class="text">Text</div></li>
+			<li style="left:3810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>20<div class="text">Text</div></li>
+			<li style="left:4010px"><div class="text">Text</div></li>
+		</ol>
+	</div>
+	
+	<div id="carousel3">
+		<div class="prev"></div>
+		<div class="next"></div>
+		<ol>
+			<li style="left:10px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>1<div class="text">Text</div></li>
+			<li style="left:210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>2<div class="text">Text</div></li>
+			<li style="left:410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>3<div class="text">Text</div></li>
+			<li style="left:610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>4<div class="text">Text</div></li>
+			<li style="left:810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>5<div class="text">Text</div></li>
+			<li style="left:1010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>6<div class="text">Text</div></li>
+			<li style="left:1210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>7<div class="text">Text</div></li>
+			<li style="left:1410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>8<div class="text">Text</div></li>
+			<li style="left:1610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>9<div class="text">Text</div></li>
+			<li style="left:1810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>10<div class="text">Text</div></li>
+			<li style="left:2010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>11<div class="text">Text</div></li>
+			<li style="left:2210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>12<div class="text">Text</div></li>
+			<li style="left:2410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>13<div class="text">Text</div></li>
+			<li style="left:2610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>14<div class="text">Text</div></li>
+			<li style="left:2810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>15<div class="text">Text</div></li>
+			<li style="left:3010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>16<div class="text">Text</div></li>
+			<li style="left:3210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>17<div class="text">Text</div></li>
+			<li style="left:3410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>18<div class="text">Text</div></li>
+			<li style="left:3610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>19<div class="text">Text</div></li>
+			<li style="left:3810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>20<div class="text">Text</div></li>
+		</ol>
+	</div>
+	
+	<div id="carousel4">
+		<div class="prev"></div>
+		<div class="next"></div>
+		<div class="win">
+			<ol>
+				<li style="left:10px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>1<div class="text">Text</div></li>
+				<li style="left:210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>2<div class="text">Text</div></li>
+				<li style="left:410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>3<div class="text">Text</div></li>
+				<li style="left:610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>4<div class="text">Text</div></li>
+				<li style="left:810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>5<div class="text">Text</div></li>
+				<li style="left:1010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>6<div class="text">Text</div></li>
+				<li style="left:1210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>7<div class="text">Text</div></li>
+				<li style="left:1410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>8<div class="text">Text</div></li>
+				<li style="left:1610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>9<div class="text">Text</div></li>
+				<li style="left:1810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>10<div class="text">Text</div></li>
+				<li style="left:2010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>11<div class="text">Text</div></li>
+				<li style="left:2210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>12<div class="text">Text</div></li>
+				<li style="left:2410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>13<div class="text">Text</div></li>
+				<li style="left:2610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>14<div class="text">Text</div></li>
+				<li style="left:2810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>15<div class="text">Text</div></li>
+				<li style="left:3010px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>16<div class="text">Text</div></li>
+				<li style="left:3210px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>17<div class="text">Text</div></li>
+				<li style="left:3410px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>18<div class="text">Text</div></li>
+				<li style="left:3610px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>19<div class="text">Text</div></li>
+				<li style="left:3810px"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>20<div class="text">Text</div></li>
+				<li style="left:4010px"><div class="text">Text</div></li>
+			</ol>
+		</div>
+	</div>
+	
+	<script type="text/javascript" class="showSrc">
+		glow.ready(function() {
+			var frameCount = 0;
+			window.anim1 = glow.anim.css('#carousel1 ol', 10, {
+				left: -3400
+			}, {tween:glow.tweens.easeBoth()});
+			
+			glow.events.addListener(anim1, 'frame', function() {
+				frameCount++;
+			});
+			
+			glow.events.addListener(anim1, 'complete', function() {
+				alert(frameCount/10);
+			});
+		});
+		
+		glow.ready(function() {
+			var frameCount = 0,
+				elm = document.getElementById('carousel2');
+				
+			window.anim2 = new glow.anim.Animation(10, {
+				tween: glow.tweens.easeBoth()
+			});
+			
+			glow.events.addListener(anim2, 'frame', function() {
+				elm.scrollLeft = Math.floor(3400 * this.value);
+				frameCount++;
+			});
+			
+			glow.events.addListener(anim2, 'complete', function() {
+				alert(frameCount/10);
+			});
+		});
+		
+		glow.ready(function() {
+			var frameCount = 0;
+			window.anim3 = glow.anim.css('#carousel3 ol', 10, {
+				left: -3400
+			}, {tween:glow.tweens.easeBoth()});
+			
+			glow.events.addListener(anim3, 'frame', function() {
+				frameCount++;
+			});
+			
+			glow.events.addListener(anim3, 'complete', function() {
+				alert(frameCount/10);
+			});
+		});
+		
+		glow.ready(function() {
+			var frameCount = 0,
+				elm = glow.dom.get('#carousel4 div.win')[0];
+				
+			window.anim4 = new glow.anim.Animation(10, {
+				tween: glow.tweens.easeBoth()
+			});
+			
+			glow.events.addListener(anim4, 'frame', function() {
+				elm.scrollLeft = Math.floor(3400 * this.value);
+				frameCount++;
+			});
+			
+			glow.events.addListener(anim4, 'complete', function() {
+				alert(frameCount/10);
+			});
+		});
+	</script>
+	
+	
+	<script type="text/javascript">manualTests.showSrc();</script>
+	<script type="text/javascript">manualTests.log('Logging enabled');</script>
+</body>
+</html>
