@@ -715,8 +715,8 @@
 				{
 					autoPosition: false,
 					anim: (this.opts.anim)? this.opts.anim : null,
-					id: this.opts.id,
-					className: this.opts.className
+					id: this.opts.id || '',
+					className: this.opts.className || ''
 				}
 			);
 		
