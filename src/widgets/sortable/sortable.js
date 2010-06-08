@@ -157,9 +157,14 @@
 		function handleDrop (e) {
 			var draggable = e.attachedTo,
 				el = draggable.element,
-				target = draggable.activeTarget;
-				
-		    this._previous = el.prev();
+				target = draggable.activeTarget,
+				previous = el.prev();
+
+			if ( previous.hasClass(this._opts.dropIndicatorClass) ) {
+				previous = previous.prev();
+			}
+		    this._previous = previous;
+
 			this._parent = el.parent();
 			if (target)	target.moveToPosition(draggable);
 	    }
@@ -177,6 +182,7 @@
 		function handleAfterDrop (e) {
 			var draggable = e.attachedTo,
 				el = draggable.element;
+
 			if (! el.prev().eq(this._previous || []) || ! el.parent().eq(this._parent)) {
 				fire(this, "sort");
 			}
