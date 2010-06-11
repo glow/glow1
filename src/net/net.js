@@ -92,7 +92,7 @@
 		*/
 
 		function noCacheUrl(url) {
-			return [url, (/\?/.test(url) ? "&" : "?"), "a", new Date().getTime(), parseInt(Math.random()*100000)].join("");
+			return url + (url.indexOf('?') === -1 ? '?' : '&') + 'cachebuster=' + new Date().valueOf();
 		}
 
 		/*
