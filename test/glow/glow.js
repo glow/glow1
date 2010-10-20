@@ -490,9 +490,9 @@ t.test("glow.lang.extend()", function() {
 })
 
 t.test("glow.lang.clone()", function() {
-	t.expect(4);
+	t.expect(6);
 
-	var testObject = { hello: "world" };
+	var testObject = { hello: "world", foo: null };
 
 	var clonedObject = glow.lang.clone( testObject );
 
@@ -503,6 +503,10 @@ t.test("glow.lang.clone()", function() {
 
 	t.equals( clonedObject.hello, "space", "clonedObject.hello property should now read space");
 	t.equals( testObject.hello, "world", "testObject.hello property should still read world");
+
+	t.ok( testObject.foo ===  null, 'testObject.foo property should be null');
+	t.ok( clonedObject.foo ===  null, 'clonedObject.foo property should be null');
+
 
 })
 
