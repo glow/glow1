@@ -1173,7 +1173,7 @@ Idler.prototype._stop = function() {
 			// pass in a tag, and if the tag matches one of the tags in the menuItems return the matching menuItem's title
 			overlayMenu.getTitleFromTag = function(tag) {
 				var menuItem;
-				for (var i = 0, leni = overlayMenu.menuItems.length; i<len; i++) {
+				for (var i = 0, leni = overlayMenu.menuItems.length; i<leni; i++) {
 					menuItem = overlayMenu.menuItems[i];
 					if (menuItem.tag == tag) {
 						return menuItem.title;
