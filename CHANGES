@@ -1,5 +1,10 @@
 Glow Changelog
 
+1.7.4-rc1
+
+* glow.widgets.Editor - Fix wrong variable name in editor widget.
+* glow.net - Changing cachebusting param to fit in with BBC S&Gs
+
 1.7.3
 
 * glow - Fixed issue with two instances of Glow clashing
