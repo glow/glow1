@@ -1,9 +1,17 @@
 Glow Changelog
 
+1.7.5
+
+* glow.widgets.Overlay - Revert fix positional issue which caused mask to grow too big as it breaks Barlesque
+
 1.7.4
 
 * glow.widgets.Editor - Fix wrong variable name in editor widget.
 * glow.net - Changing cachebusting param to fit in with BBC S&Gs
+* glow.widgets.Carousel - Documentation update
+* glow.widgets.Overlay - Fix positional issue which caused mask to grow too big
+* glow.widgets.AutoSuggest - Fix to default ID
+* glow.widgets.Sortable - Fixed 'sort' firing when last item is picked up but not moved to a different position
 
 1.7.3
 
@@ -27,14 +35,14 @@ Glow Changelog
 * glow.widgets.Overlay - returnTo() fix
 * glow.anim - slideDown() fix
 * glow.dom - html() param as number, clone() empty NodeList IE fix
-* glow.net - loadScript() memory usage regression fix 
+* glow.net - loadScript() memory usage regression fix
 * glow.net - Adding Header X-Requested-With: XmlHttpRequest to requests
 
 1.7.0
 
 * glow.widgets.Autosuggest - Fixed bug that sometimes caused the suggestion list to be position off by 1 pixel
 * glow.widgets.Autosuggest - Added option to turn off selection of the completed text in the input element
-* glow.widgets.Mask - Fixed issue that causes IE6 to get into a resize event loop 
+* glow.widgets.Mask - Fixed issue that causes IE6 to get into a resize event loop
 * glow.dom - Changing method for getting document size to correct IE issue
 * glow.embed - Added documentation for isSupported
 
