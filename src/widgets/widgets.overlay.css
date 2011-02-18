@@ -1,10 +1,8 @@
 .glowCSSVERSION-overlay {
-	visibility: hidden;
-	display: none;
-	overflow: hidden;
-	position: absolute;
-	/* Stops IE putting the overlay in WEIRD places */
-	left: 0;
+    visibility: hidden;
+    display: none;
+    overflow: hidden;
+    position: absolute;
 }
 
 /* stop the dotted line around the overlay focal point when it has focus */
