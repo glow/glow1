@@ -44,7 +44,7 @@
 						len = sheets.length,
 						sheet;
 						for (; i < len; i++) {
-							if (sheets[i].href.indexOf("widgets/widgets") != -1) {
+							if (sheets[i].href && sheets[i].href.indexOf("widgets/widgets") != -1) {
 								return sheets[i];
 							}
 							else {
