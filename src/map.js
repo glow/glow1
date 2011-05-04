@@ -176,6 +176,9 @@ gloader.map.add(
     },
     {
         $version: "1.7.5"
+    },
+    {
+        $version: "1.7.6"
     }
 );
 

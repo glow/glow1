@@ -1,5 +1,9 @@
 Glow Changelog
 
+1.7.6
+
+* Check stylesheets have href before using it.
+
 1.7.5
 
 * glow.widgets.Overlay - Revert fix positional issue which caused mask to grow too big as it breaks Barlesque
