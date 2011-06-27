@@ -1173,8 +1173,8 @@
 				if (this.dropTargets) {
 					this._mousePos = { x: e.pageX, y: e.pageY };
 				}
-				// check for IE mouseup outside of page boundary
-				if(_ie && e.nativeEvent.button == 0) {
+				// check for mouseup outside of page boundary in IE with document mode less than 9
+				if(_ie && e.nativeEvent.button == 0 && !(document.documentMode >= 9)) {
 					this._releaseElement(e);
 					return false;
 				};
