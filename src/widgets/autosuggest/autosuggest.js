@@ -431,10 +431,12 @@
 						}
 						break;
 					case 'ESC':
-						// return to the value originally entered by the user
-						that.inputElement.val(that._original);
-						that._value = that._original;
-						valueChanged(that, true);
+    					// If set then return to the value originally entered by the user
+						if (that._original) {
+							that.inputElement.val(that._original);
+							that._value = that._original;
+							valueChanged(that, true);
+						}
 						that.hide();
 						return false;
 					case 'DEL':
