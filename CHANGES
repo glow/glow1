@@ -1,5 +1,10 @@
 Glow Changelog
 
+1.7.7
+
+* glow.widgets.AutoSuggest - Fix bug that appeared when escaping the textfield after entering no text.
+* glow.widgets.DragDrop - Fix bug affecting IE9 that prevented dragging.
+
 1.7.6
 
 * Check stylesheets have href before using it.
