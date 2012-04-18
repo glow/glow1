@@ -719,8 +719,10 @@
 				*/
 				clone: function( obj ) {
 					var index, _index, tmp;
-					obj = obj.valueOf();
-					if ( typeof obj !== 'object' ) {
+
+					if ( (obj === null) || 
+					    (typeof (obj = obj.valueOf()) !== 'object') )
+					{
 						return obj;
 					} else {
 						if ( obj[0] || obj.concat ) {
