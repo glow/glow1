@@ -2845,7 +2845,10 @@
 						if (typeof val == "number" && hasUnits.test(originalProp)) {
 							val = val.toString() + "px";
 						}
-						if (prop == "opacity" && env.ie) {
+
+						// Use feature detection to support older IEs
+						// http://blogs.msdn.com/b/ie/archive/2010/08/17/ie9-opacity-and-alpha.aspx
+						if (prop == "opacity" && typeof document.createElement("div").style.opacity == 'undefined') {
 							//in IE the element needs hasLayout for opacity to work
 							thisStyle.zoom = "1";
 							if (val === "") {
