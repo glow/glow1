@@ -1,5 +1,9 @@
 Glow Changelog
 
+1.7.8
+
+* glow.dom - Switched IE browser detection for feature detection so opacity works in IE 10
+
 1.7.7
 
 * glow.widgets.AutoSuggest - Fix bug that appeared when escaping the textfield after entering no text.
