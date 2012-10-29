@@ -2845,7 +2845,7 @@
 						if (typeof val == "number" && hasUnits.test(originalProp)) {
 							val = val.toString() + "px";
 						}
-						if (prop == "opacity" && env.ie < 10) {
+						if (prop == "opacity" && parseInt(env.ie, 10) < 10) {
 							//in IE the element needs hasLayout for opacity to work
 							thisStyle.zoom = "1";
 							if (val === "") {
