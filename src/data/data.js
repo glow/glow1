@@ -358,6 +358,14 @@
 					throw new Error("glow.data.decodeJson: cannot decode item");
 				}
 
+				// If JSON.parse() is available use that instead of eval().
+				// options that are passed to decodeJson() are only safety
+				// guarantees which are automatically handled with JSON.parse(),
+				// hence return immediately without acknowledging the options.
+
+				if(window.JSON && window.JSON.parse)
+					return window.JSON.parse(text);
+
 				options = options || {};
 				options.safeMode = options.safeMode || false;
 
